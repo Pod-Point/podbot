@@ -4,13 +4,14 @@
   "description": "",
   "main": "lib/index.js",
   "scripts": {
-    "start": "npm run build && ./start.sh",
+    "start": "npm run build && node lib/index.js",
     "build": "babel src -d lib"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "botkit": "^0.2.2"
+    "botkit": "^0.2.2",
+    "dotenv": "^2.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.10.1",

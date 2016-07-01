@@ -1,9 +1,12 @@
+import dotenv from 'dotenv';
+import Botkit from 'botkit';
+
+dotenv.config();
+
 if (!process.env.token) {
     console.log('Error: Specify token in environment');
     process.exit(1);
 }
-
-import Botkit from 'botkit';
 
 let controller = Botkit.slackbot({
     debug: true
