@@ -1,9 +1,8 @@
 import dotenv from 'dotenv';
 import Botkit from 'botkit';
+import PrClosed from './modules/pr-closed';
 
 dotenv.config();
-
-var bot = null;
 
 if (!process.env.clientId || !process.env.clientSecret || !process.env.port || !process.env.team) {
     console.log('Error: Specify clientId, clientSecret, team and port in environment');
@@ -20,104 +19,38 @@ let controller = Botkit.slackbot({
 });
 
 controller.storage.teams.get(process.env.team, (err, team) => {
-    bot = controller.spawn(team).startRTM((err) => {
+
+    let bot = controller.spawn(team).startRTM((err) => {
         if (err) {
             console.log('Error connecting bot to Slack:', err);
         }
     });
-});
 
-controller.setupWebserver(process.env.port, (err, webserver) => {
+    let prClosed = new PrClosed(bot);
 
-    webserver.post('/pr_closed', (req, res) => {
+    controller.setupWebserver(process.env.port, (err, webserver) => {
 
-        let hook = req.body;
-        let pr = hook.pull_request;
+        controller.createHomepageEndpoint(controller.webserver);
 
-        if (hook.action == 'closed' && pr.merged === true) {
+        controller.createWebhookEndpoints(controller.webserver);
 
-            let message = {
-                text: `#${hook.number} ${pr.title} was just merged into ${hook.repository.name}`,
-                channel: '#software-dev',
-                attachments: [
-                    {
-                        title: 'Do you want to deploy this PR?',
-                        callback_id: 'deploy-pr',
-                        attachment_type: 'default',
-                        actions: [
-                            {
-                                name: 'yes',
-                                text: ':shipit:',
-                                value: JSON.stringify({
-                                    repo: hook.repository.id,
-                                    pr: hook.number
-                                }),
-                                style: 'primary',
-                                type: 'button'
-                            },
-                            {
-                                name: 'no',
-                                text: ':thumbsdown:',
-                                style: 'danger',
-                                type: 'button'
-                            }
-                        ]
-                    }
-                ]
-            };
+        controller.createOauthEndpoints(controller.webserver, (err, req, res) => {
+            if (err) {
+                res.status(500).send('ERROR: ' + err);
+            } else {
+                res.send('Success!');
+            }
+        });
 
-            bot.say(message);
+        prClosed.registerWebhooks(webserver);
 
-        }
-
-        res.send('OK');
     });
 
-    controller.createHomepageEndpoint(controller.webserver);
+    controller.on('interactive_message_callback', (bot, message) => {
 
-    controller.createWebhookEndpoints(controller.webserver);
+        prClosed.registerCallbacks(message);
 
-    controller.createOauthEndpoints(controller.webserver, (err, req, res) => {
-        if (err) {
-            res.status(500).send('ERROR: ' + err);
-        } else {
-            res.send('Success!');
-        }
     });
-
-});
-
-controller.on('interactive_message_callback', (bot, message) => {
-
-    let action = message.actions[0];
-
-    if (message.callback_id == 'deploy-pr') {
-
-        let reply = {};
-
-        if (action.name == 'yes') {
-
-            let value = JSON.parse(action.value);
-            reply = {
-                text: `Deploying PR #${value.pr} from repo ${value.repo}`,
-                attachments: []
-            };
-
-        } else {
-
-            reply = {
-                text: 'Ok then :disappointed:',
-                attachments: []
-            };
-
-            console.log(reply);
-
-        }
-
-        bot.replyInteractive(message, reply);
-
-    }
-
 });
 
 controller.on('rtm_open', (bot) => {
