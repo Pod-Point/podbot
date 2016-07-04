@@ -68,57 +68,75 @@ class PrClosed {
     registerCallbacks(message) {
 
         let action = message.actions[0];
+        let payload = JSON.parse(message.payload);
 
         if (message.callback_id == 'deploy-pr') {
 
             let reply = {};
-            let value = JSON.parse(action.value);
 
-            if (action.name == 'yes' && Apps.hasOwnProperty(value.repo)) {
+            if (action.name == 'yes') {
 
-                let deployer = new Deployer();
+                let value = JSON.parse(action.value);
 
-                reply = {
-                    text: `Deploying PR #${value.pr} from repo ${value.repo}`,
-                    attachments: []
-                };
+                if (Apps.hasOwnProperty(value.repo)) {
 
-                this.bot.replyInteractive(message, reply);
+                    let deployer = new Deployer();
 
-                deployer.deploy(Apps[value.repo], `PR #${value.pr}`, (err, data) => {
+                    deployer.deploy(Apps[value.repo], `PR #${value.pr}`, (err, data) => {
 
-                    if (err) {
-
-                        reply = {
-                            text: `Sorry I wasn't able to deploy ${value.pr}`,
-                            attachments: []
-                        };
-
-                    } else {
-
-                        if (data.DeploymentId) {
+                        if (err) {
 
                             reply = {
-                                text: `Deployed ${value.pr}`,
-                                attachments: []
+                                text: payload.original_message.text,
+                                attachments: [
+                                    {
+                                        color: 'danger',
+                                        text: `Sorry I wasn't able to deploy ${value.pr}`
+                                    }
+                                ]
                             };
+
+                        } else {
+
+                            if (data.DeploymentId) {
+
+                                reply = {
+                                    text: payload.original_message.text,
+                                    attachments: [
+                                        {
+                                            color: 'good',
+                                            text: `Deploying PR #${value.pr} from repo ${value.repo}...`
+                                        }
+                                    ]
+                                };
+                            }
                         }
-                    }
+                    });
 
-                    this.bot.replyInteractive(message, reply);
+                } else {
 
-                });
+                    reply = {
+                        text: payload.original_message.text,
+                        attachments: [
+                            {
+                                color: 'warning',
+                                text: `Sorry I dont know how to deploy ${value.repo} :disappointed:`
+                            }
+                        ]
+                    };
+
+                }
 
             } else {
 
                 reply = {
-                    text: 'Ok then :disappointed:',
+                    text: payload.original_message.text,
                     attachments: []
                 };
 
-                this.bot.replyInteractive(message, reply);
-
             }
+
+            this.bot.replyInteractive(message, reply);
         }
     }
 }
