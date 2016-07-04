@@ -3,31 +3,54 @@ import Botkit from 'botkit';
 
 dotenv.config();
 
-if (!process.env.token) {
-    console.log('Error: Specify token in environment');
+if (!process.env.clientId || !process.env.clientSecret || !process.env.port || !process.env.team) {
+    console.log('Error: Specify clientId, clientSecret, team and port in environment');
     process.exit(1);
 }
 
 let controller = Botkit.slackbot({
-    debug: true
+    debug: true,
+    json_file_store: './db/'
 }).configureSlackApp({
     clientId: process.env.clientId,
     clientSecret: process.env.clientSecret,
     scopes: ['bot']
 });
 
-let bot = controller.spawn({
-    token: process.env.token
-}).startRTM();
+controller.storage.teams.get(process.env.team, (err, team) => {
 
-controller.setupWebserver(process.env.port, (err, webserver) => {
-    controller.createWebhookEndpoints(controller.webserver);
-
-    controller.createOauthEndpoints(controller.webserver, (err, req, res) => {
+    let bot = controller.spawn(team).startRTM((err) => {
         if (err) {
-            res.status(500).send('ERROR: ' + err);
-        } else {
-            res.send('Success!');
+            console.log('Error connecting bot to Slack:', err);
         }
     });
+
+    controller.setupWebserver(process.env.port, (err, webserver) => {
+
+        controller.createHomepageEndpoint(controller.webserver);
+
+        controller.createWebhookEndpoints(controller.webserver);
+
+        controller.createOauthEndpoints(controller.webserver, (err, req, res) => {
+            if (err) {
+                res.status(500).send('ERROR: ' + err);
+            } else {
+                res.send('Success!');
+            }
+        });
+
+    });
+
+    controller.on('interactive_message_callback', (bot, message) => {
+
+
+    });
+});
+
+controller.on('rtm_open', (bot) => {
+    console.log('** The RTM api just connected!');
+});
+
+controller.on('rtm_close', (bot) => {
+    console.log('** The RTM api just closed');
 });
