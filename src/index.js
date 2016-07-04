@@ -28,12 +28,14 @@ controller.storage.teams.get(process.env.team, (err, team) => {
 
     let prClosed = new PrClosed(bot);
 
+    let modules = [
+        prClosed
+    ];
+
     controller.setupWebserver(process.env.port, (err, webserver) => {
 
         controller.createHomepageEndpoint(controller.webserver);
-
         controller.createWebhookEndpoints(controller.webserver);
-
         controller.createOauthEndpoints(controller.webserver, (err, req, res) => {
             if (err) {
                 res.status(500).send('ERROR: ' + err);
@@ -42,13 +44,21 @@ controller.storage.teams.get(process.env.team, (err, team) => {
             }
         });
 
-        prClosed.registerWebhooks(webserver);
+        modules.forEach((module) => {
+            if (typeof module.registerWebhooks === 'function') {
+                module.registerWebhooks(webserver);
+            }
+        });
 
     });
 
     controller.on('interactive_message_callback', (bot, message) => {
 
-        prClosed.registerCallbacks(message);
+        modules.forEach((module) => {
+            if (typeof module.registerCallbacks === 'function') {
+                module.registerCallbacks(message);
+            }
+        });
 
     });
 });

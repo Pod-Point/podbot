@@ -75,4 +75,4 @@ module.exports = {
             appId: '50ac25c3-7e60-42e8-8054-ad2fd13a137d'
         }
     ]
-}
+};
