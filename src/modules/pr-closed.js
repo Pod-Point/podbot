@@ -18,11 +18,12 @@ class PrClosed {
 
             let hook = req.body;
             let pr = hook.pull_request;
+            let repo = hook.repository;
 
             if (hook.action == 'closed' && pr.merged === true) {
 
                 let message = {
-                    text: `#${hook.number} ${pr.title} was just merged into ${hook.repository.name}`,
+                    text: `#${hook.number} ${pr.title} was just merged into ${repo.name}`,
                     channel: '#bottesting',
                     attachments: [
                         {
@@ -34,7 +35,7 @@ class PrClosed {
                                     name: 'yes',
                                     text: ':shipit:',
                                     value: JSON.stringify({
-                                        repo: hook.repository.id,
+                                        repo: repo.id,
                                         pr: hook.number
                                     }),
                                     style: 'primary',
@@ -67,76 +68,64 @@ class PrClosed {
      */
     registerCallbacks(message) {
 
-        let action = message.actions[0];
-        let payload = JSON.parse(message.payload);
-
         if (message.callback_id == 'deploy-pr') {
 
-            let reply = {};
+            let attachments = [];
+            let action = message.actions[0];
 
             if (action.name == 'yes') {
 
                 let value = JSON.parse(action.value);
+                let repo = value.repo;
+                let pr = value.pr;
 
-                if (Apps.hasOwnProperty(value.repo)) {
+                let app = Apps.find((app) => {
+                    return app.repo = repo;
+                });
+
+                if (app) {
 
                     let deployer = new Deployer();
 
-                    deployer.deploy(Apps[value.repo], `PR #${value.pr}`, (err, data) => {
+                    app.stacks.forEach((stack) => {
 
-                        if (err) {
+                        deployer.deploy(stack, `PR #${pr}`, (err, data) => {
 
-                            reply = {
-                                text: payload.original_message.text,
-                                attachments: [
-                                    {
-                                        color: 'danger',
-                                        text: `Sorry I wasn't able to deploy ${value.pr}`
-                                    }
-                                ]
-                            };
+                            if (err) {
+                                attachments.push({
+                                    color: 'danger',
+                                    title: `Sorry I wasn't able to deploy ${app.name} to ${stack.name}`
+                                });
+                            } else {
+                                if (data.DeploymentId) {
+                                    let uri = `https://console.aws.amazon.com/opsworks/home?#/stack/${stack.stackId}/deployments/${data.DeploymentId}`;
 
-                        } else {
-
-                            if (data.DeploymentId) {
-
-                                reply = {
-                                    text: payload.original_message.text,
-                                    attachments: [
-                                        {
-                                            color: 'good',
-                                            text: `Deploying PR #${value.pr} from repo ${value.repo}...`
-                                        }
-                                    ]
-                                };
+                                    attachments.push({
+                                        color: 'good',
+                                        title: `Deploying ${app.name} to ${stack.name}... | <${uri}| Check status>`
+                                    });
+                                }
                             }
-                        }
+                        });
                     });
 
                 } else {
-
-                    reply = {
-                        text: payload.original_message.text,
-                        attachments: [
-                            {
-                                color: 'warning',
-                                text: `Sorry I dont know how to deploy ${value.repo} :disappointed:`
-                            }
-                        ]
-                    };
-
+                    attachments = [
+                        {
+                            color: 'warning',
+                            title: `Sorry I dont know how to deploy ${value.repo} :disappointed:`
+                        }
+                    ];
                 }
-
-            } else {
-
-                reply = {
-                    text: payload.original_message.text,
-                    attachments: []
-                };
 
             }
 
-            this.bot.replyInteractive(message, reply);
+            let payload = JSON.parse(message.payload);
+
+            this.bot.replyInteractive(message, {
+                text: payload.original_message.text,
+                attachments: attachments
+            });
         }
     }
 }
