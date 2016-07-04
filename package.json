@@ -1,15 +1,12 @@
 {
   "name": "podbot",
   "version": "1.0.0",
-  "description": "",
   "main": "lib/index.js",
   "scripts": {
     "start": "npm run build && node lib/index.js",
     "build": "babel src -d lib",
     "watch": "nodemon src/index.js --exec babel-node --presets es2015,stage-2"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "aws-sdk": "^2.4.4",
     "botkit": "^0.2.2",
