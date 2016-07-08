@@ -77,31 +77,25 @@ class PrClosed {
 
             if (action.name == 'yes') {
 
-                let value = JSON.parse(action.value);
-                let repo = value.repo;
-                let pr = value.pr;
-                let title = value.title;
-
+                let data = JSON.parse(action.value);
                 let app = Apps.find((app) => {
-                    return app.repo = repo;
+                    return app.repo = data.repo;
                 });
 
                 if (app) {
 
                     let opsworks = new Opsworks(this.bot, message);
-                    opsworks.deploy(app, `${pr} ${title}`);
+                    opsworks.deploy(app, `${data.pr} ${data.title}`);
 
                 } else {
 
-                    let attachments = [
-                        {
-                            color: 'warning',
-                            title: `Sorry I dont know how to deploy ${value.repo} :disappointed:`
-                        }
-                    ];
-
                     this.bot.replyInteractive(message, {
-                        attachments: attachments
+                        attachments: [
+                            {
+                                color: 'warning',
+                                title: `Sorry I dont know how to deploy ${data.repo} :disappointed:`
+                            }
+                        ]
                     });
 
                 }
