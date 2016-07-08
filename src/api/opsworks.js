@@ -118,14 +118,12 @@ class Opsworks {
     updateSlack() {
 
         let attachments = [];
-        let payload = JSON.parse(this.message.payload);
 
         for (let key in this.responses) {
             attachments.push(this.responses[key]);
         }
 
         this.bot.replyInteractive(this.message, {
-            text: payload.original_message.text,
             attachments: attachments
         });
     }

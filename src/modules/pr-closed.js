@@ -100,14 +100,18 @@ class PrClosed {
                         }
                     ];
 
-                    let payload = JSON.parse(message.payload);
-
                     this.bot.replyInteractive(message, {
-                        text: payload.original_message.text,
                         attachments: attachments
                     });
 
                 }
+
+            } else {
+
+                this.bot.replyInteractive(message, {
+                    attachments: [{}]
+                });
+
             }
         }
     }
