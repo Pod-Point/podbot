@@ -1,4 +1,4 @@
-import Deployer from '../helpers/deployer';
+import Opsworks from '../api/opsworks';
 import Apps from '../../data/apps';
 
 class PrClosed {
@@ -23,11 +23,13 @@ class PrClosed {
             if (hook.action == 'closed' && pr.merged === true) {
 
                 let message = {
-                    text: `#${hook.number} ${pr.title} was just merged into ${repo.name}`,
+
                     channel: '#bottesting',
+                    unfurl_links: false,
                     attachments: [
                         {
-                            title: 'Do you want to deploy this PR?',
+                            title: `<${pr.html_url}|#${hook.number} ${pr.title}> by <${pr.user.html_url}|${pr.user.login}>`,
+                            text: 'Do you want to deploy this PR?',
                             callback_id: 'deploy-pr',
                             attachment_type: 'default',
                             actions: [
@@ -36,7 +38,8 @@ class PrClosed {
                                     text: ':shipit:',
                                     value: JSON.stringify({
                                         repo: repo.id,
-                                        pr: hook.number
+                                        pr: hook.number,
+                                        title: pr.title
                                     }),
                                     style: 'primary',
                                     type: 'button'
@@ -70,7 +73,6 @@ class PrClosed {
 
         if (message.callback_id == 'deploy-pr') {
 
-            let attachments = [];
             let action = message.actions[0];
 
             if (action.name == 'yes') {
@@ -78,6 +80,7 @@ class PrClosed {
                 let value = JSON.parse(action.value);
                 let repo = value.repo;
                 let pr = value.pr;
+                let title = value.title;
 
                 let app = Apps.find((app) => {
                     return app.repo = repo;
@@ -85,47 +88,27 @@ class PrClosed {
 
                 if (app) {
 
-                    let deployer = new Deployer();
-
-                    app.stacks.forEach((stack) => {
-
-                        deployer.deploy(stack, `PR #${pr}`, (err, data) => {
-
-                            if (err) {
-                                attachments.push({
-                                    color: 'danger',
-                                    title: `Sorry I wasn't able to deploy ${app.name} to ${stack.name}`
-                                });
-                            } else {
-                                if (data.DeploymentId) {
-                                    let uri = `https://console.aws.amazon.com/opsworks/home?#/stack/${stack.stackId}/deployments/${data.DeploymentId}`;
-
-                                    attachments.push({
-                                        color: 'good',
-                                        title: `Deploying ${app.name} to ${stack.name}... | <${uri}| Check status>`
-                                    });
-                                }
-                            }
-                        });
-                    });
+                    let opsworks = new Opsworks(this.bot, message);
+                    opsworks.deploy(app, `${pr} ${title}`);
 
                 } else {
-                    attachments = [
+
+                    let attachments = [
                         {
                             color: 'warning',
                             title: `Sorry I dont know how to deploy ${value.repo} :disappointed:`
                         }
                     ];
+
+                    let payload = JSON.parse(message.payload);
+
+                    this.bot.replyInteractive(message, {
+                        text: payload.original_message.text,
+                        attachments: attachments
+                    });
+
                 }
-
             }
-
-            let payload = JSON.parse(message.payload);
-
-            this.bot.replyInteractive(message, {
-                text: payload.original_message.text,
-                attachments: attachments
-            });
         }
     }
 }
