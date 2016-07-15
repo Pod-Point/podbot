@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import Botkit from 'botkit';
 import PrClosed from './modules/pr-closed';
+import Messages from './modules/messages';
 
 dotenv.config();
 
@@ -23,9 +24,11 @@ let controller = Botkit.slackbot({
 // Load modules
 
 let prClosed = new PrClosed();
+let messages = new Messages();
 
 let modules = [
-    prClosed
+    prClosed,
+    messages
 ];
 
 // Start bot
@@ -76,6 +79,7 @@ controller.storage.teams.get(process.env.team, (err, team) => {
         });
 
         register('messageListeners', controller);
+        register('cronjobs', bot);
 
     });
 });
