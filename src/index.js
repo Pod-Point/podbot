@@ -1,10 +1,11 @@
 import dotenv from 'dotenv';
 import Botkit from 'botkit';
+import PrClosed from './modules/pr-closed';
 
 dotenv.config();
 
-if (!process.env.clientId || !process.env.clientSecret || !process.env.port || !process.env.team) {
-    console.log('Error: Specify clientId, clientSecret, team and port in environment');
+if (!process.env.clientId || !process.env.clientSecret || !process.env.port || !process.env.team || !process.env.verifyToken) {
+    console.log('Error: Specify clientId, clientSecret, team, verifyToken and port in environment');
     process.exit(1);
 }
 
@@ -14,43 +15,82 @@ let controller = Botkit.slackbot({
 }).configureSlackApp({
     clientId: process.env.clientId,
     clientSecret: process.env.clientSecret,
-    scopes: ['bot']
+    scopes: [
+        'bot'
+    ]
 });
+
+// Load modules
+
+let prClosed = new PrClosed();
+
+let modules = [
+    prClosed
+];
+
+// Start bot
 
 controller.storage.teams.get(process.env.team, (err, team) => {
 
-    let bot = controller.spawn(team).startRTM((err) => {
+    controller.spawn(team).startRTM((err, bot) => {
+
         if (err) {
             console.log('Error connecting bot to Slack:', err);
         }
-    });
 
-    controller.setupWebserver(process.env.port, (err, webserver) => {
+        controller.setupWebserver(process.env.port, (err, webserver) => {
 
-        controller.createHomepageEndpoint(controller.webserver);
+            controller.createHomepageEndpoint(controller.webserver);
+            controller.createWebhookEndpoints(controller.webserver);
+            controller.createOauthEndpoints(controller.webserver, (err, req, res) => {
+                if (err) {
+                    res.status(500).send('ERROR: ' + err);
+                } else {
+                    res.send('Success!');
+                }
+            });
 
-        controller.createWebhookEndpoints(controller.webserver);
+            register('webhooks', bot, webserver);
 
-        controller.createOauthEndpoints(controller.webserver, (err, req, res) => {
-            if (err) {
-                res.status(500).send('ERROR: ' + err);
-            } else {
-                res.send('Success!');
-            }
         });
 
+        controller.on('interactive_message_callback', (bot, message) => {
+
+            if (message.token !== process.env.verifyToken) {
+                return false;
+            }
+
+            register('callbacks', bot, message);
+
+        });
+
+        controller.on('slash_command', (bot, message) => {
+
+            if (message.token !== process.env.verifyToken) {
+                return false;
+            }
+
+            register('slashCommands', bot, message);
+
+
+        });
+
+        register('messageListeners', controller);
+
     });
+});
 
-    controller.on('interactive_message_callback', (bot, message) => {
-
-
+/**
+ * Call register functions on modules
+ *
+ * @param  {string} type
+ * @param  {...} args
+ * @return {void}
+ */
+function register(type, ...args) {
+    modules.forEach((module) => {
+        if (typeof module[type] === 'function') {
+            module[type](...args);
+        }
     });
-});
-
-controller.on('rtm_open', (bot) => {
-    console.log('** The RTM api just connected!');
-});
-
-controller.on('rtm_close', (bot) => {
-    console.log('** The RTM api just closed');
-});
+}
