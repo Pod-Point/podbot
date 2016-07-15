@@ -5,11 +5,11 @@ class Opsworks {
     /**
      * Perform api functions on AWS Opsworks and update slack
      *
-     * @param  {[type]} bot     [description]
-     * @param  {[type]} message [description]
+     * @param  {Function} reply
+     * @param  {Object}   message
      * @return {void}
      */
-    constructor(bot, message) {
+    constructor(reply, message) {
         AWS.config.update({
             accessKeyId: process.env.AWS_ACCESS_KEY_ID,
             secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
@@ -20,7 +20,7 @@ class Opsworks {
         });
 
         this.responses = [];
-        this.bot = bot;
+        this.reply = reply;
         this.message = message;
     }
 
@@ -123,7 +123,7 @@ class Opsworks {
             attachments.push(this.responses[key]);
         }
 
-        this.bot.replyInteractive(this.message, {
+        this.reply(this.message, {
             attachments: attachments
         });
     }

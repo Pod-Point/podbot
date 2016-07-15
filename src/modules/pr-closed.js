@@ -1,11 +1,8 @@
-import Opsworks from '../api/opsworks';
+import Base from './base';
+import Opsworks from '../services/opsworks';
 import Apps from '../../data/apps';
 
-class PrClosed {
-
-    constructor(bot) {
-        this.bot = bot;
-    }
+class PrClosed extends Base {
 
     /**
      * Register any webhooks to be listened for
@@ -13,7 +10,7 @@ class PrClosed {
      * @param  {[type]} webserver
      * @return {void}
      */
-    registerWebhooks(webserver) {
+    webhooks(bot, webserver) {
         webserver.post('/pr_closed', (req, res) => {
 
             let hook = req.body;
@@ -55,7 +52,7 @@ class PrClosed {
                     ]
                 };
 
-                this.bot.say(message);
+                bot.say(message);
 
             }
 
@@ -69,7 +66,7 @@ class PrClosed {
      * @param  {[type]} message
      * @return {void}
      */
-    registerCallbacks(message) {
+    callbacks(bot, message) {
 
         if (message.callback_id == 'deploy-pr') {
 
@@ -84,12 +81,12 @@ class PrClosed {
 
                 if (app) {
 
-                    let opsworks = new Opsworks(this.bot, message);
+                    let opsworks = new Opsworks(bot.replyInteractive, message);
                     opsworks.deploy(app, `${data.pr} ${data.title}`);
 
                 } else {
 
-                    this.bot.replyInteractive(message, {
+                    bot.replyInteractive(message, {
                         attachments: [
                             {
                                 color: 'warning',
@@ -102,7 +99,7 @@ class PrClosed {
 
             } else {
 
-                this.bot.replyInteractive(message, {
+                bot.replyInteractive(message, {
                     attachments: [{}]
                 });
 

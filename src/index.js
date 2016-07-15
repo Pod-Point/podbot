@@ -15,8 +15,20 @@ let controller = Botkit.slackbot({
 }).configureSlackApp({
     clientId: process.env.clientId,
     clientSecret: process.env.clientSecret,
-    scopes: ['bot']
+    scopes: [
+        'bot'
+    ]
 });
+
+// Load modules
+
+let prClosed = new PrClosed();
+
+let modules = [
+    prClosed
+];
+
+// Start bot
 
 controller.storage.teams.get(process.env.team, (err, team) => {
 
@@ -25,12 +37,6 @@ controller.storage.teams.get(process.env.team, (err, team) => {
         if (err) {
             console.log('Error connecting bot to Slack:', err);
         }
-
-        let prClosed = new PrClosed(bot);
-
-        let modules = [
-            prClosed
-        ];
 
         controller.setupWebserver(process.env.port, (err, webserver) => {
 
@@ -44,11 +50,7 @@ controller.storage.teams.get(process.env.team, (err, team) => {
                 }
             });
 
-            modules.forEach((module) => {
-                if (typeof module.registerWebhooks === 'function') {
-                    module.registerWebhooks(webserver);
-                }
-            });
+            register('webhooks', bot, webserver);
 
         });
 
@@ -58,11 +60,7 @@ controller.storage.teams.get(process.env.team, (err, team) => {
                 return false;
             }
 
-            modules.forEach((module) => {
-                if (typeof module.registerCallbacks === 'function') {
-                    module.registerCallbacks(message);
-                }
-            });
+            register('callbacks', bot, message);
 
         });
 
@@ -72,12 +70,27 @@ controller.storage.teams.get(process.env.team, (err, team) => {
                 return false;
             }
 
-            modules.forEach((module) => {
-                if (typeof module.registerSlashCommands === 'function') {
-                    module.registerSlashCommands(message);
-                }
-            });
+            register('slashCommands', bot, message);
+
 
         });
+
+        register('messageListeners', controller);
+
     });
 });
+
+/**
+ * Call register functions on modules
+ *
+ * @param  {string} type
+ * @param  {...} args
+ * @return {void}
+ */
+function register(type, ...args) {
+    modules.forEach((module) => {
+        if (typeof module[type] === 'function') {
+            module[type](...args);
+        }
+    });
+}
