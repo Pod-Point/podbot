@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import Botkit from 'botkit';
 import PrClosed from './modules/pr-closed';
+import Deploy from './modules/deploy';
 
 dotenv.config();
 
@@ -23,9 +24,11 @@ let controller = Botkit.slackbot({
 // Load modules
 
 let prClosed = new PrClosed();
+let deploy = new Deploy();
 
 let modules = [
-    prClosed
+    prClosed,
+    deploy
 ];
 
 // Start bot
