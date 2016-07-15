@@ -17,7 +17,6 @@ class Coveralls extends Base {
             if (data.branch == 'master') {
 
                 let message = {
-
                     channel: '#bottesting',
                     attachments: [
                         {
