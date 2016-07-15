@@ -76,7 +76,7 @@ class PrClosed extends Base {
 
                 let data = JSON.parse(action.value);
                 let app = Apps.find((app) => {
-                    return app.repo = data.repo;
+                    return app.repo == data.repo;
                 });
 
                 if (app) {
