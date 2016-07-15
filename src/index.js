@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import Botkit from 'botkit';
 import PrClosed from './modules/pr-closed';
+import Coveralls from './modules/coveralls';
 
 dotenv.config();
 
@@ -23,9 +24,11 @@ let controller = Botkit.slackbot({
 // Load modules
 
 let prClosed = new PrClosed();
+let coveralls = new Coveralls();
 
 let modules = [
-    prClosed
+    prClosed,
+    coveralls
 ];
 
 // Start bot
