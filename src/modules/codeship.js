@@ -23,9 +23,9 @@ class Codeship extends Base {
                     channel: '#bottesting',
                     attachments: [
                         {
-                            fallback: `Codeship build for ${data.branch} branch on ${data.project_name} has failed.`,
+                            fallback: `Build for ${data.branch} branch on ${data.project_name} has failed.`,
                             color: 'danger',
-                            title: 'Codeship build failed',
+                            title: 'Build failed',
                             title_link: data.build_url,
                             text: data.message,
                             fields: [
