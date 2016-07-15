@@ -12,14 +12,11 @@ class Codeship extends Base {
     webhooks(bot, webserver) {
         webserver.post('/codeship', (req, res) => {
 
-            console.log(req.body);
-
             let data = req.body.build;
 
             if (data.status == 'error' && data.branch == 'master') {
 
                 let message = {
-
                     channel: '#bottesting',
                     attachments: [
                         {
