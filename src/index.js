@@ -4,8 +4,8 @@ import PrClosed from './modules/pr-closed';
 
 dotenv.config();
 
-if (!process.env.clientId || !process.env.clientSecret || !process.env.port || !process.env.team || !process.env.verifyToken) {
-    console.log('Error: Specify clientId, clientSecret, team, verifyToken and port in environment');
+if (!process.env.CLIENT_ID || !process.env.CLIENT_SECRET || !process.env.PORT || !process.env.TEAM || !process.env.VERIFY_TOKEN) {
+    console.log('Error: Specify CLIENT_ID, clientSecret, TEAM, VERIFY_TOKEN and PORT in environment');
     process.exit(1);
 }
 
@@ -13,8 +13,8 @@ let controller = Botkit.slackbot({
     debug: true,
     json_file_store: './db/'
 }).configureSlackApp({
-    clientId: process.env.clientId,
-    clientSecret: process.env.clientSecret,
+    clientId: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
     scopes: [
         'bot'
     ]
@@ -30,7 +30,7 @@ let modules = [
 
 // Start bot
 
-controller.storage.teams.get(process.env.team, (err, team) => {
+controller.storage.teams.get(process.env.TEAM, (err, team) => {
 
     controller.spawn(team).startRTM((err, bot) => {
 
@@ -38,7 +38,7 @@ controller.storage.teams.get(process.env.team, (err, team) => {
             console.log('Error connecting bot to Slack:', err);
         }
 
-        controller.setupWebserver(process.env.port, (err, webserver) => {
+        controller.setupWebserver(process.env.PORT, (err, webserver) => {
 
             controller.createHomepageEndpoint(controller.webserver);
             controller.createWebhookEndpoints(controller.webserver);
@@ -56,7 +56,7 @@ controller.storage.teams.get(process.env.team, (err, team) => {
 
         controller.on('interactive_message_callback', (bot, message) => {
 
-            if (message.token !== process.env.verifyToken) {
+            if (message.token !== process.env.VERIFY_TOKEN) {
                 return false;
             }
 
@@ -66,7 +66,7 @@ controller.storage.teams.get(process.env.team, (err, team) => {
 
         controller.on('slash_command', (bot, message) => {
 
-            if (message.token !== process.env.verifyToken) {
+            if (message.token !== process.env.VERIFY_TOKEN) {
                 return false;
             }
 
