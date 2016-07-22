@@ -11,7 +11,7 @@ if (!process.env.CLIENT_ID || !process.env.CLIENT_SECRET || !process.env.PORT ||
 }
 
 let controller = Botkit.slackbot({
-    debug: true,
+    debug: false,
     storage: redisStorage()
 }).configureSlackApp({
     clientId: process.env.CLIENT_ID,
