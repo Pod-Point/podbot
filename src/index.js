@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import Botkit from 'botkit';
+import redisStorage from 'botkit-storage-redis';
 import PrClosed from './modules/pr-closed';
 
 dotenv.config();
@@ -11,7 +12,7 @@ if (!process.env.CLIENT_ID || !process.env.CLIENT_SECRET || !process.env.PORT ||
 
 let controller = Botkit.slackbot({
     debug: true,
-    json_file_store: './db/'
+    storage: redisStorage()
 }).configureSlackApp({
     clientId: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
