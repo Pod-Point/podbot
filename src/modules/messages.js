@@ -14,7 +14,7 @@ class Messages extends Base {
         new CronJob('00 45 09 * * 1-5', () => {
 
             bot.say({
-                channel: '#bottesting',
+                channel: 'C0299REQ9',
                 text: 'Morning team, don\'t forget to sign into Jell and update your standup status before 10am :+1:'
             });
 
@@ -23,7 +23,7 @@ class Messages extends Base {
         new CronJob('00 45 12 * * 4', () => {
 
             bot.say({
-                channel: '#bottesting',
+                channel: 'C0299REQ9',
                 text: 'Don\'t forget, we\'ve got story planning at 2pm today so don\'t leave lunch too late!'
             });
 
