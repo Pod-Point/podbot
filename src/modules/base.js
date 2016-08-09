@@ -30,7 +30,15 @@ class Base {
      * @param  {[type]} controller
      * @return {void}
      */
-    messageListeners(controller) {}
+    messageListeners(controller, bot) {}
+
+    /**
+     * Register any cronjobs
+     *
+     * @param  {[type]} bot
+     * @return {void}
+     */
+    cronjobs(bot) {}
 }
 
 export default Base;
