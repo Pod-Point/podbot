@@ -3,6 +3,7 @@ import Botkit from 'botkit';
 import redisStorage from 'botkit-storage-redis';
 import PrClosed from './modules/pr-closed';
 import Codeship from './modules/codeship';
+import Messages from './modules/messages';
 
 dotenv.config();
 
@@ -26,10 +27,12 @@ let controller = Botkit.slackbot({
 
 let prClosed = new PrClosed();
 let codeship = new Codeship();
+let messages = new Messages();
 
 let modules = [
     prClosed,
-    codeship
+    codeship,
+    messages
 ];
 
 // Start bot
@@ -80,6 +83,7 @@ controller.storage.teams.get(process.env.TEAM, (err, team) => {
         });
 
         register('messageListeners', controller);
+        register('cronjobs', bot);
 
     });
 });
