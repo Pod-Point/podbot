@@ -12,7 +12,7 @@ if (!process.env.CLIENT_ID || !process.env.CLIENT_SECRET || !process.env.PORT ||
     process.exit(1);
 }
 
-let controller = Botkit.slackbot({
+const controller = Botkit.slackbot({
     debug: false,
     storage: redisStorage()
 }).configureSlackApp({
@@ -25,11 +25,11 @@ let controller = Botkit.slackbot({
 
 // Load modules
 
-let prClosed = new PrClosed();
-let coveralls = new Coveralls();
-let messages = new Messages();
+const prClosed = new PrClosed();
+const coveralls = new Coveralls();
+const messages = new Messages();
 
-let modules = [
+const modules = [
     prClosed,
     coveralls,
     messages
