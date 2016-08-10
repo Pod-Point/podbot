@@ -17,7 +17,7 @@ class Coveralls extends Base {
             if (data.branch == 'master') {
 
                 let message = {
-                    channel: '#bottesting',
+                    channel: '#software-dev',
                     attachments: [
                         {
                             fallback: `Code coverage decreased by ${data.coverage_change} for ${data.branch} branch on ${data.repo_name}.`,
