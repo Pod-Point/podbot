@@ -11,6 +11,7 @@
     "aws-sdk": "^2.4.4",
     "botkit": "^0.2.2",
     "botkit-storage-redis": "^1.0.1",
+    "cron": "^1.1.0",
     "dotenv": "^2.0.0"
   },
   "devDependencies": {

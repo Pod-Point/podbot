@@ -21,7 +21,7 @@ class PrClosed extends Base {
 
                 let message = {
 
-                    channel: '#bottesting',
+                    channel: '#software-dev',
                     unfurl_links: false,
                     attachments: [
                         {

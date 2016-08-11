@@ -17,7 +17,7 @@ class Codeship extends Base {
             if (data.status == 'error' && data.branch == 'master') {
 
                 let message = {
-                    channel: '#bottesting',
+                    channel: '#software-dev',
                     attachments: [
                         {
                             fallback: `Build for ${data.branch} branch on ${data.project_name} has failed.`,
