@@ -1,4 +1,5 @@
 import Base from './base';
+import Config from 'config';
 
 class Codeship extends Base {
 
@@ -17,7 +18,7 @@ class Codeship extends Base {
             if (data.status == 'error' && data.branch == 'master') {
 
                 let message = {
-                    channel: '#software-dev',
+                    channel: Config.get('channels.software.name'),
                     attachments: [
                         {
                             fallback: `Build for ${data.branch} branch on ${data.project_name} has failed.`,
