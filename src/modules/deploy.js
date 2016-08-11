@@ -2,41 +2,40 @@ import Base from './base';
 import Opsworks from '../services/opsworks';
 import Config from 'config';
 
-class PrClosed extends Base {
+class Deploy extends Base {
 
     /**
-     * Register any webhooks to be listened for
+     * Register any message listeners
      *
-     * @param  {[type]} webserver
+     * @param  {[type]} controller
      * @return {void}
      */
-    webhooks(bot, webserver) {
-        webserver.post('/pr_closed', (req, res) => {
+    messageListeners(controller) {
+        controller.hears('deploy (.*) with comment (.*)', ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
 
-            let hook = req.body;
-            let pr = hook.pull_request;
-            let repo = hook.repository;
+            const name = message.match[1];
+            const comment = message.match[2];
 
-            if (hook.action == 'closed' && pr.merged === true) {
+            const app = Config.get('apps').find((app) => {
+                return app.name == name;
+            });
 
-                let message = {
+            if (app) {
 
-                    channel: Config.get('channels.software.name'),
-                    unfurl_links: false,
+                bot.reply(message, {
                     attachments: [
                         {
-                            title: `<${pr.html_url}|#${hook.number} ${pr.title}> by <${pr.user.html_url}|${pr.user.login}>`,
-                            text: 'Do you want to deploy this PR?',
-                            callback_id: 'deploy-pr',
+                            title: `Deploy ${app.name} to all stacks`,
+                            text: 'Are you sure?',
+                            callback_id: 'deploy',
                             attachment_type: 'default',
                             actions: [
                                 {
                                     name: 'yes',
                                     text: ':shipit:',
                                     value: JSON.stringify({
-                                        repo: repo.id,
-                                        pr: hook.number,
-                                        title: pr.title
+                                        name: name,
+                                        comment: comment
                                     }),
                                     style: 'primary',
                                     type: 'button'
@@ -50,13 +49,20 @@ class PrClosed extends Base {
                             ]
                         }
                     ]
-                };
+                });
 
-                bot.say(message);
+            } else {
+
+                bot.reply(message, {
+                    attachments: [
+                        {
+                            color: 'warning',
+                            title: `Sorry I dont know how to deploy ${name} :disappointed:`
+                        }
+                    ]
+                });
 
             }
-
-            res.send('OK');
         });
     }
 
@@ -68,21 +74,21 @@ class PrClosed extends Base {
      */
     callbacks(bot, message) {
 
-        if (message.callback_id == 'deploy-pr') {
+        if (message.callback_id == 'deploy') {
 
-            let action = message.actions[0];
+            const action = message.actions[0];
 
             if (action.name == 'yes') {
 
-                let data = JSON.parse(action.value);
-                let app = Config.get('apps').find((app) => {
-                    return app.repo == data.repo;
+                const data = JSON.parse(action.value);
+                const app = Apps.find((app) => {
+                    return app.name == data.name;
                 });
 
                 if (app) {
 
-                    let opsworks = new Opsworks(bot.replyInteractive, message);
-                    opsworks.deploy(app, `${data.pr} ${data.title}`);
+                    const opsworks = new Opsworks(bot.replyInteractive, message);
+                    opsworks.deploy(app, data.comment);
 
                 } else {
 
@@ -90,7 +96,7 @@ class PrClosed extends Base {
                         attachments: [
                             {
                                 color: 'warning',
-                                title: `Sorry I dont know how to deploy ${data.repo} :disappointed:`
+                                title: `Sorry I dont know how to deploy ${data.name} :disappointed:`
                             }
                         ]
                     });
@@ -108,4 +114,4 @@ class PrClosed extends Base {
     }
 }
 
-export default PrClosed;
+export default Deploy;
