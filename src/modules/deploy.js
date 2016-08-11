@@ -13,10 +13,10 @@ class Deploy extends Base {
     messageListeners(controller) {
         controller.hears('deploy (.*) with comment (.*)', ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
 
-            let name = message.match[1];
-            let comment = message.match[2];
+            const name = message.match[1];
+            const comment = message.match[2];
 
-            let app = Apps.find((app) => {
+            const app = Apps.find((app) => {
                 return app.name == name;
             });
 
@@ -76,18 +76,18 @@ class Deploy extends Base {
 
         if (message.callback_id == 'deploy') {
 
-            let action = message.actions[0];
+            const action = message.actions[0];
 
             if (action.name == 'yes') {
 
-                let data = JSON.parse(action.value);
-                let app = Apps.find((app) => {
+                const data = JSON.parse(action.value);
+                const app = Apps.find((app) => {
                     return app.name == data.name;
                 });
 
                 if (app) {
 
-                    let opsworks = new Opsworks(bot.replyInteractive, message);
+                    const opsworks = new Opsworks(bot.replyInteractive, message);
                     opsworks.deploy(app, data.comment);
 
                 } else {
