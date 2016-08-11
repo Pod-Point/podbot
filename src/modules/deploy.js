@@ -81,7 +81,7 @@ class Deploy extends Base {
             if (action.name == 'yes') {
 
                 const data = JSON.parse(action.value);
-                const app = Apps.find((app) => {
+                const app = Config.get('apps').find((app) => {
                     return app.name == data.name;
                 });
 
