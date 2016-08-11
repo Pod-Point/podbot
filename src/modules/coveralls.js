@@ -1,4 +1,5 @@
 import Base from './base';
+import Config from 'config';
 
 class Coveralls extends Base {
 
@@ -17,7 +18,7 @@ class Coveralls extends Base {
             if (data.branch == 'master') {
 
                 let message = {
-                    channel: '#software-dev',
+                    channel: Config.get('channels.software.name'),
                     attachments: [
                         {
                             fallback: `Code coverage decreased by ${data.coverage_change} for ${data.branch} branch on ${data.repo_name}.`,

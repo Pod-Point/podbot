@@ -5,6 +5,7 @@ import PrClosed from './modules/pr-closed';
 import Codeship from './modules/codeship';
 import Coveralls from './modules/coveralls';
 import Messages from './modules/messages';
+import Deploy from './modules/deploy';
 
 dotenv.config();
 
@@ -43,12 +44,14 @@ const prClosed = new PrClosed();
 const codeship = new Codeship();
 const coveralls = new Coveralls();
 const messages = new Messages();
+const deploy = new Deploy();
 
 const modules = [
     prClosed,
     codeship,
     coveralls,
-    messages
+    messages,
+    deploy
 ];
 
 // Start bot
