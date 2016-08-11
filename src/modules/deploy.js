@@ -1,6 +1,6 @@
 import Base from './base';
 import Opsworks from '../services/opsworks';
-import Apps from '../../data/apps';
+import Config from 'config';
 
 class Deploy extends Base {
 
@@ -16,7 +16,7 @@ class Deploy extends Base {
             const name = message.match[1];
             const comment = message.match[2];
 
-            const app = Apps.find((app) => {
+            const app = Config.get('apps').find((app) => {
                 return app.name == name;
             });
 
