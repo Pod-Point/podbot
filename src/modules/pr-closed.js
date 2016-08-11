@@ -1,6 +1,6 @@
 import Base from './base';
 import Opsworks from '../services/opsworks';
-import Apps from '../../data/apps';
+import Config from 'config';
 
 class PrClosed extends Base {
 
@@ -21,7 +21,7 @@ class PrClosed extends Base {
 
                 let message = {
 
-                    channel: '#software-dev',
+                    channel: Config.get('channels.software.name'),
                     unfurl_links: false,
                     attachments: [
                         {
@@ -75,7 +75,7 @@ class PrClosed extends Base {
             if (action.name == 'yes') {
 
                 let data = JSON.parse(action.value);
-                let app = Apps.find((app) => {
+                let app = Config.get('apps').find((app) => {
                     return app.repo == data.repo;
                 });
 
