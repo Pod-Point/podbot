@@ -34,7 +34,7 @@ class PrClosed extends Base {
                                     name: 'yes',
                                     text: ':shipit:',
                                     value: JSON.stringify({
-                                        repo: repo.id,
+                                        repo: repo.name,
                                         pr: hook.number,
                                         title: pr.title
                                     }),
