@@ -99,8 +99,10 @@ class PrClosed extends Base {
 
             } else {
 
-                bot.replyInteractive(message, {
-                    attachments: [{}]
+                bot.api.chat.delete({
+                    token: bot.config.token,
+                    ts: message.message_ts,
+                    channel: message.channel
                 });
 
             }

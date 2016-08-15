@@ -22,31 +22,43 @@ class Deploy extends Base {
 
             if (app) {
 
+                let actions = app.stacks.map((stack) => {
+                    return {
+                        name: stack.name,
+                        text: stack.name,
+                        value: JSON.stringify({
+                            app: name,
+                            comment: comment
+                        }),
+                        type: 'button'
+                    };
+                });
+
+                actions.push({
+                    name: 'all',
+                    text: 'All',
+                    value: JSON.stringify({
+                        app: name,
+                        comment: comment
+                    }),
+                    type: 'button'
+                });
+
+                actions.push({
+                    name: 'cancel',
+                    text: 'Cancel',
+                    style: 'danger',
+                    type: 'button'
+                });
+
                 bot.reply(message, {
                     attachments: [
                         {
-                            title: `Deploy ${app.name} to all stacks`,
-                            text: 'Are you sure?',
+                            title: `Deploying ${app.name}`,
+                            text: 'Which stack to deploy?',
                             callback_id: 'deploy',
                             attachment_type: 'default',
-                            actions: [
-                                {
-                                    name: 'yes',
-                                    text: ':shipit:',
-                                    value: JSON.stringify({
-                                        name: name,
-                                        comment: comment
-                                    }),
-                                    style: 'primary',
-                                    type: 'button'
-                                },
-                                {
-                                    name: 'no',
-                                    text: ':thumbsdown:',
-                                    style: 'danger',
-                                    type: 'button'
-                                }
-                            ]
+                            actions: actions
                         }
                     ]
                 });
@@ -78,17 +90,17 @@ class Deploy extends Base {
 
             const action = message.actions[0];
 
-            if (action.name == 'yes') {
+            if (action.name !== 'cancel') {
 
                 const data = JSON.parse(action.value);
                 const app = Config.get('apps').find((app) => {
-                    return app.name == data.name;
+                    return app.name == data.app;
                 });
 
                 if (app) {
 
                     const opsworks = new Opsworks(bot.replyInteractive, message);
-                    opsworks.deploy(app, data.comment);
+                    opsworks.deploy(app, data.comment, action.name);
 
                 } else {
 
@@ -96,7 +108,7 @@ class Deploy extends Base {
                         attachments: [
                             {
                                 color: 'warning',
-                                title: `Sorry I dont know how to deploy ${data.name} :disappointed:`
+                                title: `Sorry I dont know how to deploy ${data.app} :disappointed:`
                             }
                         ]
                     });
@@ -105,8 +117,10 @@ class Deploy extends Base {
 
             } else {
 
-                bot.replyInteractive(message, {
-                    attachments: [{}]
+                bot.api.chat.delete({
+                    token: bot.config.token,
+                    ts: message.message_ts,
+                    channel: message.channel
                 });
 
             }
