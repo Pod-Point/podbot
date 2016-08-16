@@ -29,6 +29,7 @@ class PrClosed extends Base {
                     unfurl_links: false,
                     attachments: [
                         {
+                            fallback: `${pr.title} by ${pr.user.login} has been merged.`,
                             title: `<${pr.html_url}|#${hook.number} ${pr.title}> by <${pr.user.html_url}|${pr.user.login}>`,
                             text: 'Do you want to deploy this PR?',
                             callback_id: 'deploy',
