@@ -54,6 +54,7 @@ class Deploy extends Base {
                 bot.reply(message, {
                     attachments: [
                         {
+                            fallback: `Deploying ${app.name}.`,
                             title: `Deploying ${app.name}`,
                             text: 'Which stack to deploy?',
                             callback_id: 'deploy',
@@ -68,6 +69,7 @@ class Deploy extends Base {
                 bot.reply(message, {
                     attachments: [
                         {
+                            fallback: `Sorry I dont know how to deploy ${name}.`,
                             color: 'warning',
                             title: `Sorry I dont know how to deploy ${name} :disappointed:`
                         }
@@ -110,6 +112,7 @@ class Deploy extends Base {
                         let uri = `https://console.aws.amazon.com/opsworks/home?#/stack/${deployment.stack.stackId}/deployments`;
 
                         responses[deployment.stack.appId] = {
+                            fallback: `Deploying ${app.name} to ${deployment.stack.name}.`,
                             color: '#3AA3E3',
                             title: `Deploying ${app.name} to ${deployment.stack.name}...`,
                             text: `<${uri}|Check status>`
@@ -118,6 +121,7 @@ class Deploy extends Base {
                         deployment.promise.then((val) => {
 
                             responses[deployment.stack.appId] = {
+                                fallback: `Deployed ${app.name} to ${deployment.stack.name}.`,
                                 color: 'good',
                                 title: `Success!`,
                                 text: `Deployed ${app.name} to ${deployment.stack.name} :blush:`
@@ -129,6 +133,7 @@ class Deploy extends Base {
                         .catch((err) => {
 
                             responses[deployment.stack.appId] = {
+                                fallback: `Sorry I wasn't able to deploy ${app.name} to ${deployment.stack.name}.`,
                                 color: 'danger',
                                 title: `Sorry I wasn't able to deploy ${app.name} to ${deployment.stack.name} :disappointed:`,
                                 text: err
@@ -147,6 +152,7 @@ class Deploy extends Base {
                     bot.replyInteractive(message, {
                         attachments: [
                             {
+                                fallback: `Sorry I dont know how to deploy ${data.app}.`,
                                 color: 'warning',
                                 title: `Sorry I dont know how to deploy ${data.app} :disappointed:`
                             }
