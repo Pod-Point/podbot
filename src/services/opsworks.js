@@ -29,11 +29,20 @@ class Opsworks {
      *
      * @param  {Object} app
      * @param  {string} comment
+     * @param  {string} deployStack
      * @return {void}
      */
-    deploy(app, comment) {
+    deploy(app, comment, deployStack = 'all') {
 
-        let promises = app.stacks.map((stack) => {
+        let promises = app.stacks.filter((stack) => {
+
+            if (deployStack !== 'all' && stack.name !== deployStack) {
+                return false;
+            }
+
+            return true;
+
+        }).map((stack) => {
 
             return new Promise((resolve) => {
 
