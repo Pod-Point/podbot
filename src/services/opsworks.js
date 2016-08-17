@@ -5,11 +5,9 @@ class Opsworks {
     /**
      * Perform api functions on AWS Opsworks and update slack
      *
-     * @param  {Function} reply
-     * @param  {Object}   message
      * @return {void}
      */
-    constructor(reply, message) {
+    constructor() {
         AWS.config.update({
             accessKeyId: process.env.AWS_ACCESS_KEY_ID,
             secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
@@ -18,25 +16,21 @@ class Opsworks {
         this.api = new AWS.OpsWorks({
             region: 'us-east-1'
         });
-
-        this.responses = [];
-        this.reply = reply;
-        this.message = message;
     }
 
     /**
-     * Deploy an Opsworks app and update slack with the status
+     * Deploy an Opsworks app
      *
      * @param  {Object} app
      * @param  {string} comment
-     * @param  {string} deployStack
-     * @return {void}
+     * @param  {string} deploy
+     * @return {array}
      */
-    deploy(app, comment, deployStack = 'all') {
+    deploy(app, comment, deploy = 'all') {
 
-        let promises = app.stacks.filter((stack) => {
+        let deployments = app.stacks.filter((stack) => {
 
-            if (deployStack !== 'all' && stack.name !== deployStack) {
+            if (deploy !== 'all' && stack.name !== deploy) {
                 return false;
             }
 
@@ -44,7 +38,7 @@ class Opsworks {
 
         }).map((stack) => {
 
-            return new Promise((resolve) => {
+            let promise = new Promise((resolve, reject) => {
 
                 let params = {
                     AppId: stack.appId,
@@ -59,21 +53,9 @@ class Opsworks {
 
                     if (err) {
 
-                        this.responses[stack.appId] = {
-                            color: 'danger',
-                            title: `Sorry I wasn't able to deploy ${app.name} to ${stack.name} :disappointed:`,
-                            text: err.message
-                        };
+                        reject(err.message);
 
                     } else if (data.DeploymentId) {
-
-                        let uri = `https://console.aws.amazon.com/opsworks/home?#/stack/${stack.stackId}/deployments/${data.DeploymentId}`;
-
-                        this.responses[stack.appId] = {
-                            color: '#3AA3E3',
-                            title: `Deploying ${app.name} to ${stack.name}...`,
-                            text: `<${uri}|Check status>`
-                        };
 
                         let params = {
                             AppId: app.appId,
@@ -87,54 +69,26 @@ class Opsworks {
 
                             if (err) {
 
-                                this.responses[stack.appId] = {
-                                    color: 'danger',
-                                    title: `Sorry I wasn't able to deploy ${app.name} to ${stack.name} :disappointed:`,
-                                    text: err.message
-                                };
+                                reject(err.message);
 
                             } else if (data.Deployments[0]) {
 
-                                this.responses[stack.appId] = {
-                                    color: 'good',
-                                    title: `Success!`,
-                                    text: `Deployed ${app.name} to ${stack.name} :blush:`
-                                };
+                                resolve();
 
                             }
-
-                            this.updateSlack();
-
                         });
-
                     }
-
-                    resolve();
-
                 });
             });
+
+            return {
+                stack: stack,
+                promise: promise
+            };
+
         });
 
-        let results = Promise.all(promises);
-        results.then(() => this.updateSlack());
-    }
-
-    /**
-     * Update slack with Opsworks responses
-     *
-     * @return {void}
-     */
-    updateSlack() {
-
-        let attachments = [];
-
-        for (let key in this.responses) {
-            attachments.push(this.responses[key]);
-        }
-
-        this.reply(this.message, {
-            attachments: attachments
-        });
+        return deployments;
     }
 }
 
