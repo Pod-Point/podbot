@@ -7,7 +7,7 @@ class Deploy extends Base {
     /**
      * Register any message listeners
      *
-     * @param  {[type]} controller
+     * @param  {Object} controller
      * @return {void}
      */
     messageListeners(controller) {
@@ -54,6 +54,7 @@ class Deploy extends Base {
                 bot.reply(message, {
                     attachments: [
                         {
+                            fallback: `Deploying ${app.name}.`,
                             title: `Deploying ${app.name}`,
                             text: 'Which stack to deploy?',
                             callback_id: 'deploy',
@@ -68,6 +69,7 @@ class Deploy extends Base {
                 bot.reply(message, {
                     attachments: [
                         {
+                            fallback: `Sorry I dont know how to deploy ${name}.`,
                             color: 'warning',
                             title: `Sorry I dont know how to deploy ${name} :disappointed:`
                         }
@@ -81,7 +83,8 @@ class Deploy extends Base {
     /**
      * Register any message callbacks to be listened for
      *
-     * @param  {[type]} message
+     * @param  {Object} bot
+     * @param  {Object} message
      * @return {void}
      */
     callbacks(bot, message) {
@@ -99,14 +102,57 @@ class Deploy extends Base {
 
                 if (app) {
 
-                    const opsworks = new Opsworks(bot.replyInteractive, message);
-                    opsworks.deploy(app, data.comment, action.name);
+                    const opsworks = new Opsworks();
+                    const deployments = opsworks.deploy(app, data.comment, action.name);
+
+                    let responses = [];
+
+                    deployments.forEach((deployment) => {
+
+                        let uri = `https://console.aws.amazon.com/opsworks/home?#/stack/${deployment.stack.stackId}/deployments`;
+
+                        responses[deployment.stack.appId] = {
+                            fallback: `Deploying ${app.name} to ${deployment.stack.name}.`,
+                            color: '#3AA3E3',
+                            title: `Deploying ${app.name} to ${deployment.stack.name}...`,
+                            text: `<${uri}|Check status>`
+                        };
+
+                        deployment.promise.then((val) => {
+
+                            responses[deployment.stack.appId] = {
+                                fallback: `Deployed ${app.name} to ${deployment.stack.name}.`,
+                                color: 'good',
+                                title: `Success!`,
+                                text: `Deployed ${app.name} to ${deployment.stack.name} :blush:`
+                            };
+
+                            this.updateSlack(responses, bot, message);
+
+                        })
+                        .catch((err) => {
+
+                            responses[deployment.stack.appId] = {
+                                fallback: `Sorry I wasn't able to deploy ${app.name} to ${deployment.stack.name}.`,
+                                color: 'danger',
+                                title: `Sorry I wasn't able to deploy ${app.name} to ${deployment.stack.name} :disappointed:`,
+                                text: err
+                            };
+
+                            this.updateSlack(responses, bot, message);
+
+                        });
+
+                    });
+
+                    this.updateSlack(responses, bot, message);
 
                 } else {
 
                     bot.replyInteractive(message, {
                         attachments: [
                             {
+                                fallback: `Sorry I dont know how to deploy ${data.app}.`,
                                 color: 'warning',
                                 title: `Sorry I dont know how to deploy ${data.app} :disappointed:`
                             }
@@ -125,6 +171,27 @@ class Deploy extends Base {
 
             }
         }
+    }
+
+    /**
+     * Update slack with Opsworks responses
+     *
+     * @param  {array}  responses
+     * @param  {Object} bot
+     * @param  {Object} message
+     * @return {void}
+     */
+    updateSlack(responses, bot, message) {
+
+        let attachments = [];
+
+        for (let key in responses) {
+            attachments.push(responses[key]);
+        }
+
+        bot.replyInteractive(message, {
+            attachments: attachments
+        });
     }
 }
 

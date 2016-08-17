@@ -13,9 +13,13 @@ class PrClosed extends Base {
     webhooks(bot, webserver) {
         webserver.post('/pr_closed', (req, res) => {
 
-            let hook = req.body;
-            let pr = hook.pull_request;
-            let repo = hook.repository;
+            const hook = req.body;
+            const pr = hook.pull_request;
+            const repo = hook.repository;
+
+            const app = Config.get('apps').find((app) => {
+                return app.repo == repo.name;
+            });
 
             if (hook.action == 'closed' && pr.merged === true) {
 
@@ -25,24 +29,24 @@ class PrClosed extends Base {
                     unfurl_links: false,
                     attachments: [
                         {
+                            fallback: `${pr.title} by ${pr.user.login} has been merged.`,
                             title: `<${pr.html_url}|#${hook.number} ${pr.title}> by <${pr.user.html_url}|${pr.user.login}>`,
                             text: 'Do you want to deploy this PR?',
-                            callback_id: 'deploy-pr',
+                            callback_id: 'deploy',
                             attachment_type: 'default',
                             actions: [
                                 {
-                                    name: 'yes',
+                                    name: 'all',
                                     text: ':shipit:',
                                     value: JSON.stringify({
-                                        repo: repo.name,
-                                        pr: hook.number,
-                                        title: pr.title
+                                        app: app.name,
+                                        comment: pr.title
                                     }),
                                     style: 'primary',
                                     type: 'button'
                                 },
                                 {
-                                    name: 'no',
+                                    name: 'cancel',
                                     text: ':thumbsdown:',
                                     style: 'danger',
                                     type: 'button'
@@ -58,55 +62,6 @@ class PrClosed extends Base {
 
             res.send('OK');
         });
-    }
-
-    /**
-     * Register any message callbacks to be listened for
-     *
-     * @param  {[type]} message
-     * @return {void}
-     */
-    callbacks(bot, message) {
-
-        if (message.callback_id == 'deploy-pr') {
-
-            let action = message.actions[0];
-
-            if (action.name == 'yes') {
-
-                let data = JSON.parse(action.value);
-                let app = Config.get('apps').find((app) => {
-                    return app.repo == data.repo;
-                });
-
-                if (app) {
-
-                    let opsworks = new Opsworks(bot.replyInteractive, message);
-                    opsworks.deploy(app, `${data.pr} ${data.title}`);
-
-                } else {
-
-                    bot.replyInteractive(message, {
-                        attachments: [
-                            {
-                                color: 'warning',
-                                title: `Sorry I dont know how to deploy ${data.repo} :disappointed:`
-                            }
-                        ]
-                    });
-
-                }
-
-            } else {
-
-                bot.api.chat.delete({
-                    token: bot.config.token,
-                    ts: message.message_ts,
-                    channel: message.channel
-                });
-
-            }
-        }
     }
 }
 
