@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import Botkit from 'botkit';
 import redisStorage from 'botkit-storage-redis';
-import PrClosed from './modules/pr-closed';
+import Pulls from './modules/pulls';
 import Codeship from './modules/codeship';
 import Coveralls from './modules/coveralls';
 import Messages from './modules/messages';
@@ -40,14 +40,14 @@ const controller = Botkit.slackbot(botParams).configureSlackApp({
 
 // Load modules
 
-const prClosed = new PrClosed();
+const pulls = new Pulls();
 const codeship = new Codeship();
 const coveralls = new Coveralls();
 const messages = new Messages();
 const deploy = new Deploy();
 
 const modules = [
-    prClosed,
+    pulls,
     codeship,
     coveralls,
     messages,
