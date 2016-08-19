@@ -16,7 +16,7 @@ class Deploy extends Base {
         controller.hears(['deploy ?([a-zA-Z]+)?( with comment )?(.*)?'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
 
             let name = message.match[1];
-            let comment = message.match[2];
+            let comment = message.match[3];
 
             if (typeof name === 'undefined') {
                 bot.reply(message, this.pickApp());
