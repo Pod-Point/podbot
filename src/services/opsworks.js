@@ -3,7 +3,7 @@ import AWS from 'aws-sdk';
 class Opsworks {
 
     /**
-     * Perform api functions on AWS Opsworks and update slack
+     * Perform api functions on AWS Opsworks
      *
      * @return {void}
      */
