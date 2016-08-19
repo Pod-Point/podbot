@@ -1,5 +1,6 @@
 import Base from './base';
 import Opsworks from '../services/opsworks';
+import Github from '../services/github';
 import Config from 'config';
 
 class Deploy extends Base {
@@ -11,72 +12,18 @@ class Deploy extends Base {
      * @return {void}
      */
     messageListeners(controller) {
-        controller.hears('deploy (.*) with comment (.*)', ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
 
-            const name = message.match[1];
-            const comment = message.match[2];
+        controller.hears(['deploy ?([a-zA-Z]+)?( with comment )?(.*)?'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
 
-            const app = Config.get('apps').find((app) => {
-                return app.name == name;
-            });
+            let name = message.match[1];
+            let comment = message.match[3];
 
-            if (app) {
-
-                let actions = app.stacks.map((stack) => {
-                    return {
-                        name: stack.name,
-                        text: stack.name,
-                        value: JSON.stringify({
-                            app: name,
-                            comment: comment
-                        }),
-                        type: 'button'
-                    };
-                });
-
-                actions.push({
-                    name: 'all',
-                    text: 'All',
-                    value: JSON.stringify({
-                        app: name,
-                        comment: comment
-                    }),
-                    type: 'button'
-                });
-
-                actions.push({
-                    name: 'cancel',
-                    text: 'Cancel',
-                    style: 'danger',
-                    type: 'button'
-                });
-
-                bot.reply(message, {
-                    attachments: [
-                        {
-                            fallback: `Deploying ${app.name}.`,
-                            title: `Deploying ${app.name}`,
-                            text: 'Which stack to deploy?',
-                            callback_id: 'deploy',
-                            attachment_type: 'default',
-                            actions: actions
-                        }
-                    ]
-                });
-
+            if (typeof name === 'undefined') {
+                bot.reply(message, this.pickApp());
             } else {
-
-                bot.reply(message, {
-                    attachments: [
-                        {
-                            fallback: `Sorry I dont know how to deploy ${name}.`,
-                            color: 'warning',
-                            title: `Sorry I dont know how to deploy ${name} :disappointed:`
-                        }
-                    ]
-                });
-
+                bot.reply(message, this.pickStack(name, comment));
             }
+
         });
     }
 
@@ -89,21 +36,37 @@ class Deploy extends Base {
      */
     callbacks(bot, message) {
 
+        const action = message.actions[0];
+
+        if (action.name === 'cancel') {
+
+            return bot.api.chat.delete({
+                token: bot.config.token,
+                ts: message.message_ts,
+                channel: message.channel
+            });
+
+        }
+
+        if (message.callback_id == 'select-app') {
+
+            bot.replyInteractive(message, this.pickStack(action.value));
+
+        }
+
         if (message.callback_id == 'deploy') {
 
-            const action = message.actions[0];
+            const data = JSON.parse(action.value);
+            const app = Config.get('apps').find((app) => {
+                return app.name == data.app;
+            });
 
-            if (action.name !== 'cancel') {
+            if (app) {
 
-                const data = JSON.parse(action.value);
-                const app = Config.get('apps').find((app) => {
-                    return app.name == data.app;
-                });
-
-                if (app) {
+                this.getComment(app.repo, data.comment).then((comment) => {
 
                     const opsworks = new Opsworks();
-                    const deployments = opsworks.deploy(app, data.comment, action.name);
+                    const deployments = opsworks.deploy(app, comment, action.name);
 
                     let responses = [];
 
@@ -147,26 +110,30 @@ class Deploy extends Base {
 
                     this.updateSlack(responses, bot, message);
 
-                } else {
+                }).catch(() => {
 
                     bot.replyInteractive(message, {
                         attachments: [
                             {
-                                fallback: `Sorry I dont know how to deploy ${data.app}.`,
+                                fallback: `Sorry I couldn't get a comment from ${app.repo}.`,
                                 color: 'warning',
-                                title: `Sorry I dont know how to deploy ${data.app} :disappointed:`
+                                title: `Sorry I couldn't get a comment from ${app.repo}.`
                             }
                         ]
                     });
 
-                }
+                });
 
             } else {
 
-                bot.api.chat.delete({
-                    token: bot.config.token,
-                    ts: message.message_ts,
-                    channel: message.channel
+                bot.replyInteractive(message, {
+                    attachments: [
+                        {
+                            fallback: `Sorry I dont know how to deploy ${data.app}.`,
+                            color: 'warning',
+                            title: `Sorry I dont know how to deploy ${data.app} :disappointed:`
+                        }
+                    ]
                 });
 
             }
@@ -192,6 +159,150 @@ class Deploy extends Base {
         bot.replyInteractive(message, {
             attachments: attachments
         });
+    }
+
+    /**
+     * Get comment from github if not defined
+     *
+     * @param  {string|null} comment
+     * @return {Promise}
+     */
+    getComment(repo, comment) {
+
+        if (comment) {
+
+            return new Promise((resolve) => {
+                resolve(comment);
+            });
+
+        } else {
+
+            const github = new Github();
+
+            return new Promise((resolve, reject) => {
+
+                github.getLastPr(repo).then((pulls) => {
+
+                    if (pulls.length) {
+                        resolve(`${pulls[0].number} ${pulls[0].title}`);
+                    } else {
+                        reject();
+                    }
+
+                });
+
+            });
+
+        }
+    }
+
+    /**
+     * Pick an application to deploy
+     *
+     * @return {Object}
+     */
+    pickApp() {
+
+        let actions = Config.get('apps').map((app) => {
+            return {
+                name: app.name,
+                text: app.name,
+                value: app.name,
+                type: 'button'
+            };
+        });
+
+        actions.push({
+            name: 'cancel',
+            text: 'Cancel',
+            style: 'danger',
+            type: 'button'
+        });
+
+        return {
+            attachments: [
+                {
+                    fallback: 'Which app to deploy?',
+                    title: 'Deploy',
+                    text: 'Which app to deploy?',
+                    callback_id: 'select-app',
+                    attachment_type: 'default',
+                    actions: actions
+                }
+            ]
+        };
+    }
+
+    /**
+     * Pick a stack to deploy
+     *
+     * @param  {string} name
+     * @param  {string} comment
+     * @return {Object}
+     */
+    pickStack(name, comment = null) {
+
+        const app = Config.get('apps').find((app) => {
+            return app.name == name;
+        });
+
+        if (app) {
+
+            let actions = app.stacks.map((stack) => {
+                return {
+                    name: stack.name,
+                    text: stack.name,
+                    value: JSON.stringify({
+                        app: name,
+                        comment: comment
+                    }),
+                    type: 'button'
+                };
+            });
+
+            actions.push({
+                name: 'all',
+                text: 'All',
+                value: JSON.stringify({
+                    app: name,
+                    comment: comment
+                }),
+                type: 'button'
+            });
+
+            actions.push({
+                name: 'cancel',
+                text: 'Cancel',
+                style: 'danger',
+                type: 'button'
+            });
+
+            return {
+                attachments: [
+                    {
+                        fallback: 'Which stack to deploy?',
+                        title: `Deploying ${app.name}`,
+                        text: 'Which stack to deploy?',
+                        callback_id: 'deploy',
+                        attachment_type: 'default',
+                        actions: actions
+                    }
+                ]
+            };
+
+        } else {
+
+            return {
+                attachments: [
+                    {
+                        fallback: `Sorry I dont know how to deploy ${name}.`,
+                        color: 'warning',
+                        title: `Sorry I dont know how to deploy ${name} :disappointed:`
+                    }
+                ]
+            };
+
+        }
     }
 }
 
