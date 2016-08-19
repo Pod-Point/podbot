@@ -1,4 +1,4 @@
-import Github from 'github';
+import GithubApi from 'github';
 
 class Github {
 
@@ -9,7 +9,7 @@ class Github {
      */
     constructor() {
 
-        this.github = new Github({
+        this.github = new GithubApi({
             debug: true,
             protocol: 'https',
             host: 'api.github.com',
@@ -25,22 +25,21 @@ class Github {
     }
 
     /**
-     * Returns a deploy comment for the last closed PR from a repo
+     * Returns the last closed PR from a repo
      *
      * @param  {string} repo
-     * @return {string|false}
+     * @return {Promise}
      */
-    getLastPrComment(repo) {
+    getLastPr(repo) {
 
-        let pulls = this.github.pullRequests.getAll({
+        return this.github.pullRequests.getAll({
             user: 'Pod-Point',
-            user: repo,
+            repo: repo,
             state: 'closed',
             per_page: 1
         });
 
-        return pulls.length ? `${pulls[0].number} ${pulls[0].title}` : false;
     }
 }
 
-export default Opsworks;
+export default Github;
