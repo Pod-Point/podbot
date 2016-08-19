@@ -13,19 +13,17 @@ class Deploy extends Base {
      */
     messageListeners(controller) {
 
-        controller.hears('deploy', ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
-            bot.reply(message, this.pickApp());
-        });
+        controller.hears(['deploy ?([a-zA-Z]+)?( with comment )?(.*)?'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
 
-        controller.hears('deploy (.*)', ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
-            let name = message.match[1];
-            bot.reply(message, this.pickStack(name));
-        });
-
-        controller.hears('deploy (.*) with comment (.*)', ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
             let name = message.match[1];
             let comment = message.match[2];
-            bot.reply(message, this.pickStack(name, comment));
+
+            if (typeof name === 'undefined') {
+                bot.reply(message, this.pickApp());
+            } else {
+                bot.reply(message, this.pickStack(name, comment));
+            }
+
         });
     }
 
@@ -65,50 +63,66 @@ class Deploy extends Base {
 
             if (app) {
 
-                const opsworks = new Opsworks();
-                const deployments = opsworks.deploy(app, data.comment, action.name);
+                this.getComment(app.repo, data.comment).then((comment) => {
 
-                let responses = [];
+                    const opsworks = new Opsworks();
+                    const deployments = opsworks.deploy(app, comment, action.name);
 
-                deployments.forEach((deployment) => {
+                    let responses = [];
 
-                    let uri = `https://console.aws.amazon.com/opsworks/home?#/stack/${deployment.stack.stackId}/deployments`;
+                    deployments.forEach((deployment) => {
 
-                    responses[deployment.stack.appId] = {
-                        fallback: `Deploying ${app.name} to ${deployment.stack.name}.`,
-                        color: '#3AA3E3',
-                        title: `Deploying ${app.name} to ${deployment.stack.name}...`,
-                        text: `<${uri}|Check status>`
-                    };
-
-                    deployment.promise.then((val) => {
+                        let uri = `https://console.aws.amazon.com/opsworks/home?#/stack/${deployment.stack.stackId}/deployments`;
 
                         responses[deployment.stack.appId] = {
-                            fallback: `Deployed ${app.name} to ${deployment.stack.name}.`,
-                            color: 'good',
-                            title: `Success!`,
-                            text: `Deployed ${app.name} to ${deployment.stack.name} :blush:`
+                            fallback: `Deploying ${app.name} to ${deployment.stack.name}.`,
+                            color: '#3AA3E3',
+                            title: `Deploying ${app.name} to ${deployment.stack.name}...`,
+                            text: `<${uri}|Check status>`
                         };
 
-                        this.updateSlack(responses, bot, message);
+                        deployment.promise.then((val) => {
 
-                    })
-                    .catch((err) => {
+                            responses[deployment.stack.appId] = {
+                                fallback: `Deployed ${app.name} to ${deployment.stack.name}.`,
+                                color: 'good',
+                                title: `Success!`,
+                                text: `Deployed ${app.name} to ${deployment.stack.name} :blush:`
+                            };
 
-                        responses[deployment.stack.appId] = {
-                            fallback: `Sorry I wasn't able to deploy ${app.name} to ${deployment.stack.name}.`,
-                            color: 'danger',
-                            title: `Sorry I wasn't able to deploy ${app.name} to ${deployment.stack.name} :disappointed:`,
-                            text: err
-                        };
+                            this.updateSlack(responses, bot, message);
 
-                        this.updateSlack(responses, bot, message);
+                        })
+                        .catch((err) => {
+
+                            responses[deployment.stack.appId] = {
+                                fallback: `Sorry I wasn't able to deploy ${app.name} to ${deployment.stack.name}.`,
+                                color: 'danger',
+                                title: `Sorry I wasn't able to deploy ${app.name} to ${deployment.stack.name} :disappointed:`,
+                                text: err
+                            };
+
+                            this.updateSlack(responses, bot, message);
+
+                        });
 
                     });
 
-                });
+                    this.updateSlack(responses, bot, message);
 
-                this.updateSlack(responses, bot, message);
+                }).catch(() => {
+
+                    bot.replyInteractive(message, {
+                        attachments: [
+                            {
+                                fallback: `Sorry I couldn't get a comment from ${app.repo}.`,
+                                color: 'warning',
+                                title: `Sorry I couldn't get a comment from ${app.repo}.`
+                            }
+                        ]
+                    });
+
+                });
 
             } else {
 
@@ -145,6 +159,41 @@ class Deploy extends Base {
         bot.replyInteractive(message, {
             attachments: attachments
         });
+    }
+
+    /**
+     * Get comment from github if not defined
+     *
+     * @param  {string|null} comment
+     * @return {Promise}
+     */
+    getComment(repo, comment) {
+
+        if (comment) {
+
+            return new Promise((resolve) => {
+                resolve(comment);
+            });
+
+        } else {
+
+            const github = new Github();
+
+            return new Promise((resolve, reject) => {
+
+                github.getLastPr(repo).then((pulls) => {
+
+                    if (pulls.length) {
+                        resolve(`${pulls[0].number} ${pulls[0].title}`);
+                    } else {
+                        reject();
+                    }
+
+                });
+
+            });
+
+        }
     }
 
     /**
@@ -198,24 +247,6 @@ class Deploy extends Base {
         });
 
         if (app) {
-
-            if (comment === null) {
-
-                const github = new Github();
-                let githubComment = github.getLastPrComment(app.repo);
-
-                if (githubComment === false) {
-                    return {
-                        attachments: [
-                            {
-                                fallback: `Sorry I couldn't get a comment from ${app.repo}.`,
-                                color: 'warning',
-                                title: `Sorry I couldn't get a comment from ${app.repo}.`
-                            }
-                        ]
-                    };
-                }
-            }
 
             let actions = app.stacks.map((stack) => {
                 return {
