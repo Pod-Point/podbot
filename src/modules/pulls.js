@@ -2,7 +2,7 @@ import Base from './base';
 import Opsworks from '../services/opsworks';
 import Config from 'config';
 
-class PrClosed extends Base {
+class Pulls extends Base {
 
     /**
      * Register any webhooks to be listened for
@@ -11,7 +11,7 @@ class PrClosed extends Base {
      * @return {void}
      */
     webhooks(bot, webserver) {
-        webserver.post('/pr_closed', (req, res) => {
+        webserver.post('/pulls', (req, res) => {
 
             const hook = req.body;
             const pr = hook.pull_request;
@@ -58,6 +58,26 @@ class PrClosed extends Base {
 
                 bot.say(message);
 
+            } else if (hook.action == 'opened') {
+
+                let message = {
+
+                    channel: Config.get('channels.software.name'),
+                    unfurl_links: false,
+                    text: `[${repo.full_name}] Pull request submitted by <${pr.user.url}|${pr.user.login}>`,
+                    attachments: [
+                        {
+                            fallback: `Pull request submitted by ${pr.user.login}.`,
+                            title: `<${pr.html_url}|#${hook.number} ${pr.title}>`,
+                            color: 'good',
+                            text: pr.body,
+                            attachment_type: 'default'
+                        }
+                    ]
+                };
+
+                bot.say(message);
+
             }
 
             res.send('OK');
@@ -65,4 +85,4 @@ class PrClosed extends Base {
     }
 }
 
-export default PrClosed;
+export default Pulls;
