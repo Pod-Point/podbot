@@ -1,7 +1,6 @@
-import Base from './base';
-import Config from 'config';
+import * as Config from 'config';
 
-class Coveralls extends Base {
+class Codeship {
 
     /**
      * Register any webhooks to be listened for
@@ -11,30 +10,30 @@ class Coveralls extends Base {
      * @return {void}
      */
     webhooks(bot, webserver) {
-        webserver.post('/coveralls', (req, res) => {
+        webserver.post('/codeship', (req, res) => {
 
-            let data = req.body;
+            let data = req.body.build;
 
-            if (data.branch == 'master') {
+            if (data.status == 'error' && data.branch == 'master') {
 
                 let message = {
                     channel: Config.get('channels.software.name'),
                     attachments: [
                         {
-                            fallback: `Code coverage decreased by ${data.coverage_change} for ${data.branch} branch on ${data.repo_name}.`,
+                            fallback: `Build for ${data.branch} branch on ${data.project_name} has failed.`,
                             color: 'danger',
-                            title: 'Code coverage has decreased',
-                            title_link: data.url,
-                            text: data.commit_message,
+                            title: 'Build failed',
+                            title_link: data.build_url,
+                            text: data.message,
                             fields: [
                                 {
                                     title: 'Project',
-                                    value: data.repo_name,
+                                    value: data.project_name,
                                     short: true
                                 },
                                 {
-                                    title: 'Change',
-                                    value: `${data.coverage_change}%`,
+                                    title: 'Branch',
+                                    value: data.branch,
                                     short: true
                                 }
                             ]
@@ -51,4 +50,4 @@ class Coveralls extends Base {
     }
 }
 
-export default Coveralls;
+export default Codeship;

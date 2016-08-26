@@ -1,6 +1,9 @@
-import AWS from 'aws-sdk';
+/// <reference path="../typings/opsworks.d.ts" />
+import * as AWS from 'aws-sdk';
 
 class Opsworks {
+
+    private api: AWS.OpsWorks;
 
     /**
      * Perform api functions on AWS Opsworks
@@ -24,9 +27,9 @@ class Opsworks {
      * @param  {Object} app
      * @param  {string} comment
      * @param  {string} deploy
-     * @return {array}
+     * @return {Array}
      */
-    deploy(app, comment, deploy = 'all') {
+    deploy(app, comment: string, deploy: string = 'all'): Array<{stack: {appId: string, stackId: string, name: string}, promise: Promise<any>}> {
 
         let deployments = app.stacks.filter((stack) => {
 
