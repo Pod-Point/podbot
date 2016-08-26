@@ -1,11 +1,13 @@
-import dotenv from 'dotenv';
-import Botkit from 'botkit';
+/// <reference path="typings/botkit.d.ts" />
+import * as dotenv from 'dotenv';
+import * as Botkit from 'botkit';
 import redisStorage from 'botkit-storage-redis';
 import PrClosed from './modules/pr-closed';
 import Codeship from './modules/codeship';
 import Coveralls from './modules/coveralls';
 import Messages from './modules/messages';
 import Deploy from './modules/deploy';
+import Module from './interfaces/module';
 
 dotenv.config();
 
@@ -14,7 +16,7 @@ if (!process.env.CLIENT_ID || !process.env.CLIENT_SECRET || !process.env.PORT ||
     process.exit(1);
 }
 
-if (process.env.ENV == 'local') {
+if (process.env.ENV === 'local') {
 
     var botParams = {
         debug: true,
@@ -40,13 +42,13 @@ const controller = Botkit.slackbot(botParams).configureSlackApp({
 
 // Load modules
 
-const prClosed = new PrClosed();
-const codeship = new Codeship();
-const coveralls = new Coveralls();
-const messages = new Messages();
-const deploy = new Deploy();
+const prClosed: Module = new PrClosed();
+const codeship: Module = new Codeship();
+const coveralls: Module = new Coveralls();
+const messages: Module = new Messages();
+const deploy: Module = new Deploy();
 
-const modules = [
+const modules: Array<any> = [
     prClosed,
     codeship,
     coveralls,
@@ -113,7 +115,7 @@ controller.storage.teams.get(process.env.TEAM, (err, team) => {
  * @param  {...} args
  * @return {void}
  */
-function register(type, ...args) {
+function register(type: string, ...args): void {
     modules.forEach((module) => {
         if (typeof module[type] === 'function') {
             module[type](...args);

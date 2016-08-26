@@ -1,9 +1,21 @@
-import Base from './base';
 import Opsworks from '../services/opsworks';
 import Github from '../services/github';
-import Config from 'config';
+import * as Config from 'config';
+import App from '../interfaces/app';
+import Action from '../interfaces/app';
 
-class Deploy extends Base {
+class Deploy {
+
+    private apps: Array<App>;
+
+    /**
+     * Perform api functions on AWS Opsworks
+     *
+     * @return {void}
+     */
+    constructor() {
+        this.apps = Config.get('apps');
+    }
 
     /**
      * Register any message listeners
@@ -11,7 +23,7 @@ class Deploy extends Base {
      * @param  {Object} controller
      * @return {void}
      */
-    messageListeners(controller) {
+    messageListeners(controller): void {
 
         controller.hears(['deploy ?([a-zA-Z]+)?( with comment )?(.*)?'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
 
@@ -34,9 +46,9 @@ class Deploy extends Base {
      * @param  {Object} message
      * @return {void}
      */
-    callbacks(bot, message) {
+    callbacks(bot, message): void {
 
-        const action = message.actions[0];
+        const action: {name: string, value: string} = message.actions[0];
 
         if (action.name === 'cancel') {
 
@@ -48,17 +60,17 @@ class Deploy extends Base {
 
         }
 
-        if (message.callback_id == 'select-app') {
+        if (message.callback_id === 'select-app') {
 
             bot.replyInteractive(message, this.pickStack(action.value));
 
         }
 
-        if (message.callback_id == 'deploy') {
+        if (message.callback_id === 'deploy') {
 
             const data = JSON.parse(action.value);
-            const app = Config.get('apps').find((app) => {
-                return app.name == data.app;
+            const app = this.apps.find((app) => {
+                return app.name === data.app;
             });
 
             if (app) {
@@ -164,10 +176,11 @@ class Deploy extends Base {
     /**
      * Get comment from github if not defined
      *
-     * @param  {string|null} comment
+     * @param  {string} comment
+     * @param  {string} comment
      * @return {Promise}
      */
-    getComment(repo, comment) {
+    getComment(repo: string, comment: string): Promise<string> {
 
         if (comment) {
 
@@ -177,7 +190,7 @@ class Deploy extends Base {
 
         } else {
 
-            const github = new Github();
+            const github: Github = new Github();
 
             return new Promise((resolve, reject) => {
 
@@ -203,7 +216,7 @@ class Deploy extends Base {
      */
     pickApp() {
 
-        let actions = Config.get('apps').map((app) => {
+        let actions = this.apps.map((app) => {
             return {
                 name: app.name,
                 text: app.name,
@@ -240,10 +253,10 @@ class Deploy extends Base {
      * @param  {string} comment
      * @return {Object}
      */
-    pickStack(name, comment = null) {
+    pickStack(name: string, comment: string = null): Object {
 
-        const app = Config.get('apps').find((app) => {
-            return app.name == name;
+        const app = this.apps.find((app) => {
+            return app.name === name;
         });
 
         if (app) {

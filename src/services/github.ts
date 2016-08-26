@@ -2,6 +2,8 @@ import GithubApi from 'github';
 
 class Github {
 
+    private github: GithubApi;
+
     /**
      * Perform api functions on Github
      *
@@ -30,7 +32,7 @@ class Github {
      * @param  {string} repo
      * @return {Promise}
      */
-    getLastPr(repo) {
+    getLastPr(repo: string): Promise<Array<any>> {
 
         return this.github.pullRequests.getAll({
             user: 'Pod-Point',
