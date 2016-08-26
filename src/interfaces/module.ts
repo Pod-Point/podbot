@@ -1,4 +1,4 @@
-class Base {
+interface Module {
 
     /**
      * Register any webhooks to be listened for
@@ -7,7 +7,7 @@ class Base {
      * @param  {[type]} webserver
      * @return {void}
      */
-    webhooks(bot, webserver) {}
+    webhooks?: (bot, webserver) => void;
 
     /**
      * Register any message callbacks to be listened for
@@ -16,7 +16,7 @@ class Base {
      * @param  {[type]} message
      * @return {void}
      */
-    callbacks(bot, message) {}
+    callbacks?: (bot, message) => void;
 
     /**
      * Register any slash commands
@@ -25,7 +25,7 @@ class Base {
      * @param  {[type]} message
      * @return {void}
      */
-    slashCommands(bot, message) {}
+    slashCommands?: (bot, message) => void;
 
     /**
      * Register any message listeners
@@ -33,7 +33,7 @@ class Base {
      * @param  {[type]} controller
      * @return {void}
      */
-    messageListeners(controller, bot) {}
+    messageListeners?: (controller, bot) => void;
 
     /**
      * Register any cronjobs
@@ -41,7 +41,7 @@ class Base {
      * @param  {[type]} bot
      * @return {void}
      */
-    cronjobs(bot) {}
+    cronjobs?: (bot) => void;
 }
 
-export default Base;
+export default Module;

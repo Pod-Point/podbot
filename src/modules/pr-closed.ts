@@ -1,8 +1,7 @@
-import Base from './base';
 import Opsworks from '../services/opsworks';
-import Config from 'config';
+import * as Config from 'config';
 
-class PrClosed extends Base {
+class PrClosed {
 
     /**
      * Register any webhooks to be listened for
@@ -10,7 +9,7 @@ class PrClosed extends Base {
      * @param  {[type]} webserver
      * @return {void}
      */
-    webhooks(bot, webserver) {
+    webhooks(bot, webserver): void {
         webserver.post('/pr_closed', (req, res) => {
 
             const hook = req.body;

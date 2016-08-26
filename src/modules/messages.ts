@@ -1,8 +1,7 @@
-import Base from './base';
 import { CronJob } from 'cron';
-import Config from 'config';
+import * as Config from 'config';
 
-class Messages extends Base {
+class Messages {
 
     /**
      * Register any cronjobs
@@ -10,7 +9,7 @@ class Messages extends Base {
      * @param  {[type]} bot
      * @return {void}
      */
-    cronjobs(bot) {
+    cronjobs(bot): void {
 
         new CronJob('00 45 09 * * 1-5', () => {
 

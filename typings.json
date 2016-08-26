@@ -1,0 +1,10 @@
+{
+  "globalDependencies": {
+    "aws-sdk": "registry:dt/aws-sdk#0.0.0+20160811005841",
+    "config": "registry:dt/config#0.0.0+20160317120654",
+    "cron": "registry:dt/cron#1.0.9+20160316155526",
+    "dotenv": "registry:dt/dotenv#2.0.0+20160327131627",
+    "es6-shim": "registry:dt/es6-shim#0.31.2+20160602141504",
+    "node": "registry:dt/node#6.0.0+20160823142437"
+  }
+}
