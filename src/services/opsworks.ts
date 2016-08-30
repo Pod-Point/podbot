@@ -1,5 +1,7 @@
 /// <reference path="../typings/opsworks.d.ts" />
 import * as AWS from 'aws-sdk';
+import Stack from '../interfaces/stack';
+import App from '../interfaces/app';
 
 class Opsworks {
 
@@ -24,14 +26,14 @@ class Opsworks {
     /**
      * Deploy an Opsworks app
      *
-     * @param  {Object} app
+     * @param  {App} app
      * @param  {string} comment
      * @param  {string} deploy
      * @return {Array}
      */
-    deploy(app, comment: string, deploy: string = 'all'): Array<{stack: {appId: string, stackId: string, name: string}, promise: Promise<any>}> {
+    deploy(app: App, comment: string, deploy: string = 'all'): Array<{stack: Stack, promise: Promise<any>}> {
 
-        let deployments = app.stacks.filter((stack) => {
+        return app.stacks.filter((stack) => {
 
             if (deploy !== 'all' && stack.name !== deploy) {
                 return false;
@@ -61,8 +63,8 @@ class Opsworks {
                     } else if (data.DeploymentId) {
 
                         let params = {
-                            AppId: app.appId,
-                            StackId: app.stackId,
+                            AppId: stack.appId,
+                            StackId: stack.stackId,
                             DeploymentIds: [
                                 data.DeploymentId
                             ]
@@ -90,8 +92,6 @@ class Opsworks {
             };
 
         });
-
-        return deployments;
     }
 }
 

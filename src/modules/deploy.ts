@@ -2,7 +2,9 @@ import Opsworks from '../services/opsworks';
 import Github from '../services/github';
 import * as Config from 'config';
 import App from '../interfaces/app';
-import Action from '../interfaces/app';
+import Stack from '../interfaces/stack';
+import Action from '../interfaces/action';
+import Message from '../interfaces/message';
 
 class Deploy {
 
@@ -27,8 +29,8 @@ class Deploy {
 
         controller.hears(['deploy ?([a-zA-Z]+)?( with comment )?(.*)?'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
 
-            let name = message.match[1];
-            let comment = message.match[3];
+            let name: string = message.match[1];
+            let comment: string = message.match[3];
 
             if (typeof name === 'undefined') {
                 bot.reply(message, this.pickApp());
@@ -68,8 +70,8 @@ class Deploy {
 
         if (message.callback_id === 'deploy') {
 
-            const data = JSON.parse(action.value);
-            const app = this.apps.find((app) => {
+            const data: {app: string, comment: string} = JSON.parse(action.value);
+            const app: App = this.apps.find((app) => {
                 return app.name === data.app;
             });
 
@@ -77,10 +79,10 @@ class Deploy {
 
                 this.getComment(app.repo, data.comment).then((comment) => {
 
-                    const opsworks = new Opsworks();
+                    const opsworks: Opsworks = new Opsworks();
                     const deployments = opsworks.deploy(app, comment, action.name);
 
-                    let responses = [];
+                    let responses: Array<Message> = [];
 
                     deployments.forEach((deployment) => {
 
@@ -160,7 +162,7 @@ class Deploy {
      * @param  {Object} message
      * @return {void}
      */
-    updateSlack(responses, bot, message) {
+    updateSlack(responses: Array<Message>, bot, message) {
 
         let attachments = [];
 
