@@ -5,19 +5,19 @@ class Codeship {
     /**
      * Register any webhooks to be listened for
      *
-     * @param  {[type]} bot
-     * @param  {[type]} webserver
+     * @param  {slackBot} bot
+     * @param  {webServer} webserver
      * @return {void}
      */
-    webhooks(bot, webserver) {
+    webhooks(bot: slackBot, webserver: webServer) {
         webserver.post('/codeship', (req, res) => {
 
-            let data = req.body.build;
+            let data: CodeshipWebhook = req.body.build;
 
-            if (data.status == 'error' && data.branch == 'master') {
+            if (data.status === 'error' && data.branch === 'master') {
 
-                let message = {
-                    channel: Config.get('channels.software.name'),
+                let message: slackMessage = {
+                    channel: Config.get<string>('channels.software.name'),
                     attachments: [
                         {
                             fallback: `Build for ${data.branch} branch on ${data.project_name} has failed.`,
@@ -48,6 +48,14 @@ class Codeship {
             res.send('OK');
         });
     }
+}
+
+interface CodeshipWebhook {
+    status: string;
+    branch: string;
+    project_name: string;
+    message: string;
+    build_url: string;
 }
 
 export default Codeship;

@@ -7,7 +7,7 @@ interface Module {
      * @param  {[type]} webserver
      * @return {void}
      */
-    webhooks?: (bot, webserver) => void;
+    webhooks?: (bot, webserver: webServer) => void;
 
     /**
      * Register any message callbacks to be listened for
