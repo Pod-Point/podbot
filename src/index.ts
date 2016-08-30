@@ -1,7 +1,8 @@
 /// <reference path="typings/botkit.d.ts" />
+/// <reference path="typings/botkit-storage-redis.d.ts" />
 import * as dotenv from 'dotenv';
 import * as Botkit from 'botkit';
-import redisStorage from 'botkit-storage-redis';
+import * as redisStorage from 'botkit-storage-redis';
 import PrClosed from './modules/pr-closed';
 import Codeship from './modules/codeship';
 import Coveralls from './modules/coveralls';
@@ -18,14 +19,14 @@ if (!process.env.CLIENT_ID || !process.env.CLIENT_SECRET || !process.env.PORT ||
 
 if (process.env.ENV === 'local') {
 
-    var botParams = {
+    var botParams: any = {
         debug: true,
         json_file_store: './db'
     };
 
 } else {
 
-    var botParams = {
+    var botParams: any = {
         debug: false,
         storage: redisStorage()
     };

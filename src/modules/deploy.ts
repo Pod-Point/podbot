@@ -14,7 +14,7 @@ class Deploy {
      * @return {void}
      */
     constructor() {
-        this.apps = Config.get('apps');
+        this.apps = Config.get<Array<App>>('apps');
     }
 
     /**
@@ -216,13 +216,15 @@ class Deploy {
      */
     pickApp() {
 
-        let actions = this.apps.map((app) => {
-            return {
+        let actions = [];
+
+        this.apps.forEach((app) => {
+            actions.push({
                 name: app.name,
                 text: app.name,
                 value: app.name,
                 type: 'button'
-            };
+            });
         });
 
         actions.push({
@@ -261,8 +263,10 @@ class Deploy {
 
         if (app) {
 
-            let actions = app.stacks.map((stack) => {
-                return {
+            let actions = [];
+
+            app.stacks.forEach((stack) => {
+                actions.push({
                     name: stack.name,
                     text: stack.name,
                     value: JSON.stringify({
@@ -270,7 +274,7 @@ class Deploy {
                         comment: comment
                     }),
                     type: 'button'
-                };
+                });
             });
 
             actions.push({

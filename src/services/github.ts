@@ -1,4 +1,5 @@
-import GithubApi from 'github';
+/// <reference path="../typings/github.d.ts" />
+import * as GithubApi from 'github';
 
 class Github {
 
