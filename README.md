@@ -21,3 +21,5 @@ If you add a new module you will need to install the typings for the module to t
 
 * `typings search MODULE`
 * `typings install --save dt~MODULE --global`
+
+You can also create custom typings definitions in `src/typings`.
