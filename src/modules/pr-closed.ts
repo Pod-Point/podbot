@@ -7,10 +7,11 @@ class PrClosed {
     /**
      * Register any webhooks to be listened for
      *
-     * @param  {[type]} webserver
+     * @param  {slackBot} bot
+     * @param  {webServer} webserver
      * @return {void}
      */
-    webhooks(bot, webserver): void {
+    webhooks(bot: slackBot, webserver: webServer): void {
         webserver.post('/pr_closed', (req, res) => {
 
             const hook = req.body;
@@ -23,9 +24,9 @@ class PrClosed {
 
             if (hook.action === 'closed' && pr.merged === true) {
 
-                let message = {
+                let message: slackMessage = {
 
-                    channel: Config.get('channels.software.name'),
+                    channel: Config.get<string>('channels.software.name'),
                     unfurl_links: false,
                     attachments: [
                         {
