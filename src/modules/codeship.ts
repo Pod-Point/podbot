@@ -6,17 +6,17 @@ class Codeship {
      * Register any webhooks to be listened for
      *
      * @param  {slackBot} bot
-     * @param  {webServer} webserver
+     * @param  {WebServer} webserver
      * @return {void}
      */
-    webhooks(bot: slackBot, webserver: webServer): void {
+    webhooks(bot: SlackBot, webserver: WebServer): void {
         webserver.post('/codeship', (req, res) => {
 
             let data: CodeshipWebhook = req.body.build;
 
             if (data.status === 'error' && data.branch === 'master') {
 
-                let message: slackReply = {
+                let message: SlackReply = {
                     channel: Config.get<string>('channels.software.name'),
                     attachments: [
                         {

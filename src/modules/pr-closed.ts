@@ -7,11 +7,11 @@ class PrClosed {
     /**
      * Register any webhooks to be listened for
      *
-     * @param  {slackBot} bot
-     * @param  {webServer} webserver
+     * @param  {SlackBot} bot
+     * @param  {WebServer} webserver
      * @return {void}
      */
-    webhooks(bot: slackBot, webserver: webServer): void {
+    webhooks(bot: SlackBot, webserver: WebServer): void {
         webserver.post('/pr_closed', (req, res) => {
 
             const hook: GithubPrWebhook = req.body;
@@ -24,7 +24,7 @@ class PrClosed {
 
             if (hook.action === 'closed' && pr.merged === true) {
 
-                let message: slackReply = {
+                let message: SlackReply = {
 
                     channel: Config.get<string>('channels.software.name'),
                     unfurl_links: false,

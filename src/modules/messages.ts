@@ -6,10 +6,10 @@ class Messages {
     /**
      * Register any cronjobs
      *
-     * @param  {slackBot} bot
+     * @param  {SlackBot} bot
      * @return {void}
      */
-    cronjobs(bot: slackBot): void {
+    cronjobs(bot: SlackBot): void {
 
         new CronJob('00 45 09 * * 1-5', () => {
 

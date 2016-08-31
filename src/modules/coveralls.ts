@@ -5,18 +5,18 @@ class Coveralls {
     /**
      * Register any webhooks to be listened for
      *
-     * @param  {slackBot} bot
-     * @param  {webServer} webserver
+     * @param  {SlackBot} bot
+     * @param  {WebServer} webserver
      * @return {void}
      */
-    webhooks(bot: slackBot, webserver: webServer): void {
+    webhooks(bot: SlackBot, webserver: WebServer): void {
         webserver.post('/coveralls', (req, res) => {
 
             let data: CoverallsWebhook = req.body;
 
             if (data.branch === 'master') {
 
-                let message: slackReply = {
+                let message: SlackReply = {
                     channel: Config.get<string>('channels.software.name'),
                     attachments: [
                         {
