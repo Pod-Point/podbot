@@ -16,7 +16,7 @@ class Codeship {
 
             if (data.status === 'error' && data.branch === 'master') {
 
-                let message: slackMessage = {
+                let message: slackReply = {
                     channel: Config.get<string>('channels.software.name'),
                     attachments: [
                         {

@@ -3,7 +3,9 @@
     "target": "es5",
     "module": "commonjs",
     "outDir": "lib",
-    "rootDir": "src"
+    "rootDir": "src",
+    "experimentalDecorators": true,
+    "noImplicitAny": true
   },
   "exclude": [
      "node_modules"

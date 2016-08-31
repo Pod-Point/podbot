@@ -116,7 +116,7 @@ controller.storage.teams.get(process.env.TEAM, (err, team) => {
  * @param  {...} args
  * @return {void}
  */
-function register(type: string, ...args): void {
+function register(type: string, ...args: any[]): void {
     modules.forEach((module) => {
         if (typeof module[type] === 'function') {
             module[type](...args);
