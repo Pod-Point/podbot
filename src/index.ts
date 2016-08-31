@@ -19,21 +19,21 @@ if (!process.env.CLIENT_ID || !process.env.CLIENT_SECRET || !process.env.PORT ||
 
 if (process.env.ENV === 'local') {
 
-    var botParams: botParams = {
+    var botParams: BotParams = {
         debug: true,
         json_file_store: './db'
     };
 
 } else {
 
-    var botParams: botParams = {
+    var botParams: BotParams = {
         debug: false,
         storage: redisStorage()
     };
 
 }
 
-const controller: botController = Botkit.slackbot(botParams).configureSlackApp({
+const controller: BotController = Botkit.slackbot(botParams).configureSlackApp({
     clientId: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
     scopes: [

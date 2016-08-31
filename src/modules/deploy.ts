@@ -23,7 +23,7 @@ class Deploy {
      * @param  {botController} controller
      * @return {void}
      */
-    messageListeners(controller: botController): void {
+    messageListeners(controller: BotController): void {
 
         controller.hears(['deploy ?([a-zA-Z]+)?( with comment )?(.*)?'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
 
@@ -42,13 +42,13 @@ class Deploy {
     /**
      * Register any message callbacks to be listened for
      *
-     * @param  {slackBot} bot
-     * @param  {slackMessage} message
+     * @param  {SlackBot} bot
+     * @param  {SlackMessage} message
      * @return {void}
      */
-    callbacks(bot: slackBot, message: slackMessage): void {
+    callbacks(bot: SlackBot, message: SlackMessage): void {
 
-        const action: slackAttachmentAction = message.actions[0];
+        const action: SlackAttachmentAction = message.actions[0];
 
         if (action.name === 'cancel') {
 
@@ -80,7 +80,7 @@ class Deploy {
                     const opsworks: Opsworks = new Opsworks();
                     const deployments = opsworks.deploy(app, comment, action.name);
 
-                    let responses: { [index: string]: slackAttachment; } = {};
+                    let responses: { [index: string]: SlackAttachment; } = {};
 
                     deployments.forEach((deployment) => {
 
@@ -156,13 +156,13 @@ class Deploy {
      * Update slack with Opsworks responses
      *
      * @param  {Object}  responses
-     * @param  {slackBot} bot
+     * @param  {SlackBot} bot
      * @param  {slackMessage} message
      * @return {void}
      */
-    updateSlack(responses: { [index: string]: slackAttachment; }, bot: slackBot, message: slackMessage): void {
+    updateSlack(responses: { [index: string]: SlackAttachment; }, bot: SlackBot, message: SlackMessage): void {
 
-        let attachments: Array<slackAttachment> = [];
+        let attachments: Array<SlackAttachment> = [];
 
         for (let key in responses) {
             attachments.push(responses[key]);
@@ -212,11 +212,11 @@ class Deploy {
     /**
      * Pick an application to deploy
      *
-     * @return {slackReply}
+     * @return {SlackReply}
      */
-    pickApp(): slackReply {
+    pickApp(): SlackReply {
 
-        let actions: Array<slackAttachmentAction> = [];
+        let actions: Array<SlackAttachmentAction> = [];
 
         this.apps.forEach((app) => {
             actions.push({
@@ -253,9 +253,9 @@ class Deploy {
      *
      * @param  {string} name
      * @param  {string} comment
-     * @return {slackReply}
+     * @return {SlackReply}
      */
-    pickStack(name: string, comment: string = null): slackReply {
+    pickStack(name: string, comment: string = null): SlackReply {
 
         const app: App = this.apps.find((app) => {
             return app.name === name;
@@ -263,7 +263,7 @@ class Deploy {
 
         if (app) {
 
-            let actions: Array<slackAttachmentAction> = [];
+            let actions: Array<SlackAttachmentAction> = [];
 
             app.stacks.forEach((stack) => {
                 actions.push({
