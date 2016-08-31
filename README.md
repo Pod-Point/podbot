@@ -1,5 +1,5 @@
 # PodBot
-The POD Point slack bot built with [botkit](https://github.com/howdyai/botkit/) in [TypeScript](https://www.typescriptlang.org/).
+The POD Point slack bot built with [Botkit](https://github.com/howdyai/botkit/) in [TypeScript](https://www.typescriptlang.org/).
 
 ## Develop
 
