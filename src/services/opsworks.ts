@@ -1,4 +1,4 @@
-/// <reference path="../typings/opsworks.d.ts" />
+/// <reference path="../../typings/custom/opsworks.d.ts" />
 import * as AWS from 'aws-sdk';
 import Stack from '../interfaces/stack';
 import App from '../interfaces/app';
