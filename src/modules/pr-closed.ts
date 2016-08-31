@@ -24,7 +24,7 @@ class PrClosed {
 
             if (hook.action === 'closed' && pr.merged === true) {
 
-                let message: slackMessage = {
+                let message: slackReply = {
 
                     channel: Config.get<string>('channels.software.name'),
                     unfurl_links: false,

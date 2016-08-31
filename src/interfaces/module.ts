@@ -13,19 +13,19 @@ interface Module {
      * Register any message callbacks to be listened for
      *
      * @param  {slackBot} bot
-     * @param  {[type]} message
+     * @param  {slackMessage} message
      * @return {void}
      */
-    callbacks?: (bot: slackBot, message) => void;
+    callbacks?: (bot: slackBot, message: slackMessage) => void;
 
     /**
      * Register any slash commands
      *
      * @param  {slackBot} bot
-     * @param  {[type]} message
+     * @param  {slackMessage} message
      * @return {void}
      */
-    slashCommands?: (bot: slackBot, message) => void;
+    slashCommands?: (bot: slackBot, message: slackMessage) => void;
 
     /**
      * Register any message listeners
