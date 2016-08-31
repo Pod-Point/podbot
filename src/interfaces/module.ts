@@ -30,11 +30,11 @@ interface Module {
     /**
      * Register any message listeners
      *
-     * @param  {controller} controller
+     * @param  {botController} controller
      * @param  {slackBot} bot
      * @return {void}
      */
-    messageListeners?: (controller: controller, bot: slackBot) => void;
+    messageListeners?: (controller: botController, bot: slackBot) => void;
 
     /**
      * Register any cronjobs
