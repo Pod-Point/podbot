@@ -1,5 +1,5 @@
-/// <reference path="../typings/custom/botkit.d.ts" />
-/// <reference path="../typings/custom/botkit-storage-redis.d.ts" />
+/// <reference path="typings/botkit.d.ts" />
+/// <reference path="typings/botkit-storage-redis.d.ts" />
 import * as dotenv from 'dotenv';
 import * as Botkit from 'botkit';
 import * as redisStorage from 'botkit-storage-redis';

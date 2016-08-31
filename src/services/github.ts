@@ -1,4 +1,4 @@
-/// <reference path="../../typings/custom/github.d.ts" />
+/// <reference path="../typings/github.d.ts" />
 import * as GithubApi from 'github';
 
 class Github {
