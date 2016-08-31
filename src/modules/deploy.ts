@@ -20,10 +20,10 @@ class Deploy {
     /**
      * Register any message listeners
      *
-     * @param  {controller} controller
+     * @param  {botController} controller
      * @return {void}
      */
-    messageListeners(controller: controller): void {
+    messageListeners(controller: botController): void {
 
         controller.hears(['deploy ?([a-zA-Z]+)?( with comment )?(.*)?'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
 
@@ -80,11 +80,11 @@ class Deploy {
                     const opsworks: Opsworks = new Opsworks();
                     const deployments = opsworks.deploy(app, comment, action.name);
 
-                    let responses: Array<slackAttachment> = [];
+                    let responses: { [index: string]: slackAttachment; } = {};
 
                     deployments.forEach((deployment) => {
 
-                        let uri = `https://console.aws.amazon.com/opsworks/home?#/stack/${deployment.stack.stackId}/deployments`;
+                        let uri: string = `https://console.aws.amazon.com/opsworks/home?#/stack/${deployment.stack.stackId}/deployments`;
 
                         responses[deployment.stack.appId] = {
                             fallback: `Deploying ${app.name} to ${deployment.stack.name}.`,
@@ -155,12 +155,12 @@ class Deploy {
     /**
      * Update slack with Opsworks responses
      *
-     * @param  {array}  responses
+     * @param  {Object}  responses
      * @param  {slackBot} bot
      * @param  {slackMessage} message
      * @return {void}
      */
-    updateSlack(responses: Array<slackAttachment>, bot: slackBot, message: slackMessage): void {
+    updateSlack(responses: { [index: string]: slackAttachment; }, bot: slackBot, message: slackMessage): void {
 
         let attachments: Array<slackAttachment> = [];
 
@@ -257,7 +257,7 @@ class Deploy {
      */
     pickStack(name: string, comment: string = null): slackReply {
 
-        const app = this.apps.find((app) => {
+        const app: App = this.apps.find((app) => {
             return app.name === name;
         });
 
