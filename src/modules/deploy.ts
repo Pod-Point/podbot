@@ -22,10 +22,10 @@ class Deploy {
     /**
      * Register any message listeners
      *
-     * @param  {Object} controller
+     * @param  {controller} controller
      * @return {void}
      */
-    messageListeners(controller): void {
+    messageListeners(controller: controller): void {
 
         controller.hears(['deploy ?([a-zA-Z]+)?( with comment )?(.*)?'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
 
@@ -44,11 +44,11 @@ class Deploy {
     /**
      * Register any message callbacks to be listened for
      *
-     * @param  {Object} bot
-     * @param  {Object} message
+     * @param  {slackBot} bot
+     * @param  {slackMessage} message
      * @return {void}
      */
-    callbacks(bot, message): void {
+    callbacks(bot: slackBot, message: slackMessage): void {
 
         const action: {name: string, value: string} = message.actions[0];
 
@@ -158,11 +158,11 @@ class Deploy {
      * Update slack with Opsworks responses
      *
      * @param  {array}  responses
-     * @param  {Object} bot
+     * @param  {slackBot} bot
      * @param  {Object} message
      * @return {void}
      */
-    updateSlack(responses: Array<Message>, bot, message) {
+    updateSlack(responses: Array<Message>, bot: slackBot, message): void {
 
         let attachments = [];
 
@@ -214,9 +214,9 @@ class Deploy {
     /**
      * Pick an application to deploy
      *
-     * @return {Object}
+     * @return {slackMessage}
      */
-    pickApp() {
+    pickApp(): slackMessage {
 
         let actions = [];
 
@@ -255,9 +255,9 @@ class Deploy {
      *
      * @param  {string} name
      * @param  {string} comment
-     * @return {Object}
+     * @return {slackMessage}
      */
-    pickStack(name: string, comment: string = null): Object {
+    pickStack(name: string, comment: string = null): slackMessage {
 
         const app = this.apps.find((app) => {
             return app.name === name;

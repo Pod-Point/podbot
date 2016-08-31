@@ -9,7 +9,7 @@ class Coveralls {
      * @param  {webServer} webserver
      * @return {void}
      */
-    webhooks(bot: slackBot, webserver: webServer) {
+    webhooks(bot: slackBot, webserver: webServer): void {
         webserver.post('/coveralls', (req, res) => {
 
             let data: CoverallsWebhook = req.body;
