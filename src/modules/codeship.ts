@@ -9,7 +9,7 @@ class Codeship {
      * @param  {webServer} webserver
      * @return {void}
      */
-    webhooks(bot: slackBot, webserver: webServer) {
+    webhooks(bot: slackBot, webserver: webServer): void {
         webserver.post('/codeship', (req, res) => {
 
             let data: CodeshipWebhook = req.body.build;

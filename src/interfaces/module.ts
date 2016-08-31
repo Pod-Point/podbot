@@ -3,45 +3,46 @@ interface Module {
     /**
      * Register any webhooks to be listened for
      *
-     * @param  {[type]} bot
-     * @param  {[type]} webserver
+     * @param  {slackBot} bot
+     * @param  {webServer} webserver
      * @return {void}
      */
-    webhooks?: (bot, webserver: webServer) => void;
+    webhooks?: (bot: slackBot, webserver: webServer) => void;
 
     /**
      * Register any message callbacks to be listened for
      *
-     * @param  {[type]} bot
+     * @param  {slackBot} bot
      * @param  {[type]} message
      * @return {void}
      */
-    callbacks?: (bot, message) => void;
+    callbacks?: (bot: slackBot, message) => void;
 
     /**
      * Register any slash commands
      *
-     * @param  {[type]} bot
+     * @param  {slackBot} bot
      * @param  {[type]} message
      * @return {void}
      */
-    slashCommands?: (bot, message) => void;
+    slashCommands?: (bot: slackBot, message) => void;
 
     /**
      * Register any message listeners
      *
-     * @param  {[type]} controller
+     * @param  {controller} controller
+     * @param  {slackBot} bot
      * @return {void}
      */
-    messageListeners?: (controller, bot) => void;
+    messageListeners?: (controller: controller, bot: slackBot) => void;
 
     /**
      * Register any cronjobs
      *
-     * @param  {[type]} bot
+     * @param  {slackBot} bot
      * @return {void}
      */
-    cronjobs?: (bot) => void;
+    cronjobs?: (bot: slackBot) => void;
 }
 
 export default Module;
