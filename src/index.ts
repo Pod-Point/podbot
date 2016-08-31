@@ -19,14 +19,14 @@ if (!process.env.CLIENT_ID || !process.env.CLIENT_SECRET || !process.env.PORT ||
 
 if (process.env.ENV === 'local') {
 
-    var botParams: any = {
+    var botParams: botParams = {
         debug: true,
         json_file_store: './db'
     };
 
 } else {
 
-    var botParams: any = {
+    var botParams: botParams = {
         debug: false,
         storage: redisStorage()
     };
@@ -40,8 +40,6 @@ const controller: botController = Botkit.slackbot(botParams).configureSlackApp({
         'bot'
     ]
 });
-
-// Load modules
 
 const prClosed: Module = new PrClosed();
 const codeship: Module = new Codeship();
@@ -57,8 +55,6 @@ const modules: Array<any> = [
     deploy
 ];
 
-// Start bot
-
 controller.storage.teams.get(process.env.TEAM, (err, team) => {
 
     controller.spawn(team).startRTM((err, bot) => {
@@ -67,6 +63,9 @@ controller.storage.teams.get(process.env.TEAM, (err, team) => {
             console.log('Error connecting bot to Slack:', err);
         }
 
+        /**
+         * Set up listening webserver endpoints
+         */
         controller.setupWebserver(process.env.PORT, (err, webserver) => {
 
             controller.createHomepageEndpoint(controller.webserver);
@@ -83,6 +82,9 @@ controller.storage.teams.get(process.env.TEAM, (err, team) => {
 
         });
 
+        /**
+         * Listen for interactive slack message callbacks
+         */
         controller.on('interactive_message_callback', (bot, message) => {
 
             if (message.token !== process.env.VERIFY_TOKEN) {
@@ -93,6 +95,9 @@ controller.storage.teams.get(process.env.TEAM, (err, team) => {
 
         });
 
+        /**
+         * Listen for slash commands
+         */
         controller.on('slash_command', (bot, message) => {
 
             if (message.token !== process.env.VERIFY_TOKEN) {
@@ -103,7 +108,14 @@ controller.storage.teams.get(process.env.TEAM, (err, team) => {
 
         });
 
+        /**
+         * Listen for normal slack messages
+         */
         register('messageListeners', controller);
+
+        /**
+         * Register any cronjobs
+         */
         register('cronjobs', bot);
 
     });
