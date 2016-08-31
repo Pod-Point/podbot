@@ -3,8 +3,6 @@ import Github from '../services/github';
 import * as Config from 'config';
 import App from '../interfaces/app';
 import Stack from '../interfaces/stack';
-import Action from '../interfaces/action';
-import Message from '../interfaces/message';
 
 class Deploy {
 
@@ -50,7 +48,7 @@ class Deploy {
      */
     callbacks(bot: slackBot, message: slackMessage): void {
 
-        const action: {name: string, value: string} = message.actions[0];
+        const action: slackAttachmentAction = message.actions[0];
 
         if (action.name === 'cancel') {
 
@@ -82,7 +80,7 @@ class Deploy {
                     const opsworks: Opsworks = new Opsworks();
                     const deployments = opsworks.deploy(app, comment, action.name);
 
-                    let responses: Array<Message> = [];
+                    let responses: Array<slackAttachment> = [];
 
                     deployments.forEach((deployment) => {
 
@@ -159,12 +157,12 @@ class Deploy {
      *
      * @param  {array}  responses
      * @param  {slackBot} bot
-     * @param  {Object} message
+     * @param  {slackMessage} message
      * @return {void}
      */
-    updateSlack(responses: Array<Message>, bot: slackBot, message): void {
+    updateSlack(responses: Array<slackAttachment>, bot: slackBot, message: slackMessage): void {
 
-        let attachments = [];
+        let attachments: Array<slackAttachment> = [];
 
         for (let key in responses) {
             attachments.push(responses[key]);
@@ -214,11 +212,11 @@ class Deploy {
     /**
      * Pick an application to deploy
      *
-     * @return {slackMessage}
+     * @return {slackReply}
      */
-    pickApp(): slackMessage {
+    pickApp(): slackReply {
 
-        let actions = [];
+        let actions: Array<slackAttachmentAction> = [];
 
         this.apps.forEach((app) => {
             actions.push({
@@ -255,9 +253,9 @@ class Deploy {
      *
      * @param  {string} name
      * @param  {string} comment
-     * @return {slackMessage}
+     * @return {slackReply}
      */
-    pickStack(name: string, comment: string = null): slackMessage {
+    pickStack(name: string, comment: string = null): slackReply {
 
         const app = this.apps.find((app) => {
             return app.name === name;
@@ -265,7 +263,7 @@ class Deploy {
 
         if (app) {
 
-            let actions = [];
+            let actions: Array<slackAttachmentAction> = [];
 
             app.stacks.forEach((stack) => {
                 actions.push({
