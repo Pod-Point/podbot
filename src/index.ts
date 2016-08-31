@@ -17,16 +17,18 @@ if (!process.env.CLIENT_ID || !process.env.CLIENT_SECRET || !process.env.PORT ||
     process.exit(1);
 }
 
+let botParams: BotParams = {};
+
 if (process.env.ENV === 'local') {
 
-    var botParams: BotParams = {
+    botParams = {
         debug: true,
         json_file_store: './db'
     };
 
 } else {
 
-    var botParams: BotParams = {
+    botParams = {
         debug: false,
         storage: redisStorage()
     };
