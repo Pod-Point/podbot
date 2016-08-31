@@ -43,9 +43,9 @@ class Opsworks {
 
         }).map((stack) => {
 
-            let promise = new Promise((resolve, reject) => {
+            let promise: Promise<any> = new Promise((resolve, reject) => {
 
-                let params = {
+                let params: OpsworksParams = {
                     AppId: stack.appId,
                     StackId: stack.stackId,
                     Comment: comment,
@@ -62,7 +62,7 @@ class Opsworks {
 
                     } else if (data.DeploymentId) {
 
-                        let params = {
+                        let params: OpsworksParams = {
                             AppId: stack.appId,
                             StackId: stack.stackId,
                             DeploymentIds: [

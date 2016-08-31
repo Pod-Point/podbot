@@ -33,7 +33,7 @@ if (process.env.ENV === 'local') {
 
 }
 
-const controller = Botkit.slackbot(botParams).configureSlackApp({
+const controller: botController = Botkit.slackbot(botParams).configureSlackApp({
     clientId: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
     scopes: [

@@ -14,7 +14,7 @@ class PrClosed {
     webhooks(bot: slackBot, webserver: webServer): void {
         webserver.post('/pr_closed', (req, res) => {
 
-            const hook = req.body;
+            const hook: GithubPrWebhook = req.body;
             const pr = hook.pull_request;
             const repo = hook.repository;
 
@@ -64,6 +64,23 @@ class PrClosed {
             res.send('OK');
         });
     }
+}
+
+interface GithubPrWebhook {
+    action: string;
+    number: number;
+    pull_request: {
+        merged: boolean;
+        title: string;
+        html_url: string;
+        user: {
+            login: string;
+            html_url: string;
+        };
+    };
+    repository: {
+        name: string;
+    };
 }
 
 export default PrClosed;
