@@ -1,4 +1,4 @@
-/// <reference path="../../typings/custom/opsworks.d.ts" />
+/// <reference path="../typings/opsworks.d.ts" />
 import * as AWS from 'aws-sdk';
 import Stack from '../interfaces/stack';
 import App from '../interfaces/app';
@@ -45,7 +45,7 @@ class Opsworks {
 
             let promise: Promise<any> = new Promise((resolve, reject) => {
 
-                let params: OpsworksParams = {
+                let params = {
                     AppId: stack.appId,
                     StackId: stack.stackId,
                     Comment: comment,
@@ -62,7 +62,7 @@ class Opsworks {
 
                     } else if (data.DeploymentId) {
 
-                        let params: OpsworksParams = {
+                        let params = {
                             AppId: stack.appId,
                             StackId: stack.stackId,
                             DeploymentIds: [
