@@ -3,17 +3,20 @@ declare module 'aws-sdk' {
   export class OpsWorks {
     constructor(options?: any);
     endpoint: Endpoint;
-    createDeployment(params: OpsworksParams, next: (err: AwsError, data: any) => void): void;
-    waitFor(type: string, params: OpsworksParams, next: (err: AwsError, data: any) => void): void;
+    createDeployment(params: OpsworksCreateDeploymentParams, next: (err: AwsError, data: any) => void): void;
+    waitFor(type: string, params: OpsworksWaitForParams, next: (err: AwsError, data: any) => void): void;
   }
 
-  export interface OpsworksParams {
+  export interface OpsworksCreateDeploymentParams {
     AppId: string;
     StackId: string;
-    Comment?: string;
-    Command?: {
+    Comment: string;
+    Command: {
         Name: string;
     };
-    DeploymentIds?: Array<string>;
+  }
+
+  export interface OpsworksWaitForParams {
+    DeploymentIds: Array<string>;
   }
 }

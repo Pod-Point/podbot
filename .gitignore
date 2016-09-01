@@ -3,5 +3,4 @@ node_modules
 lib
 .env
 db
-typings/globals
-typings/index.d.ts
+/typings

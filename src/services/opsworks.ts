@@ -63,8 +63,6 @@ class Opsworks {
                     } else if (data.DeploymentId) {
 
                         let params = {
-                            AppId: stack.appId,
-                            StackId: stack.stackId,
                             DeploymentIds: [
                                 data.DeploymentId
                             ]
