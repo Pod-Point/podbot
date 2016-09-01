@@ -20,7 +20,7 @@ class Deploy {
     /**
      * Register any message listeners
      *
-     * @param  {botController} controller
+     * @param  {BotController} controller
      * @return {void}
      */
     messageListeners(controller: BotController): void {
@@ -157,7 +157,7 @@ class Deploy {
      *
      * @param  {Object}  responses
      * @param  {SlackBot} bot
-     * @param  {slackMessage} message
+     * @param  {SlackMessage} message
      * @return {void}
      */
     updateSlack(responses: { [index: string]: SlackAttachment; }, bot: SlackBot, message: SlackMessage): void {

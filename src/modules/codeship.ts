@@ -5,7 +5,7 @@ class Codeship {
     /**
      * Register any webhooks to be listened for
      *
-     * @param  {slackBot} bot
+     * @param  {SlackBot} bot
      * @param  {WebServer} webserver
      * @return {void}
      */
