@@ -1,6 +1,11 @@
-import AWS from 'aws-sdk';
+/// <reference path="../typings/opsworks.d.ts" />
+import * as AWS from 'aws-sdk';
+import Stack from '../interfaces/stack';
+import App from '../interfaces/app';
 
 class Opsworks {
+
+    private api: AWS.OpsWorks;
 
     /**
      * Perform api functions on AWS Opsworks
@@ -21,14 +26,14 @@ class Opsworks {
     /**
      * Deploy an Opsworks app
      *
-     * @param  {Object} app
+     * @param  {App} app
      * @param  {string} comment
      * @param  {string} deploy
-     * @return {array}
+     * @return {Array}
      */
-    deploy(app, comment, deploy = 'all') {
+    deploy(app: App, comment: string, deploy: string = 'all'): Array<{stack: Stack, promise: Promise<any>}> {
 
-        let deployments = app.stacks.filter((stack) => {
+        return app.stacks.filter((stack) => {
 
             if (deploy !== 'all' && stack.name !== deploy) {
                 return false;
@@ -38,7 +43,7 @@ class Opsworks {
 
         }).map((stack) => {
 
-            let promise = new Promise((resolve, reject) => {
+            let promise: Promise<any> = new Promise((resolve, reject) => {
 
                 let params = {
                     AppId: stack.appId,
@@ -58,8 +63,6 @@ class Opsworks {
                     } else if (data.DeploymentId) {
 
                         let params = {
-                            AppId: app.appId,
-                            StackId: app.stackId,
                             DeploymentIds: [
                                 data.DeploymentId
                             ]
@@ -87,8 +90,6 @@ class Opsworks {
             };
 
         });
-
-        return deployments;
     }
 }
 

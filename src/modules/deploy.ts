@@ -1,22 +1,34 @@
-import Base from './base';
 import Opsworks from '../services/opsworks';
 import Github from '../services/github';
-import Config from 'config';
+import * as Config from 'config';
+import App from '../interfaces/app';
+import Stack from '../interfaces/stack';
 
-class Deploy extends Base {
+class Deploy {
+
+    private apps: Array<App>;
+
+    /**
+     * Perform api functions on AWS Opsworks
+     *
+     * @return {void}
+     */
+    constructor() {
+        this.apps = Config.get<Array<App>>('apps');
+    }
 
     /**
      * Register any message listeners
      *
-     * @param  {Object} controller
+     * @param  {BotController} controller
      * @return {void}
      */
-    messageListeners(controller) {
+    messageListeners(controller: BotController): void {
 
         controller.hears(['deploy ?([a-zA-Z]+)?( with comment )?(.*)?'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
 
-            let name = message.match[1];
-            let comment = message.match[3];
+            let name: string = message.match[1];
+            let comment: string = message.match[3];
 
             if (typeof name === 'undefined') {
                 bot.reply(message, this.pickApp());
@@ -30,13 +42,13 @@ class Deploy extends Base {
     /**
      * Register any message callbacks to be listened for
      *
-     * @param  {Object} bot
-     * @param  {Object} message
+     * @param  {SlackBot} bot
+     * @param  {SlackMessage} message
      * @return {void}
      */
-    callbacks(bot, message) {
+    callbacks(bot: SlackBot, message: SlackMessage): void {
 
-        const action = message.actions[0];
+        const action: SlackAttachmentAction = message.actions[0];
 
         if (action.name === 'cancel') {
 
@@ -48,31 +60,31 @@ class Deploy extends Base {
 
         }
 
-        if (message.callback_id == 'select-app') {
+        if (message.callback_id === 'select-app') {
 
             bot.replyInteractive(message, this.pickStack(action.value));
 
         }
 
-        if (message.callback_id == 'deploy') {
+        if (message.callback_id === 'deploy') {
 
-            const data = JSON.parse(action.value);
-            const app = Config.get('apps').find((app) => {
-                return app.name == data.app;
+            const data: {app: string, comment: string} = JSON.parse(action.value);
+            const app: App = this.apps.find((app) => {
+                return app.name === data.app;
             });
 
             if (app) {
 
                 this.getComment(app.repo, data.comment).then((comment) => {
 
-                    const opsworks = new Opsworks();
+                    const opsworks: Opsworks = new Opsworks();
                     const deployments = opsworks.deploy(app, comment, action.name);
 
-                    let responses = [];
+                    let responses: { [index: string]: SlackAttachment; } = {};
 
                     deployments.forEach((deployment) => {
 
-                        let uri = `https://console.aws.amazon.com/opsworks/home?#/stack/${deployment.stack.stackId}/deployments`;
+                        let uri: string = `https://console.aws.amazon.com/opsworks/home?#/stack/${deployment.stack.stackId}/deployments`;
 
                         responses[deployment.stack.appId] = {
                             fallback: `Deploying ${app.name} to ${deployment.stack.name}.`,
@@ -143,14 +155,14 @@ class Deploy extends Base {
     /**
      * Update slack with Opsworks responses
      *
-     * @param  {array}  responses
-     * @param  {Object} bot
-     * @param  {Object} message
+     * @param  {Object}  responses
+     * @param  {SlackBot} bot
+     * @param  {SlackMessage} message
      * @return {void}
      */
-    updateSlack(responses, bot, message) {
+    updateSlack(responses: { [index: string]: SlackAttachment; }, bot: SlackBot, message: SlackMessage): void {
 
-        let attachments = [];
+        let attachments: Array<SlackAttachment> = [];
 
         for (let key in responses) {
             attachments.push(responses[key]);
@@ -164,10 +176,11 @@ class Deploy extends Base {
     /**
      * Get comment from github if not defined
      *
-     * @param  {string|null} comment
+     * @param  {string} comment
+     * @param  {string} comment
      * @return {Promise}
      */
-    getComment(repo, comment) {
+    getComment(repo: string, comment: string): Promise<string> {
 
         if (comment) {
 
@@ -177,7 +190,7 @@ class Deploy extends Base {
 
         } else {
 
-            const github = new Github();
+            const github: Github = new Github();
 
             return new Promise((resolve, reject) => {
 
@@ -199,17 +212,19 @@ class Deploy extends Base {
     /**
      * Pick an application to deploy
      *
-     * @return {Object}
+     * @return {SlackReply}
      */
-    pickApp() {
+    pickApp(): SlackReply {
 
-        let actions = Config.get('apps').map((app) => {
-            return {
+        let actions: Array<SlackAttachmentAction> = [];
+
+        this.apps.forEach((app) => {
+            actions.push({
                 name: app.name,
                 text: app.name,
                 value: app.name,
                 type: 'button'
-            };
+            });
         });
 
         actions.push({
@@ -238,18 +253,20 @@ class Deploy extends Base {
      *
      * @param  {string} name
      * @param  {string} comment
-     * @return {Object}
+     * @return {SlackReply}
      */
-    pickStack(name, comment = null) {
+    pickStack(name: string, comment: string = null): SlackReply {
 
-        const app = Config.get('apps').find((app) => {
-            return app.name == name;
+        const app: App = this.apps.find((app) => {
+            return app.name === name;
         });
 
         if (app) {
 
-            let actions = app.stacks.map((stack) => {
-                return {
+            let actions: Array<SlackAttachmentAction> = [];
+
+            app.stacks.forEach((stack) => {
+                actions.push({
                     name: stack.name,
                     text: stack.name,
                     value: JSON.stringify({
@@ -257,7 +274,7 @@ class Deploy extends Base {
                         comment: comment
                     }),
                     type: 'button'
-                };
+                });
             });
 
             actions.push({

@@ -1,24 +1,23 @@
-import Base from './base';
-import Config from 'config';
+import * as Config from 'config';
 
-class Codeship extends Base {
+class Codeship {
 
     /**
      * Register any webhooks to be listened for
      *
-     * @param  {[type]} bot
-     * @param  {[type]} webserver
+     * @param  {SlackBot} bot
+     * @param  {WebServer} webserver
      * @return {void}
      */
-    webhooks(bot, webserver) {
+    webhooks(bot: SlackBot, webserver: WebServer): void {
         webserver.post('/codeship', (req, res) => {
 
-            let data = req.body.build;
+            let data: CodeshipWebhook = req.body.build;
 
-            if (data.status == 'error' && data.branch == 'master') {
+            if (data.status === 'error' && data.branch === 'master') {
 
-                let message = {
-                    channel: Config.get('channels.software.name'),
+                let message: SlackReply = {
+                    channel: Config.get<string>('channels.software.name'),
                     attachments: [
                         {
                             fallback: `Build for ${data.branch} branch on ${data.project_name} has failed.`,
@@ -49,6 +48,14 @@ class Codeship extends Base {
             res.send('OK');
         });
     }
+}
+
+interface CodeshipWebhook {
+    status: string;
+    branch: string;
+    project_name: string;
+    message: string;
+    build_url: string;
 }
 
 export default Codeship;
