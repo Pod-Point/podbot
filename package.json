@@ -3,23 +3,26 @@
   "version": "1.0.0",
   "main": "lib/index.js",
   "scripts": {
-    "start": "npm run build && node lib/index.js",
-    "build": "babel src -d lib",
-    "watch": "nodemon src/index.js --exec babel-node --presets es2015,stage-2"
+    "start": "npm run tsc && node lib/index.js",
+    "tsc": "tsc",
+    "tsc:w": "tsc -w",
+    "watch": "concurrently --kill-others \"tsc -w\" \"nodemon lib/index.js\"",
+    "typings": "typings",
+    "postinstall": "typings install"
   },
   "dependencies": {
     "aws-sdk": "^2.4.4",
     "botkit": "^0.2.2",
     "botkit-storage-redis": "^1.0.1",
+    "concurrently": "^2.2.0",
     "config": "^1.21.0",
     "cron": "^1.1.0",
     "dotenv": "^2.0.0",
-    "github": "^2.5.1"
+    "github": "^2.5.1",
+    "typescript": "^1.8.10",
+    "typings": "^1.3.3"
   },
   "devDependencies": {
-    "babel-cli": "^6.10.1",
-    "babel-preset-es2015": "^6.9.0",
-    "babel-preset-stage-2": "^6.11.0",
     "nodemon": "^1.9.2"
   }
 }

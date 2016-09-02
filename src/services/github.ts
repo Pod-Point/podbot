@@ -1,6 +1,9 @@
-import GithubApi from 'github';
+/// <reference path="../typings/github.d.ts" />
+import * as GithubApi from 'github';
 
 class Github {
+
+    private github: GithubApi;
 
     /**
      * Perform api functions on Github
@@ -30,7 +33,7 @@ class Github {
      * @param  {string} repo
      * @return {Promise}
      */
-    getLastPr(repo) {
+    getLastPr(repo: string): Promise<Array<any>> {
 
         return this.github.pullRequests.getAll({
             user: 'Pod-Point',
