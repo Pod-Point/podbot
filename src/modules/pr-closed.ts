@@ -1,31 +1,32 @@
-import Base from './base';
 import Opsworks from '../services/opsworks';
-import Config from 'config';
+import * as Config from 'config';
+import App from '../interfaces/app';
 
-class PrClosed extends Base {
+class PrClosed {
 
     /**
      * Register any webhooks to be listened for
      *
-     * @param  {[type]} webserver
+     * @param  {SlackBot} bot
+     * @param  {WebServer} webserver
      * @return {void}
      */
-    webhooks(bot, webserver) {
+    webhooks(bot: SlackBot, webserver: WebServer): void {
         webserver.post('/pr_closed', (req, res) => {
 
-            const hook = req.body;
+            const hook: GithubPrWebhook = req.body;
             const pr = hook.pull_request;
             const repo = hook.repository;
 
-            const app = Config.get('apps').find((app) => {
-                return app.repo == repo.name;
+            const app = Config.get<Array<App>>('apps').find((app) => {
+                return app.repo === repo.name;
             });
 
-            if (hook.action == 'closed' && pr.merged === true) {
+            if (hook.action === 'closed' && pr.merged === true) {
 
-                let message = {
+                let message: SlackReply = {
 
-                    channel: Config.get('channels.software.name'),
+                    channel: Config.get<string>('channels.software.name'),
                     unfurl_links: false,
                     attachments: [
                         {
@@ -63,6 +64,23 @@ class PrClosed extends Base {
             res.send('OK');
         });
     }
+}
+
+interface GithubPrWebhook {
+    action: string;
+    number: number;
+    pull_request: {
+        merged: boolean;
+        title: string;
+        html_url: string;
+        user: {
+            login: string;
+            html_url: string;
+        };
+    };
+    repository: {
+        name: string;
+    };
 }
 
 export default PrClosed;
