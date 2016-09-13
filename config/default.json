@@ -22,8 +22,8 @@
 	            },
 	            {
 	                "name": "MIS Staging",
-	                "stackId": "9030b7a5-1dc0-4838-9152-cea0c04cbdcf",
-	                "appId": "3e43a965-4885-4d43-84d6-12e23b5f74a9"
+	                "stackId": "2cc18bb6-7389-4f4d-b9ac-3d4080db6cac",
+	                "appId": "11b38db1-da23-4564-ad87-8d7f473ef57b"
 	            }
 	        ]
 	    },
@@ -38,8 +38,8 @@
 	            },
 	            {
 	                "name": "Installs Staging",
-	                "stackId": "0dab851b-df2e-4d18-bdb1-5fa948ce2661",
-	                "appId": "39228efd-f8d8-47a5-bedc-68b25f92ce4c"
+	                "stackId": "5cc8a380-d67b-459f-a551-073cce33e6dd",
+	                "appId": "8b6130e7-f4bc-4700-8d90-76af17014ef7"
 	            }
 	        ]
 	    },
@@ -103,8 +103,8 @@
 		        },
 		        {
 		            "name": "Pod Point CMS Staging",
-		            "stackId": "8f42b4c2-6ff9-49bb-a4f0-3a2aeff0058e",
-		            "appId": "7226958c-182a-48ea-a233-65fa7144071d"
+		            "stackId": "03641413-58c4-4196-a88f-078979d35f72",
+		            "appId": "37dafa24-410b-4407-8a53-ee05ae3635fd"
 		        }
 	        ]
 	    },
@@ -116,6 +116,33 @@
 		            "name": "Installs Reporting Production",
 		            "stackId": "8d1cefd0-ca19-4a36-b477-28ec5eb47d21",
 		            "appId": "50ac25c3-7e60-42e8-8054-ad2fd13a137d"
+		        }
+	        ]
+	    },
+	    {
+	        "name": "pdfService",
+	        "repo": "pdf-service",
+	        "stacks": [
+	        	{
+		            "name": "PDF Service Production",
+		            "stackId": "98695b6a-3a80-4cdb-9ff8-1dfdc71b9a55",
+		            "appId": "4e5cda4e-7de2-43e8-b6ca-a1fd80270b01"
+		        }
+	        ]
+	    },
+	    {
+	        "name": "commissioningService",
+	        "repo": "commissioning-service",
+	        "stacks": [
+	        	{
+		            "name": "Commissioning Service Production",
+		            "stackId": "7d83f4d8-8db1-47d2-b7b0-53d00955cf86",
+		            "appId": "1595adb1-64d4-419d-9971-0628504b0673"
+		        },
+		        {
+		            "name": "Commissioning Service Staging",
+		            "stackId": "65a2666c-02bd-4f03-b882-01f990b6f09a",
+		            "appId": "b45ef57b-4007-4aaa-ba7a-523947f6f272"
 		        }
 	        ]
 	    }
