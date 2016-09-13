@@ -5,7 +5,7 @@ import App from '../interfaces/app';
 
 class Opsworks {
 
-    private api: AWS.OpsWorks;
+    private endpoints: { [key: string]: AWS.OpsWorks };
 
     /**
      * Perform api functions on AWS Opsworks
@@ -18,9 +18,14 @@ class Opsworks {
             secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
         });
 
-        this.api = new AWS.OpsWorks({
-            region: 'us-east-1'
-        });
+        this.endpoints = {
+            'us-east-1': new AWS.OpsWorks({
+                region: 'us-east-1'
+            }),
+            'eu-west-1': new AWS.OpsWorks({
+                region: 'eu-west-1'
+            })
+        };
     }
 
     /**
@@ -54,7 +59,7 @@ class Opsworks {
                     }
                 };
 
-                this.api.createDeployment(params, (err, data) => {
+                this.endpoints[stack.region].createDeployment(params, (err, data) => {
 
                     if (err) {
 
@@ -68,7 +73,7 @@ class Opsworks {
                             ]
                         };
 
-                        this.api.waitFor('deploymentSuccessful', params, (err, data) => {
+                        this.endpoints[stack.region].waitFor('deploymentSuccessful', params, (err, data) => {
 
                             if (err) {
 

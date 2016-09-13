@@ -84,7 +84,7 @@ class Deploy {
 
                     deployments.forEach((deployment) => {
 
-                        let uri: string = `https://console.aws.amazon.com/opsworks/home?#/stack/${deployment.stack.stackId}/deployments`;
+                        let uri: string = `https://console.aws.amazon.com/opsworks/home?region=${deployment.stack.region}#/stack/${deployment.stack.stackId}/deployments`;
 
                         responses[deployment.stack.appId] = {
                             fallback: `Deploying ${app.name} to ${deployment.stack.name}.`,

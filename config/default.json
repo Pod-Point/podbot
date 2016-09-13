@@ -13,17 +13,20 @@
 	        	{
 	                "name": "MIS Production",
 	                "stackId": "e7f0fae6-1c53-4453-afaa-9bee37ea0752",
-	                "appId": "648c41c6-6167-41dc-8168-b6312db678b7"
+	                "appId": "648c41c6-6167-41dc-8168-b6312db678b7",
+	                "region": "us-east-1"
 	            },
 	            {
 	                "name": "MIS Demo",
 	                "stackId": "de471941-1a0c-4694-b723-8138c6e7316b",
-	                "appId": "b26d2a50-2f6a-4606-8638-0ea2e3d1359c"
+	                "appId": "b26d2a50-2f6a-4606-8638-0ea2e3d1359c",
+	                "region": "us-east-1"
 	            },
 	            {
 	                "name": "MIS Staging",
 	                "stackId": "2cc18bb6-7389-4f4d-b9ac-3d4080db6cac",
-	                "appId": "11b38db1-da23-4564-ad87-8d7f473ef57b"
+	                "appId": "11b38db1-da23-4564-ad87-8d7f473ef57b",
+	                "region": "eu-west-1"
 	            }
 	        ]
 	    },
@@ -34,12 +37,14 @@
 	            {
 	                "name": "Installs Production",
 	                "stackId": "416265b1-10fe-4f1a-8b66-d96fe11974c3",
-	                "appId": "905fbf33-0b1b-474d-9ab9-774fbb471022"
+	                "appId": "905fbf33-0b1b-474d-9ab9-774fbb471022",
+	                "region": "us-east-1"
 	            },
 	            {
 	                "name": "Installs Staging",
 	                "stackId": "5cc8a380-d67b-459f-a551-073cce33e6dd",
-	                "appId": "8b6130e7-f4bc-4700-8d90-76af17014ef7"
+	                "appId": "8b6130e7-f4bc-4700-8d90-76af17014ef7",
+	                "region": "eu-west-1"
 	            }
 	        ]
 	    },
@@ -50,12 +55,14 @@
 	        	{
 		            "name": "API v3 Production",
 		            "stackId": "269b9fa8-536b-4c9c-b1c4-3a71ffc06e05",
-		            "appId": "f5d35b2c-b753-4bde-a091-970e31b68dab"
+		            "appId": "f5d35b2c-b753-4bde-a091-970e31b68dab",
+		            "region": "us-east-1"
 		        },
 		        {
 		            "name": "API v3 Staging",
 		            "stackId": "2a6abc21-4e4f-49eb-9f3e-8d66c38f6344",
-		            "appId": "fc18f631-b420-45a2-994b-5bb0db3e194a"
+		            "appId": "fc18f631-b420-45a2-994b-5bb0db3e194a",
+		            "region": "us-east-1"
 		        }
 	        ]
 	    },
@@ -66,7 +73,8 @@
 	        	{
 		            "name": "Renault Production",
 		            "stackId": "42b33c97-00e6-42a2-9dfe-22641486ae3a",
-		            "appId": "2ef52391-6109-4f06-b9be-0aeeb0937839"
+		            "appId": "2ef52391-6109-4f06-b9be-0aeeb0937839",
+		            "region": "us-east-1"
 		        }
 	        ]
 	    },
@@ -77,7 +85,8 @@
 	        	{
 		            "name": "Dashboard Service Production",
 		            "stackId": "d2dc278b-1026-4297-a8ae-26ea9397d27b",
-		            "appId": "58e02c16-726c-47d8-a70a-5b53746ea784"
+		            "appId": "58e02c16-726c-47d8-a70a-5b53746ea784",
+		            "region": "us-east-1"
 		        }
 	        ]
 	    },
@@ -88,7 +97,8 @@
 	        	{
 		            "name": "OpenCharge Wep App Production",
 		            "stackId": "f0f4512a-da64-4638-a639-6a73ea2d3404",
-		            "appId": "d75aa708-4124-4007-bd6e-c380f66d8cd7"
+		            "appId": "d75aa708-4124-4007-bd6e-c380f66d8cd7",
+		            "region": "us-east-1"
 		        }
 	        ]
 	    },
@@ -99,12 +109,14 @@
 	        	{
 		            "name": "Pod Point CMS Production",
 		            "stackId": "5bd9478e-f63a-41b4-b040-dddb9dca4d02",
-		            "appId": "231ad2f0-6e0d-41d5-aeed-772fa1c18876"
+		            "appId": "231ad2f0-6e0d-41d5-aeed-772fa1c18876",
+		            "region": "us-east-1"
 		        },
 		        {
 		            "name": "Pod Point CMS Staging",
 		            "stackId": "03641413-58c4-4196-a88f-078979d35f72",
-		            "appId": "37dafa24-410b-4407-8a53-ee05ae3635fd"
+		            "appId": "37dafa24-410b-4407-8a53-ee05ae3635fd",
+		            "region": "eu-west-1"
 		        }
 	        ]
 	    },
@@ -115,7 +127,8 @@
 	        	{
 		            "name": "Installs Reporting Production",
 		            "stackId": "8d1cefd0-ca19-4a36-b477-28ec5eb47d21",
-		            "appId": "50ac25c3-7e60-42e8-8054-ad2fd13a137d"
+		            "appId": "50ac25c3-7e60-42e8-8054-ad2fd13a137d",
+		            "region": "us-east-1"
 		        }
 	        ]
 	    },
@@ -126,7 +139,8 @@
 	        	{
 		            "name": "PDF Service Production",
 		            "stackId": "98695b6a-3a80-4cdb-9ff8-1dfdc71b9a55",
-		            "appId": "4e5cda4e-7de2-43e8-b6ca-a1fd80270b01"
+		            "appId": "4e5cda4e-7de2-43e8-b6ca-a1fd80270b01",
+		            "region": "eu-west-1"
 		        }
 	        ]
 	    },
@@ -137,12 +151,14 @@
 	        	{
 		            "name": "Commissioning Service Production",
 		            "stackId": "7d83f4d8-8db1-47d2-b7b0-53d00955cf86",
-		            "appId": "1595adb1-64d4-419d-9971-0628504b0673"
+		            "appId": "1595adb1-64d4-419d-9971-0628504b0673",
+		            "region": "us-east-1"
 		        },
 		        {
 		            "name": "Commissioning Service Staging",
 		            "stackId": "65a2666c-02bd-4f03-b882-01f990b6f09a",
-		            "appId": "b45ef57b-4007-4aaa-ba7a-523947f6f272"
+		            "appId": "b45ef57b-4007-4aaa-ba7a-523947f6f272",
+		            "region": "us-east-1"
 		        }
 	        ]
 	    }
