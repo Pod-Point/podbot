@@ -49,7 +49,7 @@ const coveralls: Module = new Coveralls();
 const messages: Module = new Messages();
 const deploy: Module = new Deploy();
 
-const modules: Array<any> = [
+const modules: any[] = [
     prClosed,
     codeship,
     coveralls,
@@ -126,14 +126,14 @@ controller.storage.teams.get(process.env.TEAM, (err, team) => {
 /**
  * Call register functions on modules
  *
- * @param  {string} type
+ * @param  {string} callback
  * @param  {...} args
  * @return {void}
  */
-function register(type: string, ...args: any[]): void {
-    modules.forEach((module) => {
-        if (typeof module[type] === 'function') {
-            module[type](...args);
+function register(callback: string, ...args: any[]): void {
+    modules.forEach((botModule) => {
+        if (typeof botModule[callback] === 'function') {
+            botModule[callback](...args);
         }
     });
 }

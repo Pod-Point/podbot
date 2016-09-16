@@ -1,7 +1,7 @@
 import { CronJob } from 'cron';
 import * as Config from 'config';
 
-class Messages {
+export default class Messages {
 
     /**
      * Register any cronjobs
@@ -9,7 +9,7 @@ class Messages {
      * @param  {SlackBot} bot
      * @return {void}
      */
-    cronjobs(bot: SlackBot): void {
+    public cronjobs(bot: SlackBot): void {
 
         new CronJob('00 45 09 * * 1-5', () => {
 
@@ -31,5 +31,3 @@ class Messages {
 
     }
 }
-
-export default Messages;

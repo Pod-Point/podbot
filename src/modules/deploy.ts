@@ -2,11 +2,10 @@ import Opsworks from '../services/opsworks';
 import Github from '../services/github';
 import * as Config from 'config';
 import App from '../interfaces/app';
-import Stack from '../interfaces/stack';
 
-class Deploy {
+export default class Deploy {
 
-    private apps: Array<App>;
+    private apps: App[];
 
     /**
      * Perform api functions on AWS Opsworks
@@ -14,7 +13,7 @@ class Deploy {
      * @return {void}
      */
     constructor() {
-        this.apps = Config.get<Array<App>>('apps');
+        this.apps = Config.get<App[]>('apps');
     }
 
     /**
@@ -23,14 +22,14 @@ class Deploy {
      * @param  {BotController} controller
      * @return {void}
      */
-    messageListeners(controller: BotController): void {
+    public messageListeners(controller: BotController): void {
 
         controller.hears(['deploy ?([a-zA-Z]+)?( with comment )?(.*)?'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
 
-            let name: string = message.match[1];
-            let comment: string = message.match[3];
+            const name: string = message.match[1];
+            const comment: string = message.match[3];
 
-            if (typeof name === 'undefined') {
+            if (name === undefined) {
                 bot.reply(message, this.pickApp());
             } else {
                 bot.reply(message, this.pickStack(name, comment));
@@ -46,7 +45,7 @@ class Deploy {
      * @param  {SlackMessage} message
      * @return {void}
      */
-    callbacks(bot: SlackBot, message: SlackMessage): void {
+    public callbacks(bot: SlackBot, message: SlackMessage): void {
 
         const action: SlackAttachmentAction = message.actions[0];
 
@@ -80,11 +79,11 @@ class Deploy {
                     const opsworks: Opsworks = new Opsworks();
                     const deployments = opsworks.deploy(app, comment, action.name);
 
-                    let responses: { [index: string]: SlackAttachment; } = {};
+                    const responses: { [index: string]: SlackAttachment; } = {};
 
                     deployments.forEach((deployment) => {
 
-                        let uri: string = `https://console.aws.amazon.com/opsworks/home?region=${deployment.stack.region}#/stack/${deployment.stack.stackId}/deployments`;
+                        const uri: string = `https://console.aws.amazon.com/opsworks/home?region=${deployment.stack.region}#/stack/${deployment.stack.stackId}/deployments`;
 
                         responses[deployment.stack.appId] = {
                             fallback: `Deploying ${app.name} to ${deployment.stack.name}.`,
@@ -98,7 +97,7 @@ class Deploy {
                             responses[deployment.stack.appId] = {
                                 fallback: `Deployed ${app.name} to ${deployment.stack.name}.`,
                                 color: 'good',
-                                title: `Success!`,
+                                title: 'Success!',
                                 text: `Deployed ${app.name} to ${deployment.stack.name} :blush:`
                             };
 
@@ -160,13 +159,13 @@ class Deploy {
      * @param  {SlackMessage} message
      * @return {void}
      */
-    updateSlack(responses: { [index: string]: SlackAttachment; }, bot: SlackBot, message: SlackMessage): void {
+    private updateSlack(responses: { [index: string]: SlackAttachment; }, bot: SlackBot, message: SlackMessage): void {
 
-        let attachments: Array<SlackAttachment> = [];
+        const attachments: SlackAttachment[] = [];
 
-        for (let key in responses) {
+        Object.keys(responses).forEach((key) => {
             attachments.push(responses[key]);
-        }
+        });
 
         bot.replyInteractive(message, {
             attachments: attachments
@@ -180,7 +179,7 @@ class Deploy {
      * @param  {string} comment
      * @return {Promise}
      */
-    getComment(repo: string, comment: string): Promise<string> {
+    private getComment(repo: string, comment: string): Promise<string> {
 
         if (comment) {
 
@@ -214,9 +213,9 @@ class Deploy {
      *
      * @return {SlackReply}
      */
-    pickApp(): SlackReply {
+    private pickApp(): SlackReply {
 
-        let actions: Array<SlackAttachmentAction> = [];
+        const actions: SlackAttachmentAction[] = [];
 
         this.apps.forEach((app) => {
             actions.push({
@@ -255,7 +254,7 @@ class Deploy {
      * @param  {string} comment
      * @return {SlackReply}
      */
-    pickStack(name: string, comment: string = null): SlackReply {
+    private pickStack(name: string, comment: string = null): SlackReply {
 
         const app: App = this.apps.find((app) => {
             return app.name === name;
@@ -263,7 +262,7 @@ class Deploy {
 
         if (app) {
 
-            let actions: Array<SlackAttachmentAction> = [];
+            const actions: SlackAttachmentAction[] = [];
 
             app.stacks.forEach((stack) => {
                 actions.push({
@@ -322,5 +321,3 @@ class Deploy {
         }
     }
 }
-
-export default Deploy;
