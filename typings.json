@@ -1,10 +1,14 @@
 {
   "globalDependencies": {
     "aws-sdk": "registry:dt/aws-sdk#0.0.0+20160811005841",
+    "chai": "registry:dt/chai#3.4.0+20160601211834",
     "config": "registry:dt/config#0.0.0+20160317120654",
     "cron": "registry:dt/cron#1.0.9+20160316155526",
     "dotenv": "registry:dt/dotenv#2.0.0+20160327131627",
     "es6-shim": "registry:dt/es6-shim#0.31.2+20160602141504",
-    "node": "registry:dt/node#6.0.0+20160823142437"
+    "mocha": "registry:dt/mocha#2.2.5+20160720003353",
+    "node": "registry:dt/node#6.0.0+20160823142437",
+    "proxyquire": "registry:dt/proxyquire#1.3.0+20160316155526",
+    "sinon": "registry:dt/sinon#1.16.0+20160517064723"
   }
 }
