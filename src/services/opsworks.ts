@@ -3,7 +3,7 @@ import * as AWS from 'aws-sdk';
 import Stack from '../interfaces/stack';
 import App from '../interfaces/app';
 
-class Opsworks {
+export default class Opsworks {
 
     private endpoints: { [key: string]: AWS.OpsWorks };
 
@@ -36,7 +36,7 @@ class Opsworks {
      * @param  {string} deploy
      * @return {Array}
      */
-    deploy(app: App, comment: string, deploy: string = 'all'): Array<{stack: Stack, promise: Promise<any>}> {
+    public deploy(app: App, comment: string, deploy: string = 'all'): {stack: Stack, promise: Promise<any>}[] {
 
         return app.stacks.filter((stack) => {
 
@@ -48,9 +48,9 @@ class Opsworks {
 
         }).map((stack) => {
 
-            let promise: Promise<any> = new Promise((resolve, reject) => {
+            const promise: Promise<any> = new Promise((resolve, reject) => {
 
-                let params = {
+                const params = {
                     AppId: stack.appId,
                     StackId: stack.stackId,
                     Comment: comment,
@@ -67,7 +67,7 @@ class Opsworks {
 
                     } else if (data.DeploymentId) {
 
-                        let params = {
+                        const params = {
                             DeploymentIds: [
                                 data.DeploymentId
                             ]
@@ -97,5 +97,3 @@ class Opsworks {
         });
     }
 }
-
-export default Opsworks;

@@ -23,3 +23,8 @@ If you add a new module you will need to install the typings for the module to t
 * `typings install --save dt~MODULE --global`
 
 You can also create custom typings definitions in `src/typings`.
+
+## Linting
+
+We use [TSLint](https://palantir.github.io/tslint/) as code linting utility, to ensure a consistent code style.
+Linting rules and config can be added to `tslint.json` file.
