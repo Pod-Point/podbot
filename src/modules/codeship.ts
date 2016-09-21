@@ -1,6 +1,6 @@
 import * as Config from 'config';
 
-class Codeship {
+export default class Codeship {
 
     /**
      * Register any webhooks to be listened for
@@ -9,14 +9,14 @@ class Codeship {
      * @param  {WebServer} webserver
      * @return {void}
      */
-    webhooks(bot: SlackBot, webserver: WebServer): void {
+    public webhooks(bot: SlackBot, webserver: WebServer): void {
         webserver.post('/codeship', (req, res) => {
 
-            let data: CodeshipWebhook = req.body.build;
+            const data: CodeshipWebhook = req.body.build;
 
             if (data.status === 'error' && data.branch === 'master') {
 
-                let message: SlackReply = {
+                const message: SlackReply = {
                     channel: Config.get<string>('channels.software.name'),
                     attachments: [
                         {
@@ -57,5 +57,3 @@ interface CodeshipWebhook {
     message: string;
     build_url: string;
 }
-
-export default Codeship;

@@ -1,6 +1,6 @@
 import * as Config from 'config';
 
-class Coveralls {
+export default class Coveralls {
 
     /**
      * Register any webhooks to be listened for
@@ -9,14 +9,14 @@ class Coveralls {
      * @param  {WebServer} webserver
      * @return {void}
      */
-    webhooks(bot: SlackBot, webserver: WebServer): void {
+    public webhooks(bot: SlackBot, webserver: WebServer): void {
         webserver.post('/coveralls', (req, res) => {
 
-            let data: CoverallsWebhook = req.body;
+            const data: CoverallsWebhook = req.body;
 
             if (data.branch === 'master') {
 
-                let message: SlackReply = {
+                const message: SlackReply = {
                     channel: Config.get<string>('channels.software.name'),
                     attachments: [
                         {
@@ -57,5 +57,3 @@ interface CoverallsWebhook {
     commit_message: string;
     url: string;
 }
-
-export default Coveralls;
