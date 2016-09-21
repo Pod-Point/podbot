@@ -1,7 +1,7 @@
 /// <reference path="../typings/github.d.ts" />
 import * as GithubApi from 'github';
 
-class Github {
+export default class Github {
 
     private github: GithubApi;
 
@@ -33,7 +33,7 @@ class Github {
      * @param  {string} repo
      * @return {Promise}
      */
-    getLastPr(repo: string): Promise<Array<any>> {
+    public getLastPr(repo: string): Promise<any[]> {
 
         return this.github.pullRequests.getAll({
             user: 'Pod-Point',
@@ -44,5 +44,3 @@ class Github {
 
     }
 }
-
-export default Github;

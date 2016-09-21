@@ -1,7 +1,7 @@
 interface App {
     name: string;
     repo: string;
-    stacks: Array<any>;
+    stacks: any[];
 }
 
 export default App;
