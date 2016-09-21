@@ -1,0 +1,4 @@
+verbose: false
+instrumentation:
+    excludes: ['**/*.spec.js', '**/interfaces/**']
+    include-all-sources: true
