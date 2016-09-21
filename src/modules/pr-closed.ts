@@ -1,8 +1,7 @@
-import Opsworks from '../services/opsworks';
 import * as Config from 'config';
 import App from '../interfaces/app';
 
-class PrClosed {
+export default class PrClosed {
 
     /**
      * Register any webhooks to be listened for
@@ -11,20 +10,20 @@ class PrClosed {
      * @param  {WebServer} webserver
      * @return {void}
      */
-    webhooks(bot: SlackBot, webserver: WebServer): void {
+    public webhooks(bot: SlackBot, webserver: WebServer): void {
         webserver.post('/pr_closed', (req, res) => {
 
             const hook: GithubPrWebhook = req.body;
             const pr = hook.pull_request;
             const repo = hook.repository;
 
-            const app = Config.get<Array<App>>('apps').find((app) => {
+            const app = Config.get<App[]>('apps').find((app) => {
                 return app.repo === repo.name;
             });
 
             if (hook.action === 'closed' && pr.merged === true) {
 
-                let message: SlackReply = {
+                const message: SlackReply = {
 
                     channel: Config.get<string>('channels.software.name'),
                     unfurl_links: false,
@@ -82,5 +81,3 @@ interface GithubPrWebhook {
         name: string;
     };
 }
-
-export default PrClosed;
