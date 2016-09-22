@@ -1,6 +1,6 @@
 # PodBot
 
-[ ![Codeship Status for Pod-Point/podbot](https://codeship.com/projects/3be1a400-6217-0134-a0c1-0627957cda96/status?branch=master)](https://codeship.com/projects/174987) [![Coverage Status](https://coveralls.io/repos/github/Pod-Point/podbot/badge.svg?t=97tX75)](https://coveralls.io/github/Pod-Point/podbot)
+[ ![Codeship Status for Pod-Point/podbot](https://codeship.com/projects/3be1a400-6217-0134-a0c1-0627957cda96/status?branch=master)](https://codeship.com/projects/174987) [![Coverage Status](https://coveralls.io/repos/github/Pod-Point/podbot/badge.svg?branch=master&t=97tX75)](https://coveralls.io/github/Pod-Point/podbot?branch=master)
 
 The POD Point slack bot built with [Botkit](https://github.com/howdyai/botkit/) in [TypeScript](https://www.typescriptlang.org/).
 
