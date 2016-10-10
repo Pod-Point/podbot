@@ -18,8 +18,8 @@
 	            },
 	            {
 	                "name": "MIS Demo",
-	                "stackId": "de471941-1a0c-4694-b723-8138c6e7316b",
-	                "appId": "b26d2a50-2f6a-4606-8638-0ea2e3d1359c",
+	                "stackId": "4d406628-8328-4c69-af11-0ccbeb43d741",
+	                "appId": "6f2599d8-cf27-4b85-9eac-62e8745efc22",
 	                "region": "us-east-1"
 	            },
 	            {
@@ -96,8 +96,8 @@
 	        "stacks": [
 	        	{
 		            "name": "OpenCharge Wep App Production",
-		            "stackId": "f0f4512a-da64-4638-a639-6a73ea2d3404",
-		            "appId": "d75aa708-4124-4007-bd6e-c380f66d8cd7",
+		            "stackId": "5581b728-1a23-4071-be2a-2e8276e41920",
+		            "appId": "b4321160-d902-43d7-b701-adb1494ec537",
 		            "region": "us-east-1"
 		        }
 	        ]
