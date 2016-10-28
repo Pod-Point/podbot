@@ -126,9 +126,9 @@
 	        "stacks": [
 	        	{
 		            "name": "Installs Reporting Production",
-		            "stackId": "8d1cefd0-ca19-4a36-b477-28ec5eb47d21",
-		            "appId": "50ac25c3-7e60-42e8-8054-ad2fd13a137d",
-		            "region": "us-east-1"
+		            "stackId": "f697f818-a32b-4d4b-8212-5264f32911bd",
+		            "appId": "bdbdab8f-44d0-48d7-9cc5-c135f79efe5b",
+		            "region": "eu-west-1"
 		        }
 	        ]
 	    },
