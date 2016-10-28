@@ -20,7 +20,7 @@
 	                "name": "MIS Demo",
 	                "stackId": "4d406628-8328-4c69-af11-0ccbeb43d741",
 	                "appId": "6f2599d8-cf27-4b85-9eac-62e8745efc22",
-	                "region": "us-east-1"
+	                "region": "eu-west-1"
 	            },
 	            {
 	                "name": "MIS Staging",
@@ -60,9 +60,9 @@
 		        },
 		        {
 		            "name": "API v3 Staging",
-		            "stackId": "2a6abc21-4e4f-49eb-9f3e-8d66c38f6344",
-		            "appId": "fc18f631-b420-45a2-994b-5bb0db3e194a",
-		            "region": "us-east-1"
+		            "stackId": "0231e89d-a03e-48f1-896a-e78f61b5e778",
+		            "appId": "c5d5cebe-7614-4bea-b5e8-d50921a90b63",
+		            "region": "eu-west-1"
 		        }
 	        ]
 	    },
@@ -98,7 +98,7 @@
 		            "name": "OpenCharge Wep App Production",
 		            "stackId": "5581b728-1a23-4071-be2a-2e8276e41920",
 		            "appId": "b4321160-d902-43d7-b701-adb1494ec537",
-		            "region": "us-east-1"
+		            "region": "eu-west-1"
 		        }
 	        ]
 	    },
