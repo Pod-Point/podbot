@@ -108,9 +108,9 @@
 	        "stacks": [
 	        	{
 		            "name": "Pod Point CMS Production",
-		            "stackId": "5bd9478e-f63a-41b4-b040-dddb9dca4d02",
-		            "appId": "231ad2f0-6e0d-41d5-aeed-772fa1c18876",
-		            "region": "us-east-1"
+		            "stackId": "334dbd63-531f-46b6-951e-c83a238e21d7",
+		            "appId": "52dd62c7-e9f0-41e4-97c4-b862e8eace58",
+		            "region": "eu-west-1"
 		        },
 		        {
 		            "name": "Pod Point CMS Staging",
@@ -159,6 +159,18 @@
 		            "stackId": "65a2666c-02bd-4f03-b882-01f990b6f09a",
 		            "appId": "b45ef57b-4007-4aaa-ba7a-523947f6f272",
 		            "region": "us-east-1"
+		        }
+	        ]
+	    },
+	    {
+	        "name": "ocppService",
+	        "repo": "ocpp-service",
+	        "stacks": [
+	        	{
+		            "name": "OCPP Service Production",
+		            "stackId": "cde52956-72cb-46ad-86d8-37cc2dd80a3c",
+		            "appId": "f471654c-84bb-4517-b68f-4e09e22cbe3a",
+		            "region": "eu-west-1"
 		        }
 	        ]
 	    }
