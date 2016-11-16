@@ -72,8 +72,8 @@
 	        "stacks": [
 	        	{
 		            "name": "Renault Production",
-		            "stackId": "42b33c97-00e6-42a2-9dfe-22641486ae3a",
-		            "appId": "2ef52391-6109-4f06-b9be-0aeeb0937839",
+		            "stackId": "20cb4825-f055-47d0-8183-ca33a74e6d41",
+		            "appId": "4a4004ac-64b9-4e41-af19-21aabfd58916",
 		            "region": "us-east-1"
 		        }
 	        ]
