@@ -36,9 +36,9 @@
 	        "stacks": [
 	            {
 	                "name": "Installs Production",
-	                "stackId": "416265b1-10fe-4f1a-8b66-d96fe11974c3",
-	                "appId": "905fbf33-0b1b-474d-9ab9-774fbb471022",
-	                "region": "us-east-1"
+	                "stackId": "8dc47cdf-dac1-4501-9bbb-ba6603fcb063",
+	                "appId": "9862de71-3616-406e-ae05-b5725784a6fa",
+	                "region": "eu-west-1"
 	            },
 	            {
 	                "name": "Installs Staging",
@@ -170,6 +170,18 @@
 		            "name": "OCPP Service Production",
 		            "stackId": "cde52956-72cb-46ad-86d8-37cc2dd80a3c",
 		            "appId": "f471654c-84bb-4517-b68f-4e09e22cbe3a",
+		            "region": "eu-west-1"
+		        }
+	        ]
+	    },
+	    {
+	        "name": "commsService",
+	        "repo": "pod-comms-service",
+	        "stacks": [
+	        	{
+		            "name": "OCPP Service Production",
+		            "stackId": "fc287030-5fac-4871-883d-224e336a8df8",
+		            "appId": "d3e4b58c-1d37-43f9-80b7-9d5711020daf",
 		            "region": "eu-west-1"
 		        }
 	        ]
