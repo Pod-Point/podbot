@@ -179,9 +179,15 @@
 	        "repo": "pod-comms-service",
 	        "stacks": [
 	        	{
-		            "name": "OCPP Service Production",
+		            "name": "Pod Comms Service Production",
 		            "stackId": "fc287030-5fac-4871-883d-224e336a8df8",
 		            "appId": "d3e4b58c-1d37-43f9-80b7-9d5711020daf",
+		            "region": "eu-west-1"
+		        },
+		        {
+		            "name": "Pod Comms Service Staging",
+		            "stackId": "7d725999-2cca-4a04-b7e8-9ceeab175f21",
+		            "appId": "2c7699cb-52f7-42b3-bb9a-eb4c95db7993",
 		            "region": "eu-west-1"
 		        }
 	        ]
