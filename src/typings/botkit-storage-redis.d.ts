@@ -1,5 +1,5 @@
 declare module 'botkit-storage-redis' {
-    let redisStorage: () => void;
+    const redisStorage: () => void;
 
     export = redisStorage;
 }
