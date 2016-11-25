@@ -1,6 +1,11 @@
 {
   "compilerOptions": {
     "target": "es5",
+    "lib": [
+      "es6",
+      "dom",
+      "es2015.promise"
+    ],
     "module": "commonjs",
     "outDir": "lib",
     "rootDir": "src",
