@@ -1,6 +1,6 @@
 # PodBot
 
-[![Build Status](https://travis-ci.com/Pod-Point/podbot.svg?token=F7wj2GWZpNRsZSDUXLya&branch=master)](https://travis-ci.com/Pod-Point/podbot) [![Coverage Status](https://coveralls.io/repos/github/Pod-Point/podbot/badge.svg?branch=master&t=97tX75)](https://coveralls.io/github/Pod-Point/podbot?branch=master)
+[![Build Status](https://travis-ci.com/Pod-Point/podbot.svg?token=F7wj2GWZpNRsZSDUXLya&branch=master)](https://travis-ci.com/Pod-Point/podbot) [![codecov](https://codecov.io/gh/Pod-Point/podbot/branch/master/graph/badge.svg?token=s8NmBmIuY6)](https://codecov.io/gh/Pod-Point/podbot)
 
 The POD Point slack bot built with [Botkit](https://github.com/howdyai/botkit/) in [TypeScript](https://www.typescriptlang.org/).
 
@@ -16,16 +16,9 @@ You can then run the application with `npm run watch`.
 
 ## Typings
 
-You will need to install [typings](https://github.com/typings/typings) for third party modules. Otherwise tsc will fail to compile. These are saved in `typings.json` and can be installed with:
+You will need to install [typings](https://blogs.msdn.microsoft.com/typescript/2016/06/15/the-future-of-declaration-files/) for third party modules. Otherwise tsc will fail to compile.
 
-* `typings install`
-
-If you add a new module you will need to install the typings for the module to the `typings.json` file with the command:
-
-* `typings search MODULE`
-* `typings install --save dt~MODULE --global`
-
-You can also create custom typings definitions in `src/typings`.
+* `npm install --save @types/aws-sdk`
 
 ## Linting
 
