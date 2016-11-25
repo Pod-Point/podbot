@@ -3,4 +3,6 @@ node_js:
   - 4
 sudo: false
 after_script:
-  - npm run-script test:coveralls
+  - npm run-script test:coverage
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
