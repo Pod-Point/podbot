@@ -10,8 +10,7 @@
     "typings": "typings",
     "postinstall": "typings install",
     "test": "mocha --opts ./mocha.opts",
-    "test:coverage": "tsc && node ./node_modules/istanbul/lib/cli.js cover _mocha lib/**/*.spec.js && ./node_modules/.bin/remap-istanbul -i ./coverage/coverage.raw.json -o ./coverage/html-report -t html",
-    "test:coveralls": "npm run test:coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
+    "test:coverage": "tsc && node ./node_modules/istanbul/lib/cli.js cover _mocha lib/**/*.spec.js && ./node_modules/.bin/remap-istanbul -i ./coverage/coverage.raw.json -o ./coverage/html-report -t html"
   },
   "dependencies": {
     "aws-sdk": "^2.4.4",
@@ -27,7 +26,6 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "coveralls": "^2.11.14",
     "istanbul": "1.1.0-alpha.1",
     "mocha": "^3.0.2",
     "nodemon": "^1.9.2",
