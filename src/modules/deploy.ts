@@ -24,7 +24,11 @@ export default class Deploy {
      */
     public messageListeners(controller: BotController): void {
 
-        controller.hears(['deploy ?([a-zA-Z]+)?( with comment )?(.*)?'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
+        controller.hears(['deploy ?([a-zA-Z]+)?( with comment )?(.*)?'], [
+            'direct_message',
+            'direct_mention',
+            'mention'
+        ], (bot, message) => {
 
             const name: string = message.match[1];
             const comment: string = message.match[3];
@@ -50,19 +54,15 @@ export default class Deploy {
         const action: SlackAttachmentAction = message.actions[0];
 
         if (action.name === 'cancel') {
-
             return bot.api.chat.delete({
                 token: bot.config.token,
                 ts: message.message_ts,
                 channel: message.channel
             });
-
         }
 
         if (message.callback_id === 'select-app') {
-
             bot.replyInteractive(message, this.pickStack(action.value));
-
         }
 
         if (message.callback_id === 'deploy') {
@@ -83,7 +83,8 @@ export default class Deploy {
 
                     deployments.forEach((deployment) => {
 
-                        const uri: string = `https://console.aws.amazon.com/opsworks/home?region=${deployment.stack.region}#/stack/${deployment.stack.stackId}/deployments`;
+                        const endpoint: string = 'https://console.aws.amazon.com/opsworks/home';
+                        const uri: string = `${endpoint}?region=${deployment.stack.region}#/stack/${deployment.stack.stackId}/deployments`;
 
                         responses[deployment.stack.appId] = {
                             fallback: `Deploying ${app.name} to ${deployment.stack.name}.`,
@@ -136,7 +137,6 @@ export default class Deploy {
                 });
 
             } else {
-
                 bot.replyInteractive(message, {
                     attachments: [
                         {
@@ -146,7 +146,6 @@ export default class Deploy {
                         }
                     ]
                 });
-
             }
         }
     }

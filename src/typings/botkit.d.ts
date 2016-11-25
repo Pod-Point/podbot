@@ -7,7 +7,7 @@ interface BotParams {
 interface SlackOptions {
     clientId?: string;
     clientSecret?: string;
-    scopes?: Array<string>;
+    scopes?: string[];
 }
 
 interface BotStorage {
@@ -19,10 +19,10 @@ interface WebServer {
 }
 
 interface SlackMessage {
-    match?: Array<string>;
+    match?: string[];
     channel: string;
-    actions?: Array<SlackAttachmentAction>;
-    attachments?: Array<SlackAttachment>;
+    actions?: SlackAttachmentAction[];
+    attachments?: SlackAttachment[];
     message_ts: string;
     callback_id?: string;
     token: string;
@@ -30,7 +30,7 @@ interface SlackMessage {
 
 interface SlackReply {
     channel?: string;
-    attachments?: Array<SlackAttachment>;
+    attachments?: SlackAttachment[];
     unfurl_links?: boolean;
     text?: string;
 }
@@ -57,8 +57,8 @@ interface SlackAttachment {
     callback_id?: string;
     attachment_type?: string;
     text?: string;
-    fields?: Array<SlackAttachmentField>;
-    actions?: Array<SlackAttachmentAction>;
+    fields?: SlackAttachmentField[];
+    actions?: SlackAttachmentAction[];
 }
 
 interface SlackApi {
@@ -88,7 +88,7 @@ interface BotController {
     createWebhookEndpoints?: (webserver: WebServer) => void;
     createOauthEndpoints?: (webserver: WebServer, callback: (err: any, req: any, res: any) => void) => void;
     on?: (event: string, callback: (bot: SlackBot, message: SlackMessage) => void) => void;
-    hears?: (events: Array<string>, types: Array<string>, callback: (bot: SlackBot, message: SlackMessage) => void) => void;
+    hears?: (events: string[], types: string[], callback: (bot: SlackBot, message: SlackMessage) => void) => void;
 }
 
 declare module 'botkit' {
