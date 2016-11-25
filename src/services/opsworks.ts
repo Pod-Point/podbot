@@ -1,4 +1,3 @@
-/// <reference path="../typings/opsworks.d.ts" />
 import * as AWS from 'aws-sdk';
 import Stack from '../interfaces/stack';
 import App from '../interfaces/app';
@@ -14,8 +13,10 @@ export default class Opsworks {
      */
     constructor() {
         AWS.config.update({
-            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+            credentials: {
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+            }
         });
 
         this.endpoints = {
