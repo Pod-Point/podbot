@@ -5,6 +5,7 @@ import * as Botkit from 'botkit';
 import * as redisStorage from 'botkit-storage-redis';
 import PrClosed from './modules/pr-closed';
 import Codeship from './modules/codeship';
+import Travis from './modules/travis';
 import Coveralls from './modules/coveralls';
 import Messages from './modules/messages';
 import Deploy from './modules/deploy';
@@ -45,6 +46,7 @@ const controller: BotController = Botkit.slackbot(botParams).configureSlackApp({
 
 const prClosed: Module = new PrClosed();
 const codeship: Module = new Codeship();
+const travis: Module = new Travis();
 const coveralls: Module = new Coveralls();
 const messages: Module = new Messages();
 const deploy: Module = new Deploy();
@@ -52,6 +54,7 @@ const deploy: Module = new Deploy();
 const modules: any[] = [
     prClosed,
     codeship,
+    travis,
     coveralls,
     messages,
     deploy
