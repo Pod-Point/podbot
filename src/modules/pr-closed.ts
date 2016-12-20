@@ -4,7 +4,7 @@ import App from '../interfaces/app';
 export default class PrClosed {
 
     /**
-     * Register any webhooks to be listened for
+     * Listen for PR closed Github webhooks
      *
      * @param  {SlackBot} bot
      * @param  {WebServer} webserver

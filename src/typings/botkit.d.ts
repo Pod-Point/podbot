@@ -1,6 +1,6 @@
 interface BotParams {
     debug?: boolean;
-    storage?: any;
+    storage?: BotStorage;
     json_file_store?: string;
 }
 
@@ -11,6 +11,12 @@ interface SlackOptions {
 }
 
 interface BotStorage {
+    teams: BotStorageObject;
+    users: BotStorageObject;
+    channels: BotStorageObject;
+}
+
+interface BotStorageObject {
     get: (key: string, callback: (err: any, result: any) => void) => string;
 }
 
@@ -79,7 +85,7 @@ interface SlackBot {
 
 interface BotController {
     configureSlackApp?: (options?: SlackOptions) => BotController;
-    storage: { teams: BotStorage };
+    storage: BotStorage;
     webserver: WebServer;
     spawn: (team?: string) => BotController;
     startRTM?: (callback: (err: any, bot: SlackBot) => void) => BotController;
