@@ -99,6 +99,12 @@
 		            "stackId": "5581b728-1a23-4071-be2a-2e8276e41920",
 		            "appId": "b4321160-d902-43d7-b701-adb1494ec537",
 		            "region": "eu-west-1"
+		        },
+		        {
+		            "name": "OpenCharge Wep App Staging",
+		            "stackId": "04b6e908-358a-4c1e-8586-9de3c31dc54a",
+		            "appId": "54a2d84f-7eec-416e-8c33-bafbd9fb75ca",
+		            "region": "eu-west-1"
 		        }
 	        ]
 	    },
