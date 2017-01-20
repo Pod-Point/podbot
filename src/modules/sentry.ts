@@ -3,7 +3,7 @@ import Trello from 'node-trello';
 export default class Sentry {
 
     /**
-     * Register any webhooks to be listened for
+     * Listen for Sentry webhooks and create Trello cards if applicable
      *
      * @param  {SlackBot} bot
      * @param  {WebServer} webserver

@@ -3,7 +3,8 @@ import * as Config from 'config';
 export default class Coveralls {
 
     /**
-     * Register any webhooks to be listened for
+     * Listen for Coveralls webhooks and notify the channel if
+     * the coverage has decreased
      *
      * @param  {SlackBot} bot
      * @param  {WebServer} webserver
