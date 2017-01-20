@@ -9,6 +9,7 @@ import Travis from './modules/travis';
 import Coveralls from './modules/coveralls';
 import Messages from './modules/messages';
 import Deploy from './modules/deploy';
+import Sentry from './modules/sentry';
 import Module from './interfaces/module';
 
 dotenv.config();
@@ -50,6 +51,7 @@ const travis: Module = new Travis();
 const coveralls: Module = new Coveralls();
 const messages: Module = new Messages();
 const deploy: Module = new Deploy();
+const sentry: Module = new Sentry();
 
 const modules: any[] = [
     prClosed,
@@ -57,7 +59,8 @@ const modules: any[] = [
     travis,
     coveralls,
     messages,
-    deploy
+    deploy,
+    sentry
 ];
 
 controller.storage.teams.get(process.env.TEAM, (err, team) => {
