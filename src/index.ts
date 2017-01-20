@@ -11,6 +11,7 @@ import Messages from './modules/messages';
 import Deploy from './modules/deploy';
 import Sentry from './modules/sentry';
 import Module from './interfaces/module';
+import Codecov from './modules/codecov';
 
 dotenv.config();
 
@@ -51,6 +52,7 @@ const travis: Module = new Travis();
 const coveralls: Module = new Coveralls();
 const messages: Module = new Messages();
 const deploy: Module = new Deploy();
+const codecov: Module = new Codecov();
 const sentry: Module = new Sentry();
 
 const modules: any[] = [
@@ -60,6 +62,7 @@ const modules: any[] = [
     coveralls,
     messages,
     deploy,
+    codecov,
     sentry
 ];
 
