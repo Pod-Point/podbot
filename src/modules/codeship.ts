@@ -3,7 +3,8 @@ import * as Config from 'config';
 export default class Codeship {
 
     /**
-     * Register any webhooks to be listened for
+     * Listen for Codeship webhooks and notify the channel if
+     * the master branch build has failed
      *
      * @param  {SlackBot} bot
      * @param  {WebServer} webserver
