@@ -12,12 +12,17 @@ export default class Messages {
     public cronjobs(bot: SlackBot): void {
 
         new CronJob('00 15 09 * * 1-5', () => {
+            const day = new Date().getDay();
+            const message = 'Morning team, don\'t forget we have a standup at 9:30am :+1:';
+
+            if (day === 3) {
+                message += ' Also it\'s Wednesday so we are starting a new sprint today!';
+            }
 
             bot.say({
                 channel: Config.get<string>('channels.software.code'),
-                text: 'Morning team, don\'t forget we have a standup at 9:30am :+1:'
+                text: message
             });
-
         }, null, true, 'Europe/London');
 
     }
