@@ -12,8 +12,8 @@ export default class Messages {
     public cronjobs(bot: SlackBot): void {
 
         new CronJob('00 15 09 * * 1-5', () => {
-            const day = new Date().getDay();
-            const message = 'Morning team, don\'t forget we have a standup at 9:30am :+1:';
+            const day: number = new Date().getDay();
+            let message: string = 'Morning team, don\'t forget we have a standup at 9:30am :+1:';
 
             if (day === 3) {
                 message += ' Also it\'s Wednesday so we are starting a new sprint today!';
