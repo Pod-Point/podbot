@@ -9,6 +9,8 @@
 		{
 	        "name": "mis",
 	        "repo": "admin-tool",
+	        "label": "5825f18f84e677fd3647c413",
+	        "sentry": "MIS",
 	        "stacks": [
 	        	{
 	                "name": "MIS Production",
@@ -33,6 +35,8 @@
 	    {
 	        "name": "installs",
 	        "repo": "installs-tool",
+	        "label": "5825f18f84e677fd3647c415",
+	        "sentry": "installs",
 	        "stacks": [
 	            {
 	                "name": "Installs Production",
@@ -51,6 +55,8 @@
 	    {
 	        "name": "api",
 	        "repo": "api3",
+	        "label": "5825f18f84e677fd3647c418",
+	        "sentry": "API",
 	        "stacks": [
 	        	{
 		            "name": "API v3 Production",
@@ -79,20 +85,10 @@
 	        ]
 	    },
 	    {
-	        "name": "dashboard",
-	        "repo": "dashboard-service",
-	        "stacks": [
-	        	{
-		            "name": "Dashboard Service Production",
-		            "stackId": "d2dc278b-1026-4297-a8ae-26ea9397d27b",
-		            "appId": "58e02c16-726c-47d8-a70a-5b53746ea784",
-		            "region": "us-east-1"
-		        }
-	        ]
-	    },
-	    {
 	        "name": "opencharge",
 	        "repo": "payg",
+	        "label": "5825f18f84e677fd3647c417",
+	        "sentry": "opencharge-web-app",
 	        "stacks": [
 	        	{
 		            "name": "OpenCharge Wep App Production",
@@ -111,6 +107,8 @@
 	    {
 	        "name": "cms",
 	        "repo": "pod-point.com",
+	        "label": "5825f18f84e677fd3647c416",
+	        "sentry": "CMS",
 	        "stacks": [
 	        	{
 		            "name": "Pod Point CMS Production",
@@ -141,6 +139,7 @@
 	    {
 	        "name": "pdfService",
 	        "repo": "pdf-service",
+	        "sentry": "pdf-service",
 	        "stacks": [
 	        	{
 		            "name": "PDF Service Production",
@@ -153,6 +152,7 @@
 	    {
 	        "name": "commissioningService",
 	        "repo": "commissioning-service",
+	        "sentry": "commissioning-service",
 	        "stacks": [
 	        	{
 		            "name": "Commissioning Service Production",
@@ -171,6 +171,7 @@
 	    {
 	        "name": "ocppService",
 	        "repo": "ocpp-service",
+	        "sentry": "ocpp-service",
 	        "stacks": [
 	        	{
 		            "name": "OCPP Service Production",
@@ -183,6 +184,7 @@
 	    {
 	        "name": "commsService",
 	        "repo": "pod-comms-service",
+	        "sentry": "pod-comms-service",
 	        "stacks": [
 	        	{
 		            "name": "Pod Comms Service Production",
