@@ -24,9 +24,8 @@ export default class Sentry {
 
             trello.post('1/cards', {
                 idList: '5825f19c448059485b692824',
-                name: data.event.metadata.type,
-                desc: data.message,
-                urlSource: data.url,
+                name: `${data.event.metadata.type}: ${data.event.metadata.value}`,
+                desc: `${data.url}\n\n    ${data.message}`,
                 idLabels: app.label
             }, () => false);
 
