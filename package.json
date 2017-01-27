@@ -9,7 +9,7 @@
     "watch": "concurrently --kill-others \"tsc -w\" \"nodemon lib/index.js\"",
     "test": "mocha --opts ./mocha.opts",
     "test:coverage": "tsc && node ./node_modules/istanbul/lib/cli.js cover _mocha lib/**/*.spec.js && ./node_modules/.bin/remap-istanbul -i ./coverage/coverage.raw.json -o ./coverage/html-report -t html",
-    "tslint" : "tslint -c tslint.json 'src/**/*.ts'"
+    "tslint": "tslint -c tslint.json 'src/**/*.ts'"
   },
   "dependencies": {
     "@types/chai": "^3.4.34",
@@ -28,6 +28,7 @@
     "cron": "^1.1.0",
     "dotenv": "^2.0.0",
     "github": "^2.5.1",
+    "node-trello": "^1.1.2",
     "typescript": "^2.0.10"
   },
   "devDependencies": {
