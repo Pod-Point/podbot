@@ -9,6 +9,7 @@ import Travis from './modules/travis';
 import Coveralls from './modules/coveralls';
 import Messages from './modules/messages';
 import Deploy from './modules/deploy';
+import Sentry from './modules/sentry';
 import Module from './interfaces/module';
 import Codecov from './modules/codecov';
 
@@ -52,6 +53,7 @@ const coveralls: Module = new Coveralls();
 const messages: Module = new Messages();
 const deploy: Module = new Deploy();
 const codecov: Module = new Codecov();
+const sentry: Module = new Sentry();
 
 const modules: any[] = [
     prClosed,
@@ -60,7 +62,8 @@ const modules: any[] = [
     coveralls,
     messages,
     deploy,
-    codecov
+    codecov,
+    sentry
 ];
 
 controller.storage.teams.get(process.env.TEAM, (err, team) => {
