@@ -1,4 +1,7 @@
-import Trello from 'node-trello';
+/// <reference path="../typings/node-trello.d.ts" />
+import * as Trello from 'node-trello';
+import * as Config from 'config';
+import App from '../interfaces/app';
 
 export default class Sentry {
 
@@ -11,20 +14,21 @@ export default class Sentry {
      */
     public webhooks(bot: SlackBot, webserver: WebServer): void {
         webserver.post('/sentry', (req, res) => {
-
-            const trello = new Trello(process.env.GITHUB_TOKEN, process.env.GITHUB_TOKEN);
+            const trello = new Trello(process.env.TRELLO_KEY, process.env.TRELLO_TOKEN);
             const data: SentryWebhook = req.body;
 
-            const trelloData = {
-                idList: 1,
-                name: data.message,
-                desc: data.message,
-                urlSource: data.url
-            };
-
-            trello.post('1/cards', trelloData, (err: any, response: any) => {
-                console.log(response);
+            const apps = Config.get<App[]>('apps');
+            const app: App = apps.find((app) => {
+                return app.sentry === data.project_name;
             });
+
+            trello.post('1/cards', {
+                idList: '5825f19c448059485b692824',
+                name: data.event.metadata.type,
+                desc: data.message,
+                urlSource: data.url,
+                idLabels: app.label
+            }, () => false);
 
             res.send('OK');
         });
@@ -34,4 +38,11 @@ export default class Sentry {
 interface SentryWebhook {
     message: string;
     url: string;
+    project_name: string;
+    event: {
+        metadata: {
+            type: string,
+            value: string,
+        }
+    };
 }
