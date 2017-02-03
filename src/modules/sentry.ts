@@ -22,12 +22,14 @@ export default class Sentry {
                 return app.sentry === data.project_name;
             });
 
-            trello.post('1/cards', {
+            const params = {
                 idList: '5825f19c448059485b692824',
                 name: `${data.event.metadata.type}: ${data.event.metadata.value}`,
                 desc: `${data.url}\n\n    ${data.message}`,
-                idLabels: app.label
-            }, () => false);
+                idLabels: app ? app.label : null
+            };
+
+            trello.post('1/cards', params, () => false);
 
             res.send('OK');
         });
