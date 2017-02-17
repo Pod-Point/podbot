@@ -36,7 +36,7 @@
 	        "name": "installs",
 	        "repo": "installs-tool",
 	        "label": "5825f18f84e677fd3647c415",
-	        "sentry": "installs",
+	        "sentry": "Installs",
 	        "stacks": [
 	            {
 	                "name": "Installs Production",
@@ -88,7 +88,7 @@
 	        "name": "opencharge",
 	        "repo": "payg",
 	        "label": "5825f18f84e677fd3647c417",
-	        "sentry": "opencharge-web-app",
+	        "sentry": "OpenCharge Web App",
 	        "stacks": [
 	        	{
 		            "name": "OpenCharge Wep App Production",
@@ -139,7 +139,7 @@
 	    {
 	        "name": "pdfService",
 	        "repo": "pdf-service",
-	        "sentry": "pdf-service",
+	        "sentry": "PDF Service",
 	        "stacks": [
 	        	{
 		            "name": "PDF Service Production",
@@ -152,7 +152,7 @@
 	    {
 	        "name": "commissioningService",
 	        "repo": "commissioning-service",
-	        "sentry": "commissioning-service",
+	        "sentry": "Commissioning Service",
 	        "stacks": [
 	        	{
 		            "name": "Commissioning Service Production",
@@ -171,7 +171,7 @@
 	    {
 	        "name": "ocppService",
 	        "repo": "ocpp-service",
-	        "sentry": "ocpp-service",
+	        "sentry": "OCPP Service",
 	        "stacks": [
 	        	{
 		            "name": "OCPP Service Production",
@@ -184,7 +184,7 @@
 	    {
 	        "name": "commsService",
 	        "repo": "pod-comms-service",
-	        "sentry": "pod-comms-service",
+	        "sentry": "Pod Comms Service",
 	        "stacks": [
 	        	{
 		            "name": "Pod Comms Service Production",
