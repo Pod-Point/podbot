@@ -24,7 +24,7 @@ export default class Sentry {
 
             const params = {
                 idList: '5825f19c448059485b692824',
-                name: `${data.event.metadata.type}: ${data.event.metadata.value}`,
+                name: `${data.event.metadata.type}: ${data.culprit}`,
                 desc: `${data.url}\n\n    ${data.message}`,
                 idLabels: app ? app.label : null
             };
@@ -40,6 +40,7 @@ interface SentryWebhook {
     message: string;
     url: string;
     project_name: string;
+    culprit: string;
     event: {
         metadata: {
             type: string,

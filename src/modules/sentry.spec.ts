@@ -27,9 +27,10 @@ describe('Sentry', () => {
         const webserver = { post: () => false };
         const req = {
             body: {
-                project_name: 'installs',
+                project_name: 'Installs',
                 url: '',
                 message: '',
+                culprit: '',
                 event: {
                     metadata: {
                         type: '',
