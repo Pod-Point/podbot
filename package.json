@@ -9,7 +9,7 @@
     "watch": "concurrently --kill-others \"tsc -w\" \"nodemon lib/index.js\"",
     "test": "mocha --opts ./mocha.opts",
     "test:coverage": "tsc && node ./node_modules/istanbul/lib/cli.js cover _mocha lib/**/*.spec.js && ./node_modules/.bin/remap-istanbul -i ./coverage/coverage.raw.json -o ./coverage/html-report -t html",
-    "tslint": "tslint -c tslint.json 'src/**/*.ts'"
+    "eslint": "eslint 'src/**/*.ts'"
   },
   "dependencies": {
     "@types/chai": "^3.4.34",
@@ -32,7 +32,12 @@
     "typescript": "^2.0.10"
   },
   "devDependencies": {
+    "@pod-point/eslint-config-podpoint-base": "^0.1.1",
+    "babel-eslint": "^7.1.1",
     "chai": "^3.5.0",
+    "eslint": "^3.15.0",
+    "eslint-config-airbnb-base": "^11.1.0",
+    "eslint-plugin-import": "^2.2.0",
     "istanbul": "1.1.0-alpha.1",
     "mocha": "^3.0.2",
     "nodemon": "^1.9.2",
@@ -40,7 +45,6 @@
     "remap-istanbul": "^0.6.4",
     "sinon": "^1.17.5",
     "ts-node": "^1.3.0",
-    "tslint": "^3.15.1",
-    "tslint-microsoft-contrib": "^2.0.10"
+    "typescript-eslint-parser": "^1.0.3"
   }
 }
