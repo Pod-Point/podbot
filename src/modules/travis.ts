@@ -29,16 +29,16 @@ export default class Travis {
                                 {
                                     title: 'Project',
                                     value: data.repository.name,
-                                    short: true
+                                    short: true,
                                 },
                                 {
                                     title: 'Branch',
                                     value: data.branch,
-                                    short: true
-                                }
-                            ]
-                        }
-                    ]
+                                    short: true,
+                                },
+                            ],
+                        },
+                    ],
                 };
 
                 bot.say(message);

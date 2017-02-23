@@ -18,7 +18,7 @@ export default class Sentry {
             const data: SentryWebhook = req.body;
 
             const apps = Config.get<App[]>('apps');
-            const app: App = apps.find((app) => {
+            const app: App = apps.find(app => {
                 return app.sentry === data.project_name;
             });
 
@@ -45,6 +45,6 @@ interface SentryWebhook {
         metadata: {
             type: string,
             value: string,
-        }
+        },
     };
 }

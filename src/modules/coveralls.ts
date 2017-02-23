@@ -30,16 +30,16 @@ export default class Coveralls {
                                 {
                                     title: 'Project',
                                     value: data.repo_name,
-                                    short: true
+                                    short: true,
                                 },
                                 {
                                     title: 'Change',
                                     value: `${data.coverage_change}%`,
-                                    short: true
-                                }
-                            ]
-                        }
-                    ]
+                                    short: true,
+                                },
+                            ],
+                        },
+                    ],
                 };
 
                 bot.say(message);

@@ -17,7 +17,7 @@ describe('GithubService', () => {
         });
 
         const proxiedGithub = proxyquire('./github', {
-            'github': githubApiStub
+            'github': githubApiStub,
         }).default;
 
         github = new proxiedGithub();

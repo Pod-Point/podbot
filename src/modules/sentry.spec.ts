@@ -17,7 +17,7 @@ describe('Sentry', () => {
         });
 
         const proxiedSentry = proxyquire('./sentry', {
-            'node-trello': trelloStub
+            'node-trello': trelloStub,
         }).default;
 
         sentry = new proxiedSentry();
@@ -34,10 +34,10 @@ describe('Sentry', () => {
                 event: {
                     metadata: {
                         type: '',
-                        value: ''
-                    }
-                }
-            }
+                        value: '',
+                    },
+                },
+            },
         };
         const res = { send: sinon.spy() };
 

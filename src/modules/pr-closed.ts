@@ -17,7 +17,7 @@ export default class PrClosed {
             const pr = hook.pull_request;
             const repo = hook.repository;
 
-            const app = Config.get<App[]>('apps').find((app) => {
+            const app = Config.get<App[]>('apps').find(app => {
                 return app.repo === repo.name;
             });
 
@@ -40,20 +40,20 @@ export default class PrClosed {
                                     text: ':shipit:',
                                     value: JSON.stringify({
                                         app: app.name,
-                                        comment: pr.title
+                                        comment: pr.title,
                                     }),
                                     style: 'primary',
-                                    type: 'button'
+                                    type: 'button',
                                 },
                                 {
                                     name: 'cancel',
                                     text: ':thumbsdown:',
                                     style: 'danger',
-                                    type: 'button'
-                                }
-                            ]
-                        }
-                    ]
+                                    type: 'button',
+                                },
+                            ],
+                        },
+                    ],
                 };
 
                 bot.say(message);

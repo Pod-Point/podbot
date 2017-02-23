@@ -30,16 +30,16 @@ export default class Codeship {
                                 {
                                     title: 'Project',
                                     value: data.project_name,
-                                    short: true
+                                    short: true,
                                 },
                                 {
                                     title: 'Branch',
                                     value: data.branch,
-                                    short: true
-                                }
-                            ]
-                        }
-                    ]
+                                    short: true,
+                                },
+                            ],
+                        },
+                    ],
                 };
 
                 bot.say(message);
