@@ -70,9 +70,10 @@ export default class S3 {
      *
      * @param  {string} fromBucket
      * @param  {string} toBucket
+     * @param  {string} toPrefix
      * @return {Promise}
      */
-    public copyBucket(fromBucket: string, toBucket: string) {
+    public copyBucket(fromBucket: string, toBucket: string, toPrefix: string) {
         return new Promise<any> ((resolve, reject) => {
             const s3 = this;
             const async = require('async');
@@ -95,7 +96,7 @@ export default class S3 {
                         const copyParams = {
                             CopySource: encodeURIComponent(fromBucket + '/' + file.Key),
                             Bucket: encodeURIComponent(toBucket),
-                            Key: file.Key
+                            Key: toPrefix + file.Key
                         };
                         s3.endpoints['eu-west-1'].copyObject(copyParams, (error, response) => {
                             if (error) {
@@ -120,17 +121,44 @@ export default class S3 {
                         createLogFile.then((val: any) => {
                             console.log(val);
                             console.log('FINISHED. ERRORS: ' + copyErrors.toString() + ' SUCCESSES: ' + copySuccess.toString());
-                            resolve('Successfully pushed ' + copySuccess.length + ' files on S3, ' + copyErrors.length + ' errors');
+                            resolve('Success! Pushed ' + copySuccess.length + ' files on S3, ' + copyErrors.length + ' errors');
                         })
                         .catch((err: any) => {
                             console.log(err);
                             console.log('FINISHED. ERRORS: ' + copyErrors.toString() + ' SUCCESSES: ' + copySuccess.toString());
-                            resolve('Successfully pushed ' + copySuccess.length + ' files on S3, ' + copyErrors.length + ' errors\nLogging failed');
+                            reject('Pushed ' + copySuccess.length + ' files on S3, ' + copyErrors.length + ' errors\nLogging failed');
                         });
                     });
                 }
             });
 
+        });
+
+    }
+
+    /**
+     * Back up an S3 bucket by copying all its contents into a temporary backup directory
+     *
+     * @param  {string} bucket
+     * @return {Promise}
+     */
+    public backupBucket(bucket: string) {
+        return new Promise<any> ((resolve, reject) => {
+            const currentDate = new Date();
+            const dateTimeStamp: string =
+                currentDate.getFullYear() + '-' +
+                ('0' + (currentDate.getMonth() + 1)).slice(-2) + '-' +
+                currentDate.getDate() + '--' +
+                currentDate.getHours() + '-' +
+                ('0' + currentDate.getMinutes()).slice(-2) + '-' +
+                ('0' + currentDate.getSeconds()).slice(-2);
+            const copyBucket = this.copyBucket(bucket, bucket, 'backup__' + dateTimeStamp + '/');
+            copyBucket.then((val: string) => {
+                resolve(val);
+            })
+            .catch((err) => {
+                reject(val);
+            });
         });
 
     }
