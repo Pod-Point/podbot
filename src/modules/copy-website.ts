@@ -20,7 +20,8 @@ export default class CopyWebsite {
             'mention'
         ], (bot, message) => {
             const s3: S3 = new S3();
-            const myTest = s3.copyBucket('podpoint-website-dev-test', 'podpoint-website-test');
+            // const myTest = s3.copyBucket('podpoint-website-dev-test', 'podpoint-website-test', null);
+            const myTest = s3.backupBucket('podpoint-website-test');
             // const myTest = s3.test();
 
             myTest.then((val) => {
