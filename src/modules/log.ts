@@ -1,7 +1,10 @@
 import * as AWS from 'aws-sdk';
+import FileStamp from '../modules/file-stamp';
 
 export default class Log {
 
+    private env: string;
+    private logsDir: string;
     private endpoints: { [key: string]: AWS.S3 };
 
     /**
@@ -10,6 +13,8 @@ export default class Log {
      * @return {void}
      */
     constructor() {
+        this.logsDir = __dirname + (process.env.WEBSITE_DEPLOY_LOGS_DIR ? process.env.WEBSITE_DEPLOY_LOGS_DIR : Config.get<string>('website.logging.' + this.env + '.directory'));
+
         AWS.config.update({
             credentials: {
                 accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -38,29 +43,20 @@ export default class Log {
     public createLogFile(logFileName: string, logContent: string) {
         return new Promise<any> ((resolve, reject) => {
             const util = require('util');
-            AWS.config.region = 'eu-west-1';
-            const currentDate = new Date(); 
-            const dateTimeStamp: string = 
-                currentDate.getFullYear() + '-' +
-                ('0' + (currentDate.getMonth()+1)).slice(-2) + '-' +
-                currentDate.getDate() + '--' +
-                currentDate.getHours() + '-' +
-                ('0' + currentDate.getMinutes()).slice(-2) + '-' +
-                ('0' + currentDate.getSeconds()).slice(-2);
-            const params = {
-                Bucket: 'podpoint-podbot-logs-test',
-                Key: logFileName + '__' + dateTimeStamp + '.txt',
-                Body: logContent
-            };
             console.log('LOGGING PARAMS: ' + util.inspect(params, {showHidden: false, depth: null}));
-            this.endpoints['eu-west-1'].putObject(params, (err, data) => {
+            const fs = require('fs');
+            if (!fs.existsSync(logsDir)){
+                fs.mkdirSync(logsDir);
+            }
+            const fileStamp = new FileStamp();
+            fs.writeFile(logsDir + '/' + logFileName + fileStamp.dateTime() + '.log', logContent, (err: string) => {
                 if (err) {
                     console.log(err);
                     reject(err);
-                } else {
-                    console.log(data);
-                    resolve();
                 }
+
+                console.log("The file was saved!");
+                resolve();
             });
 
         });

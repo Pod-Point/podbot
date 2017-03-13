@@ -199,6 +199,36 @@
 		            "region": "eu-west-1"
 		        }
 	        ]
-	    }
-	]
+		}
+	],
+	"website": {
+		"s3": {
+			"testing": {
+				"staging": "podpoint-website-dev-test",
+				"live": "podpoint-website-test"
+			},
+			"production": {
+				"staging": "podpoint-website-dev",
+				"live": "podpoint-website"
+			}
+		},
+		"database": {
+			"testing": {
+				"staging": "xxxxxx",
+				"live": "yyyyyyy"
+			},
+			"production": {
+				"staging": "zzzzzzz",
+				"live": "aaaaaaa"
+			}
+		},
+		"logging": {
+			"testing": {
+				"directory": "logs"
+			},
+			"production": {
+				"directory": "logs"
+			}
+		}
+	}
 }
