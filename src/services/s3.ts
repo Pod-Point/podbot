@@ -3,6 +3,8 @@ import * as Config from 'config';
 import FileStamp from '../modules/file-stamp';
 import Log from '../modules/log';
 
+const log = new Log();
+
 export default class S3 {
 
     private env: string;
@@ -94,6 +96,13 @@ export default class S3 {
             //     console.log("The file was saved!");
             // });
 
+            // const deployWebsite = this.deployWebsite();
+            // deployWebsite.then((val) => {
+            //     resolve(val);
+            // })
+            // .catch((err) => {
+            //     reject(err);
+            // });
         });
     }
 
@@ -107,22 +116,22 @@ export default class S3 {
      */
     public copyBucket(fromBucket: string, toBucket: string, toPrefix: string) {
         return new Promise<any> ((resolve, reject) => {
+            let logContents: string = log.formatLogMsg('COPYING FROM ' + fromBucket + ' to ' + toBucket + '/' + toPrefix);
             const s3 = this;
             const async = require('async');
             const util = require('util');
             const listParams = {
                 Bucket: encodeURIComponent(fromBucket)
             };
-            let errors: string[] = [];
-            let successes: string[] = [];
 
             s3.endpoints['eu-west-1'].listObjectsV2(listParams, (err, data) => {
                 if (err) {
                     console.log('ERROR: ' + util.inspect(err, {showHidden: false, depth: null}));
-                    reject(err.message);
+                    logContents += 'Error: trying to list files in bucket ' + fromBucket + ' ' + log.formatLogMsg(err);
+                    reject(logContents);
                 } else if (data.Contents) {
                     console.log('DATA: ' + util.inspect(data, {showHidden: false, depth: null}));
-                    async.each(data.Contents, (file, callback) => {
+                    async.each(data.Contents, (file: any, callback: any) => {
                         console.log('FILE: ' + file.Key);
                         const copyParams = {
                             CopySource: encodeURIComponent(fromBucket + '/' + file.Key),
@@ -132,37 +141,26 @@ export default class S3 {
                         if (file.Key.indexOf('backup__') === -1) {
                             s3.endpoints['eu-west-1'].copyObject(copyParams, (error, response) => {
                                 if (error) {
-                                    errors.push('Error: ' + file.Key + ' ' + error.toString());
+                                    logContents += 'Error: copying file ' + file.Key + ' ' + log.formatLogMsg(error);
                                 } else {
-                                    successes.push('Success: ' + file.Key);
+                                    logContents += log.formatLogMsg('Copied file: ' + file.Key);
                                 }
                                 callback(null);
                             });
                         } else {
                             callback(null);
                         }
-                    }, (err: string) => {
+                    }, (err) => {
                         if (err) {
-                            // errors.push(err);
-                            return next(err);
+                            // return next(err);
                             console.log(err);
+                            logContents += 'Error: copying files from ' + fromBucket + ' to ' + toBucket + ' ' + log.formatLogMsg(err);
+                            reject(logContents);
                         } else {
-                            console.log('success'); 
+                            console.log('success');
+                            logContents += log.formatLogMsg('Succeeded copying files from ' + fromBucket + ' to ' + toBucket);
+                            resolve(logContents);
                         }
-
-                        const log: Log = new Log();
-                        const logFileName: string = 's3' + '__' + fromBucket + '__' + toBucket;
-                        const createLogFile: any = log.createLogFile(logFileName, successes.join('\n') + errors.join('\n'));
-                        createLogFile.then((val: any) => {
-                            console.log(val);
-                            console.log('FINISHED. ERRORS: ' + errors.toString() + ' SUCCESSES: ' + successes.toString());
-                            resolve('Success! Pushed ' + successes.length + ' files on S3, ' + errors.length + ' errors');
-                        })
-                        .catch((err: any) => {
-                            console.log(err);
-                            console.log('FINISHED. ERRORS: ' + errors.toString() + ' SUCCESSES: ' + successes.toString());
-                            reject('Pushed ' + successes.length + ' files on S3, ' + errors.length + ' errors\nLogging failed');
-                        });
                     });
                 }
             });
@@ -179,13 +177,25 @@ export default class S3 {
      */
     public backupBucket(bucket: string) {
         return new Promise<any> ((resolve, reject) => {
-            const fileStamp = new FileStamp();
-            const copyBucket = this.copyBucket(bucket, bucket, 'backup__' + fileStamp.dateTime() + '/');
-            copyBucket.then((val: string) => {
-                resolve(val);
+            let logContents: string = log.formatLogMsg('BACKING UP ' + bucket);
+            const deleteOldestBackup = this.deleteOldestBackup(bucket);
+            deleteOldestBackup.then((val: string) => {
+                logContents += val;
+                const fileStamp = new FileStamp();
+                const copyBucket = this.copyBucket(bucket, bucket, 'backup__' + fileStamp.dateTime() + '/');
+                copyBucket.then((val: string) => {
+                    // console.log("HERE: " + val);
+                    logContents += val;
+                    resolve(logContents);
+                })
+                .catch((err) => {
+                    logContents += err.toString();
+                    reject(logContents);
+                });
             })
             .catch((err) => {
-                reject(val);
+                logContents += err.toString();
+                reject(logContents);
             });
         });
 
@@ -205,13 +215,11 @@ export default class S3 {
             const listParams = {
                 Bucket: encodeURIComponent(bucket)
             };
-            let deleteErrors: string[] = [];
-            let deleteSuccess: string[] = [];
 
             s3.endpoints['eu-west-1'].listObjectsV2(listParams, (err, data) => {
                 if (err) {
                     // console.log('ERROR: ' + util.inspect(err, {showHidden: false, depth: null}));
-                    reject(err.message);
+                    reject('Error: Trying to delete oldest backup in ' +  bucket + ' encountered problem getting directory list: ' + log.formatLogMsg(err));
                 } else if (data.Contents) {
                     // console.log('DATA: ' + util.inspect(data, {showHidden: false, depth: null}));
 
@@ -248,13 +256,13 @@ export default class S3 {
 
                         s3.endpoints['eu-west-1'].deleteObjects(deleteParams, (error, response) => {
                             if (error) {
-                                reject(error.toString());
+                                reject('Error: Trying to delete oldest backup in ' +  bucket + ' encountered errors trying to delete: ' + log.formatLogMsg(error));
                             } else {
-                                resolve(countBackupFolders + ' backup folders found. Deleted folder ' + oldestBackupFolder);
+                                resolve(log.formatLogMsg(bucket + ': ' + backupFolders.length + ' backup folders found. Deleted folder ' + oldestBackupFolder));
                             }
                         });
                     } else {
-                        reject(backupFolders.length + ' backup folders so not deleting any (will only delete if 5 or more)');
+                        resolve(log.formatLogMsg(bucket + ': ' + backupFolders.length + ' backup folders so not deleting any (will only delete if 5 or more)'));
                     }
 
                 }
@@ -269,14 +277,30 @@ export default class S3 {
      *
      * @return {Promise}
      */
-    public deployWebsiteS3() {
+    public deployWebsite() {
         return new Promise<any> ((resolve, reject) => {
-            const copyBucket = this.copyBucket(this.stagingBucket, this.liveBucket, '');
-            copyBucket.then((val) => {
-                resolve(val);
+            let logContents: string = log.formatLogMsg('COPYING S3 CONTENT FROM ' + this.stagingBucket + ' to ' + this.liveBucket);
+            const logFileName: string = 's3' + '__' + this.stagingBucket + '__' + this.liveBucket;
+
+            const backupBucket = this.backupBucket(this.liveBucket);
+            backupBucket.then((val) => {
+                logContents += val;
+                const copyBucket = this.copyBucket(this.stagingBucket, this.liveBucket, '');
+                copyBucket.then((val) => {
+                    logContents += val;
+                    log.createLogFile(logFileName, logContents);
+                    resolve(logContents);
+                })
+                .catch((err) => {
+                    logContents += err;
+                    log.createLogFile(logFileName, logContents);
+                    reject(logContents);
+                });
             })
             .catch((err) => {
-                reject(err);
+                logContents += err;
+                log.createLogFile(logFileName, logContents);
+                reject(logContents);
             });
         });
     }
