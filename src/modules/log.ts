@@ -1,4 +1,5 @@
 import * as AWS from 'aws-sdk';
+import * as Config from 'config';
 import FileStamp from '../modules/file-stamp';
 
 export default class Log {
@@ -13,6 +14,7 @@ export default class Log {
      * @return {void}
      */
     constructor() {
+        this.env = (process.env.ENV === 'production') ? 'production' : 'testing';
         this.logsDir = __dirname + (process.env.WEBSITE_DEPLOY_LOGS_DIR ? process.env.WEBSITE_DEPLOY_LOGS_DIR : Config.get<string>('website.logging.' + this.env + '.directory'));
 
         AWS.config.update({
@@ -60,6 +62,16 @@ export default class Log {
             });
 
         });
+    }
+
+    /**
+     * Format a success/error message to be added to the log string
+     *
+     * @param  {any} message
+     * @return {string}
+     */
+    public formatLogMsg(message: any) {
+        return message.toString() + '\n';
     }
 
 }
