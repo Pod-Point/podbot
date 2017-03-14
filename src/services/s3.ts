@@ -7,9 +7,6 @@ const log = new Log();
 
 export default class S3 {
 
-    private env: string;
-    private stagingBucket: string;
-    private liveBucket: string;
     private endpoints: { [key: string]: AWS.S3 };
 
     /**
@@ -18,10 +15,6 @@ export default class S3 {
      * @return {void}
      */
     constructor() {
-        this.env = (process.env.ENV === 'production') ? 'production' : 'testing';
-        this.stagingBucket = Config.get<string>('website.s3.' + this.env + '.staging');
-        this.liveBucket = Config.get<string>('website.s3.' + this.env + '.live');
-
         AWS.config.update({
             credentials: {
                 accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -212,15 +205,15 @@ export default class S3 {
      *
      * @return {Promise}
      */
-    public migrateWebsite() {
+    public migrateBucket(fromBucket: string, toBucket: string) {
         return new Promise<any> ((resolve, reject) => {
-            let logContents: string = log.formatLogMsg('COPYING S3 CONTENT FROM ' + this.stagingBucket + ' to ' + this.liveBucket);
-            const logFileName: string = 's3' + '__' + this.stagingBucket + '__' + this.liveBucket;
+            let logContents: string = log.formatLogMsg('MIGRATING S3 CONTENT FROM ' + fromBucket + ' TO ' + toBucket);
+            const logFileName: string = 's3' + '__' + fromBucket + '__' + toBucket;
 
-            const backupBucket = this.backupBucket(this.liveBucket);
+            const backupBucket = this.backupBucket(toBucket);
             backupBucket.then((val) => {
                 logContents += val;
-                const copyBucket = this.copyBucket(this.stagingBucket, this.liveBucket, '');
+                const copyBucket = this.copyBucket(fromBucket, toBucket, '');
                 copyBucket.then((val) => {
                     logContents += val;
                     log.createLogFile(logFileName, logContents);
