@@ -51,7 +51,7 @@ export default class Log {
             }
             const fileStamp = new FileStamp();
             console.log(this.logsDir + '/' + logFileName + '__' + fileStamp.dateTime() + '.log');
-            fs.writeFile(this.logsDir + '/' + logFileName + fileStamp.dateTime() + '.log', logContent, (err: string) => {
+            fs.writeFile(this.logsDir + '/' + logFileName + '__' + fileStamp.dateTime() + '.log', logContent, (err: string) => {
                 if (err) {
                     console.log(err);
                     reject(this.formatLogMsg(err));
@@ -71,7 +71,13 @@ export default class Log {
      * @return {string}
      */
     public formatLogMsg(message: any) {
-        return message.toString() + '\n';
+        if (typeof(message) == 'string') {
+            return message + '\n';
+        } else if (typeof(message) == 'array') {
+            return message.toString() + '\n';
+        } else if (typeof(message) == 'object') {
+            return JSON.stringify(message) + '\n';
+        }
     }
 
 }
