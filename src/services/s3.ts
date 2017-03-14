@@ -47,20 +47,16 @@ export default class S3 {
             let logContents: string = log.formatLogMsg('COPYING FROM ' + fromBucket + ' to ' + toBucket + '/' + toPrefix);
             const s3 = this;
             const async = require('async');
-            const util = require('util');
             const listParams = {
                 Bucket: encodeURIComponent(fromBucket)
             };
 
             s3.endpoints['eu-west-1'].listObjectsV2(listParams, (err, data) => {
                 if (err) {
-                    console.log('ERROR: ' + util.inspect(err, {showHidden: false, depth: null}));
                     logContents += 'Error: trying to list files in bucket ' + fromBucket + ' ' + log.formatLogMsg(err);
                     reject(logContents);
                 } else if (data.Contents) {
-                    console.log('DATA: ' + util.inspect(data, {showHidden: false, depth: null}));
                     async.each(data.Contents, (file: any, callback: any) => {
-                        console.log('FILE: ' + file.Key);
                         const copyParams = {
                             CopySource: encodeURIComponent(fromBucket + '/' + file.Key),
                             Bucket: encodeURIComponent(toBucket),
@@ -80,12 +76,9 @@ export default class S3 {
                         }
                     }, (err) => {
                         if (err) {
-                            // return next(err);
-                            console.log(err);
                             logContents += 'Error: copying files from ' + fromBucket + ' to ' + toBucket + ' ' + log.formatLogMsg(err);
                             reject(logContents);
                         } else {
-                            console.log('success');
                             logContents += log.formatLogMsg('Succeeded copying files from ' + fromBucket + ' to ' + toBucket);
                             resolve(logContents);
                         }
@@ -112,7 +105,6 @@ export default class S3 {
                 const fileStamp = new FileStamp();
                 const copyBucket = this.copyBucket(bucket, bucket, 'backup__' + fileStamp.dateTime() + '/');
                 copyBucket.then((val: string) => {
-                    // console.log("HERE: " + val);
                     logContents += val;
                     resolve(logContents);
                 })
@@ -139,17 +131,14 @@ export default class S3 {
         return new Promise<any> ((resolve, reject) => {
             const s3 = this;
             const async = require('async');
-            const util = require('util');
             const listParams = {
                 Bucket: encodeURIComponent(bucket)
             };
 
             s3.endpoints['eu-west-1'].listObjectsV2(listParams, (err, data) => {
                 if (err) {
-                    // console.log('ERROR: ' + util.inspect(err, {showHidden: false, depth: null}));
                     reject('Error: Trying to delete oldest backup in ' +  bucket + ' encountered problem getting directory list: ' + log.formatLogMsg(err));
                 } else if (data.Contents) {
-                    // console.log('DATA: ' + util.inspect(data, {showHidden: false, depth: null}));
 
                     let backupFolders: string[] = [];
                     let oldestBackupFolder: string;
@@ -163,8 +152,6 @@ export default class S3 {
                             }
                         }
                     }
-                    console.log("BACKUP FOLDERS: " + backupFolders.toString());
-                    console.log("OLDEST BACKUP FOLDER: " + oldestBackupFolder);
 
                     if (backupFolders.length >= 5) {
                         const deleteParams = {
@@ -179,8 +166,6 @@ export default class S3 {
                                 deleteParams.Delete.Objects.push({ Key: file.Key });
                             }
                         }
-
-                        console.log('FILES TO DELETE: ' + util.inspect(deleteParams, {showHidden: false, depth: null}));
 
                         s3.endpoints['eu-west-1'].deleteObjects(deleteParams, (error, response) => {
                             if (error) {
