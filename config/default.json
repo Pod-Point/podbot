@@ -214,10 +214,10 @@
 		},
 		"dms": {
 			"testing": {
-				"replication-task": "migrate-staging-to-test"
+				"replication-task-arn": "arn:aws:dms:eu-west-1:959744386191:task:XA7MBY3Q72N3JK4KRKMFEVZXNA"
 			},
 			"production": {
-				"replication-task": "migrate-staging-to-live"
+				"replication-task-arn": "arn:aws:dms:eu-west-1:959744386191:task:W2C2J47OOPDEGRFSVXNAFMMWGM"
 			}
 		},
 		"logging": {
