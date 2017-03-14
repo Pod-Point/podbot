@@ -46,8 +46,9 @@ export default class DMS {
             const util = require('util');
             const params = {
                 ReplicationTaskArn: replicationTask,
-                StartReplicationTaskType: 'start-replication'
+                StartReplicationTaskType: 'resume-processing'
             };
+            console.log('PARAMS: ' + util.inspect(params, {showHidden: false, depth: null}));
 
             this.endpoints['eu-west-1'].startReplicationTask(params, (err, data) => {
                 if (err) {
@@ -58,7 +59,7 @@ export default class DMS {
                     reject(logContents);
                 } else if (data) {
                     console.log('DATA: ' + util.inspect(data, {showHidden: false, depth: null}));
-                    logContents += 'Replicated database ' + log.formatLogMsg(data);
+                    logContents += 'Successfully started database replication ' + log.formatLogMsg(data);
                     log.createLogFile(logFileName, logContents);
                     resolve(logContents);
                 }
