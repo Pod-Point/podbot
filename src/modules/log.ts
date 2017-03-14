@@ -15,7 +15,7 @@ export default class Log {
      */
     constructor() {
         this.env = (process.env.ENV === 'production') ? 'production' : 'testing';
-        this.logsDir = __dirname + (process.env.WEBSITE_DEPLOY_LOGS_DIR ? process.env.WEBSITE_DEPLOY_LOGS_DIR : Config.get<string>('website.logging.' + this.env + '.directory'));
+        this.logsDir = process.env.WEBSITE_MIGRATE_LOGS_DIR ? process.env.WEBSITE_MIGRATE_LOGS_DIR : Config.get<string>('website.logging.' + this.env + '.directory');
 
         AWS.config.update({
             credentials: {
@@ -45,20 +45,20 @@ export default class Log {
     public createLogFile(logFileName: string, logContent: string) {
         return new Promise<any> ((resolve, reject) => {
             const util = require('util');
-            console.log('LOGGING PARAMS: ' + util.inspect(params, {showHidden: false, depth: null}));
             const fs = require('fs');
-            if (!fs.existsSync(logsDir)){
-                fs.mkdirSync(logsDir);
+            if (!fs.existsSync(this.logsDir)){
+                fs.mkdirSync(this.logsDir);
             }
             const fileStamp = new FileStamp();
-            fs.writeFile(logsDir + '/' + logFileName + fileStamp.dateTime() + '.log', logContent, (err: string) => {
+            console.log(this.logsDir + '/' + logFileName + '__' + fileStamp.dateTime() + '.log');
+            fs.writeFile(this.logsDir + '/' + logFileName + fileStamp.dateTime() + '.log', logContent, (err: string) => {
                 if (err) {
                     console.log(err);
-                    reject(err);
+                    reject(this.formatLogMsg(err));
                 }
 
-                console.log("The file was saved!");
-                resolve();
+                console.log("Log file was saved!");
+                resolve(this.formatLogMsg('Log file created'));
             });
 
         });
