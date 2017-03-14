@@ -212,14 +212,12 @@
 				"live": "podpoint-website"
 			}
 		},
-		"database": {
+		"dms": {
 			"testing": {
-				"staging": "xxxxxx",
-				"live": "yyyyyyy"
+				"replication-task": "migrate-staging-to-test"
 			},
 			"production": {
-				"staging": "zzzzzzz",
-				"live": "aaaaaaa"
+				"replication-task": "migrate-staging-to-live"
 			}
 		},
 		"logging": {
