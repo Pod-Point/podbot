@@ -43,22 +43,18 @@ export default class DMS {
         return new Promise<any> ((resolve, reject) => {
             let logContents: string = log.formatLogMsg('MIGRATING DATABASE ON AWS DMS USING REPLICATION TASK ' + replicationTask);
             const logFileName: string = 'dms' + '__' + replicationTask;
-            const util = require('util');
             const params = {
                 ReplicationTaskArn: replicationTask,
                 StartReplicationTaskType: 'resume-processing'
             };
-            console.log('PARAMS: ' + util.inspect(params, {showHidden: false, depth: null}));
 
             this.endpoints['eu-west-1'].startReplicationTask(params, (err, data) => {
                 if (err) {
-                    console.log('ERROR: ' + util.inspect(err, {showHidden: false, depth: null}));
                     logContents += 'Error: trying to replicate database ' + log.formatLogMsg(err);
                     logContents += log.formatLogMsg('See DMS logs for more details');
                     log.createLogFile(logFileName, logContents);
                     reject(logContents);
                 } else if (data) {
-                    console.log('DATA: ' + util.inspect(data, {showHidden: false, depth: null}));
                     logContents += 'Successfully started database replication ' + log.formatLogMsg(data);
                     log.createLogFile(logFileName, logContents);
                     resolve(logContents);

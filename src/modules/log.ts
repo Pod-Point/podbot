@@ -44,20 +44,15 @@ export default class Log {
      */
     public createLogFile(logFileName: string, logContent: string) {
         return new Promise<any> ((resolve, reject) => {
-            const util = require('util');
             const fs = require('fs');
             if (!fs.existsSync(this.logsDir)){
                 fs.mkdirSync(this.logsDir);
             }
             const fileStamp = new FileStamp();
-            console.log(this.logsDir + '/' + logFileName + '__' + fileStamp.dateTime() + '.log');
             fs.writeFile(this.logsDir + '/' + logFileName + '__' + fileStamp.dateTime() + '.log', logContent, (err: string) => {
                 if (err) {
-                    console.log(err);
                     reject(this.formatLogMsg(err));
                 }
-
-                console.log("Log file was saved!");
                 resolve(this.formatLogMsg('Log file created'));
             });
 
