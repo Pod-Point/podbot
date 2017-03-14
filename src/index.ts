@@ -12,7 +12,7 @@ import Deploy from './modules/deploy';
 import Sentry from './modules/sentry';
 import Module from './interfaces/module';
 import Codecov from './modules/codecov';
-import CopyWebsite from './modules/copy-website';
+import MigrateWebsite from './modules/migrate-website';
 
 dotenv.config();
 
@@ -55,7 +55,7 @@ const messages: Module = new Messages();
 const deploy: Module = new Deploy();
 const codecov: Module = new Codecov();
 const sentry: Module = new Sentry();
-const copyWebsite: Module = new CopyWebsite();
+const migrateWebsite: Module = new MigrateWebsite();
 
 const modules: any[] = [
     prClosed,
@@ -66,7 +66,7 @@ const modules: any[] = [
     deploy,
     codecov,
     sentry,
-    copyWebsite
+    migrateWebsite
 ];
 
 controller.storage.teams.get(process.env.TEAM, (err, team) => {
