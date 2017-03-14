@@ -42,71 +42,6 @@ export default class S3 {
     }
 
     /**
-     * For testing only
-     *
-     */
-    public test() {
-        return new Promise<any> ((resolve, reject) => {
-
-            const util = require('util');
-            // let message: string = "default";
-            // let params: any = {
-            //     Bucket: 'podpoint-website-dev'
-            // };
-
-            // this.endpoints['eu-west-1'].getBucketLocation(params, (err, data) => {
-            //     if (err) {
-            //         console.log('ERROR: ' + util.inspect(err, {showHidden: false, depth: null}));
-            //         reject(err.message);
-            //     } else if (data.LocationConstraint) {
-            //         console.log('DATA: ' + util.inspect(data, {showHidden: false, depth: null}));
-            //         resolve(data.LocationConstraint);
-            //     }
-            // });
-
-            // const params = {
-            //     Bucket: 'podpoint-podbot-logs-test',
-            //     Key: 'abc123',
-            //     Body: 'My test log'
-            // }
-            // this.endpoints['eu-west-1'].putObject(params, (err, data) => {
-            //     if (err) console.log(err, err.stack); // an error occurred
-            //     else console.log(data);           // successful response
-            // });
-
-            // const testFolder = '../';
-            // const fs = require('fs');
-            // fs.readdir(testFolder, (err, files) => {
-            //     files.forEach(file => {
-            //         console.log(file);
-            //     });
-            // })
-
-            // const fs = require('fs');
-            // const logsDir: string = __dirname + process.env.WEBSITE_DEPLOY_LOGS_DIR ? process.env.WEBSITE_DEPLOY_LOGS_DIR : Config.get<string>('website.logging.' + this.env + '.directory');
-            // console.log(logsDir);
-            // if (!fs.existsSync(logsDir)){
-            //     fs.mkdirSync(logsDir);
-            // }
-            // fs.writeFile(logsDir + '/' + 'testlog.log', "Hey there!", function(err) {
-            //     if(err) {
-            //         return console.log(err);
-            //     }
-
-            //     console.log("The file was saved!");
-            // });
-
-            // const deployWebsite = this.deployWebsite();
-            // deployWebsite.then((val) => {
-            //     resolve(val);
-            // })
-            // .catch((err) => {
-            //     reject(err);
-            // });
-        });
-    }
-
-    /**
      * Copy all content except backup directories from one S3 bucket to another
      *
      * @param  {string} fromBucket
@@ -273,11 +208,11 @@ export default class S3 {
     }
 
     /**
-     * Deploy content from staging bucket to live
+     * Migrate content from staging bucket to live
      *
      * @return {Promise}
      */
-    public deployWebsite() {
+    public migrateWebsite() {
         return new Promise<any> ((resolve, reject) => {
             let logContents: string = log.formatLogMsg('COPYING S3 CONTENT FROM ' + this.stagingBucket + ' to ' + this.liveBucket);
             const logFileName: string = 's3' + '__' + this.stagingBucket + '__' + this.liveBucket;
