@@ -66,11 +66,9 @@ export default class Log {
      * @return {string}
      */
     public formatLogMsg(message: any) {
-        if (typeof(message) == 'string') {
+        if (typeof(message) === 'string') {
             return message + '\n';
-        } else if (typeof(message) == 'array') {
-            return message.toString() + '\n';
-        } else if (typeof(message) == 'object') {
+        } else if (typeof(message) === 'object') {
             return JSON.stringify(message) + '\n';
         }
     }
