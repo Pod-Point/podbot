@@ -7,9 +7,10 @@ const log = new Log();
 export default class DMS {
 
     private endpoints: { [key: string]: AWS.DMS };
+    public replicationTaskStatuses: { [index: string]: string; } = {};
 
     /**
-     * Perform api functions on AWS RDS
+     * Perform api functions on AWS Database Migration Service (DMS)
      *
      * @return {void}
      */
@@ -50,16 +51,59 @@ export default class DMS {
 
             this.endpoints['eu-west-1'].startReplicationTask(params, (err, data) => {
                 if (err) {
-                    logContents += 'Error: trying to replicate database ' + log.formatLogMsg(err);
+                    logContents += 'Error: trying to start database replication ' + log.formatLogMsg(err);
                     logContents += log.formatLogMsg('See DMS logs for more details');
                     log.createLogFile(logFileName, logContents);
-                    reject(logContents);
+                    reject('Error starting database replication. <https://eu-west-1.console.aws.amazon.com/dms/home?region=eu-west-1#tasks:|See here> and log files for details.');
                 } else if (data) {
                     logContents += 'Successfully started database replication ' + log.formatLogMsg(data);
-                    log.createLogFile(logFileName, logContents);
-                    resolve(logContents);
+                    resolve('Started database replication...');
                 }
             });
+        });
+    }
+
+    /**
+     * Get replication task status
+     *
+     * @param  {string} replicationTask
+     * @return {void}
+     */
+    public getReplicationTaskStatus(replicationTask: string) {
+        return new Promise<any> ((resolve, reject) => {
+            const params = {
+                Filters: [
+                    {
+                        Name: 'replication-task-arn',
+                        Values: [
+                            replicationTask
+                        ]
+                    }
+                ]
+            };
+
+            let response: string = '';
+            this.endpoints['eu-west-1'].describeReplicationTasks(params, (err, data) => {
+                if (err) {
+                    console.log('ERROR: ' + JSON.stringify(err));
+                    this.replicationTaskStatuses[replicationTask] = 'error';
+                    reject('error');
+                } else if (data) {
+                    console.log('DATA: ' + JSON.stringify(data));
+                    response = data.ReplicationTasks[0].Status;
+                    if (response === 'stopped' && data.ReplicationTasks[0].StopReason === 'Stop Reason FULL_LOAD_ONLY_FINISHED') {
+                        this.replicationTaskStatuses[replicationTask] = 'success';
+                        resolve('success');
+                    } else if (response === 'starting' || response === 'running') {
+                        this.replicationTaskStatuses[replicationTask] = response;
+                        resolve(response);
+                    } else {
+                        this.replicationTaskStatuses[replicationTask] = 'error';
+                        reject('error');
+                    }
+                }
+            });
+            console.log('RESPONSE: ' + response);
         });
     }
 
