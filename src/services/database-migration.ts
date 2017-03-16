@@ -3,7 +3,7 @@ import Log from '../modules/log';
 
 const log = new Log();
 
-export default class DMS {
+export default class DatabaseMigration {
 
     private endpoints: { [key: string]: AWS.DMS };
 
