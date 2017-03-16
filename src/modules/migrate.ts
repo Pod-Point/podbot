@@ -135,7 +135,6 @@ export default class Migrate {
                 });
             }
 
-            console.log('RESPONSES: ' + JSON.stringify(responses));
             this.updateSlack(responses, bot, message);
         }
     }
@@ -152,7 +151,6 @@ export default class Migrate {
     private checkReplicationTaskStatusTillDone(replicationTask: string, responses: { [index: string]: SlackAttachment; }, bot: SlackBot, message: SlackMessage) {
         const getReplicationTaskStatus = this.dms.getReplicationTaskStatus(this.websiteReplicationTask);
         getReplicationTaskStatus.then((val) => {
-            console.log('HEARD BACK ON REPLICATION TASK STATUS - ' + val);
             if (val === 'running') {
                 responses['database'].text = 'Running...';
                 this.updateSlack(responses, bot, message);
@@ -165,7 +163,6 @@ export default class Migrate {
             }
         })
         .catch((err) => {
-            console.log('HEARD BACK ON REPLICATION TASK STATUS - ' + err);
             clearInterval(this.replicationTaskChecker);
             responses['database'].text = 'Errors during migration. <https://eu-west-1.console.aws.amazon.com/dms/home?region=eu-west-1#tasks:|See here> for more details.';
             responses['database'].color = 'danger';
