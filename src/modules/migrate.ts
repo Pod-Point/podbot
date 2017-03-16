@@ -1,5 +1,5 @@
 import * as Config from 'config';
-import DMS from '../services/dms';
+import DatabaseMigration from '../services/database-migration';
 import S3 from '../services/s3';
 
 export default class Migrate {
@@ -8,7 +8,7 @@ export default class Migrate {
     private s3: S3 = new S3();
     private websiteStagingBucket: string = Config.get<string>('website.s3.' + this.env + '.staging');
     private websiteLiveBucket: string = Config.get<string>('website.s3.' + this.env + '.live');
-    private dms: DMS = new DMS();
+    private dms: DatabaseMigration = new DatabaseMigration();
     private websiteReplicationTask: string = Config.get<string>('website.dms.' + this.env + '.replication-task-arn');
     private replicationTaskChecker: any;
 
