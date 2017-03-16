@@ -74,7 +74,7 @@ export default class S3 {
                         } else {
                             callback(null);
                         }
-                    }, (err) => {
+                    }, (err: any) => {
                         if (err) {
                             logContents += 'Error: copying files from ' + fromBucket + ' to ' + toBucket + ' ' + log.formatLogMsg(err);
                             reject(logContents);
