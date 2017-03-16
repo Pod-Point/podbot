@@ -7,7 +7,6 @@ const log = new Log();
 export default class DMS {
 
     private endpoints: { [key: string]: AWS.DMS };
-    public replicationTaskStatuses: { [index: string]: string; } = {};
 
     /**
      * Perform api functions on AWS Database Migration Service (DMS)
@@ -85,25 +84,18 @@ export default class DMS {
             let response: string = '';
             this.endpoints['eu-west-1'].describeReplicationTasks(params, (err, data) => {
                 if (err) {
-                    console.log('ERROR: ' + JSON.stringify(err));
-                    this.replicationTaskStatuses[replicationTask] = 'error';
                     reject('error');
                 } else if (data) {
-                    console.log('DATA: ' + JSON.stringify(data));
                     response = data.ReplicationTasks[0].Status;
                     if (response === 'stopped' && data.ReplicationTasks[0].StopReason === 'Stop Reason FULL_LOAD_ONLY_FINISHED') {
-                        this.replicationTaskStatuses[replicationTask] = 'success';
                         resolve('success');
                     } else if (response === 'starting' || response === 'running') {
-                        this.replicationTaskStatuses[replicationTask] = response;
                         resolve(response);
                     } else {
-                        this.replicationTaskStatuses[replicationTask] = 'error';
                         reject('error');
                     }
                 }
             });
-            console.log('RESPONSE: ' + response);
         });
     }
 
