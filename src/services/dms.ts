@@ -1,5 +1,4 @@
 import * as AWS from 'aws-sdk';
-import * as Config from 'config';
 import Log from '../modules/log';
 
 const log = new Log();
@@ -41,6 +40,7 @@ export default class DMS {
      */
     public migrateDatabase(replicationTask: string) {
         return new Promise<any> ((resolve, reject) => {
+
             let logContents: string = log.formatLogMsg('MIGRATING DATABASE ON AWS DMS USING REPLICATION TASK ' + replicationTask);
             const logFileName: string = 'dms' + '__' + replicationTask;
             const params = {
@@ -70,6 +70,7 @@ export default class DMS {
      */
     public getReplicationTaskStatus(replicationTask: string) {
         return new Promise<any> ((resolve, reject) => {
+
             const params = {
                 Filters: [
                     {
