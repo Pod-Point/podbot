@@ -19,13 +19,12 @@ export default class Migrate {
      * @return {void}
      */
     public messageListeners(controller: BotController): void {
+
         controller.hears(['migrate website'], [
             'direct_message',
             'direct_mention',
             'mention'
         ], (bot, message) => {
-
-            const responses: { [index: string]: SlackAttachment; } = {};
 
             const attachments: SlackAttachment[] = [
                 {
@@ -149,7 +148,9 @@ export default class Migrate {
      * @return {void}
      */
     private checkReplicationTaskStatusTillDone(replicationTask: string, responses: { [index: string]: SlackAttachment; }, bot: SlackBot, message: SlackMessage) {
+
         const getReplicationTaskStatus = this.dms.getReplicationTaskStatus(this.websiteReplicationTask);
+
         getReplicationTaskStatus.then((val) => {
             if (val === 'running') {
                 responses['database'].text = 'Running...';
@@ -162,6 +163,7 @@ export default class Migrate {
                 this.updateSlack(responses, bot, message);
             }
         })
+
         .catch((err) => {
             clearInterval(this.replicationTaskChecker);
             responses['database'].text = 'Errors during migration. <https://eu-west-1.console.aws.amazon.com/dms/home?region=eu-west-1#tasks:|See here> for more details.';
