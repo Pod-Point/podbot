@@ -219,14 +219,14 @@
 			"production": {
 				"replication-task-arn": "arn:aws:dms:eu-west-1:959744386191:task:W2C2J47OOPDEGRFSVXNAFMMWGM"
 			}
+		}
+	},
+	"logging": {
+		"testing": {
+			"directory": "logs"
 		},
-		"logging": {
-			"testing": {
-				"directory": "logs"
-			},
-			"production": {
-				"directory": "logs"
-			}
+		"production": {
+			"directory": "logs"
 		}
 	}
 }
