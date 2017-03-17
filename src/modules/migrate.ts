@@ -1,14 +1,14 @@
 import * as Config from 'config';
 import DatabaseMigration from '../services/database-migration';
-import S3 from '../services/s3';
+import S3Migration from '../services/s3-migration';
 
 export default class Migrate {
 
     private env: string = (process.env.ENV === 'production') ? 'production' : 'testing';
-    private s3: S3 = new S3();
+    private s3migration: S3Migration = new S3Migration();
     private websiteStagingBucket: string = Config.get<string>('website.s3.' + this.env + '.staging');
     private websiteLiveBucket: string = Config.get<string>('website.s3.' + this.env + '.live');
-    private dms: DatabaseMigration = new DatabaseMigration();
+    private dbMigration: DatabaseMigration = new DatabaseMigration();
     private websiteReplicationTask: string = Config.get<string>('website.dms.' + this.env + '.replication-task-arn');
     private replicationTaskChecker: any;
 
@@ -66,6 +66,35 @@ export default class Migrate {
             bot.reply(message, {attachments: attachments});
 
         });
+
+        controller.hears(['db status'], [
+            'direct_message',
+            'direct_mention',
+            'mention'
+        ], (bot, message) => {
+
+            const checkStatus = this.dbMigration.getReplicationTaskStatus(this.websiteReplicationTask);
+            checkStatus.then((val) => {
+                bot.reply(message, 'Got status');
+            })
+            .catch((err) => {
+                bot.reply(message, 'Error');
+            });
+
+        });
+
+        controller.hears(['test'], [
+            'direct_message',
+            'direct_mention',
+            'mention'
+        ], (bot, message) => {
+
+            this.dbMigration.testAWS();
+            bot.reply(message, 'hello');
+
+        });
+
+
     }
 
     /**
@@ -98,7 +127,7 @@ export default class Migrate {
                         text: 'In progress...'
                 };
 
-                const migrateBucket = this.s3.migrateBucket(this.websiteStagingBucket, this.websiteLiveBucket);
+                const migrateBucket = this.s3migration.migrateBucket(this.websiteStagingBucket, this.websiteLiveBucket);
                 migrateBucket.then((val) => {
                     responses['s3'].text = 'Success!';
                     responses['s3'].color = 'good';
@@ -119,7 +148,7 @@ export default class Migrate {
                         text: 'In progress...'
                 };
 
-                const migrateDatabase = this.dms.migrateDatabase(this.websiteReplicationTask);
+                const migrateDatabase = this.dbMigration.migrateDatabase(this.websiteReplicationTask);
                 migrateDatabase.then((val) => {
                     responses['database'].text = val;
                     this.updateSlack(responses, bot, message);
@@ -149,7 +178,7 @@ export default class Migrate {
      */
     private checkReplicationTaskStatusTillDone(replicationTask: string, responses: { [index: string]: SlackAttachment; }, bot: SlackBot, message: SlackMessage) {
 
-        const getReplicationTaskStatus = this.dms.getReplicationTaskStatus(this.websiteReplicationTask);
+        const getReplicationTaskStatus = this.dbMigration.getReplicationTaskStatus(this.websiteReplicationTask);
 
         getReplicationTaskStatus.then((val) => {
             if (val === 'running') {
