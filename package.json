@@ -12,6 +12,7 @@
     "tslint": "tslint -c tslint.json 'src/**/*.ts'"
   },
   "dependencies": {
+    "@types/aws-sdk": "0.0.42",
     "@types/chai": "^3.4.34",
     "@types/config": "0.0.30",
     "@types/cron": "^1.0.30",
