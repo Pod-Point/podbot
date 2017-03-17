@@ -5,7 +5,7 @@ import Log from '../modules/log';
 
 const log = new Log();
 
-export default class S3 {
+export default class S3Migration {
 
     private endpoints: { [key: string]: AWS.S3 };
 
