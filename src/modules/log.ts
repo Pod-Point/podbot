@@ -15,7 +15,7 @@ export default class Log {
      */
     constructor() {
         this.env = (process.env.ENV === 'production') ? 'production' : 'testing';
-        this.logsDir = process.env.WEBSITE_MIGRATE_LOGS_DIR ? process.env.WEBSITE_MIGRATE_LOGS_DIR : Config.get<string>('website.logging.' + this.env + '.directory');
+        this.logsDir = process.env.MIGRATE_LOGS_DIR ? process.env.MIGRATE_LOGS_DIR : Config.get<string>('logging.' + this.env + '.directory');
 
         AWS.config.update({
             credentials: {
