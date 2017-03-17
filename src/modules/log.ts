@@ -9,7 +9,7 @@ export default class Log {
     private endpoints: { [key: string]: AWS.S3 };
 
     /**
-     * Perform api functions on AWS S3
+     * Create logs for tasks carried out by Podbot not logged elsewhere
      *
      * @return {void}
      */
