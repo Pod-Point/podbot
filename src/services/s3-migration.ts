@@ -157,10 +157,11 @@ export default class S3Migration {
                         const deleteParams = {
                             Bucket: encodeURIComponent(bucket),
                             Delete: {
-                                Objects: []
+                                Objects: [{ Key: '' }]
                             }
                         };
 
+                        deleteParams.Delete.Objects = [];
                         for (const file of data.Contents) {
                             if (file.Key.indexOf(oldestBackupFolder) !== -1) {
                                 deleteParams.Delete.Objects.push({ Key: file.Key });
