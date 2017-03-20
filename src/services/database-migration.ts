@@ -66,9 +66,10 @@ export default class DatabaseMigration {
      * Get replication task status
      *
      * @param  {string} replicationTask
-     * @return {void}
+     * @return {Promise}
      */
     public getReplicationTaskStatus(replicationTask: string) {
+        console.log('Started getReplicationTaskStatus');
         return new Promise<any> ((resolve, reject) => {
 
             const params = {
@@ -83,10 +84,13 @@ export default class DatabaseMigration {
             };
 
             let response: string = '';
+            console.log('HERE 1');
             this.endpoints['eu-west-1'].describeReplicationTasks(params, (err, data) => {
                 if (err) {
+                    console.log('ERROR: ' + JSON.stringify(err));
                     reject('error');
                 } else if (data) {
+                    console.log('DATA: ' + JSON.stringify(data));
                     response = data.ReplicationTasks[0].Status;
                     if (response === 'stopped' && data.ReplicationTasks[0].StopReason === 'Stop Reason FULL_LOAD_ONLY_FINISHED') {
                         resolve('success');
