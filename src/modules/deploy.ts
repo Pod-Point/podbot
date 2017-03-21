@@ -51,9 +51,6 @@ export default class Deploy {
      */
     public callbacks(bot: SlackBot, message: SlackMessage): void {
 
-        console.log('BOT: ' + bot);
-        console.log('MESSAGE: ' + message);
-
         const action: SlackAttachmentAction = message.actions[0];
 
         if (action.name === 'cancel') {
@@ -65,7 +62,6 @@ export default class Deploy {
         }
 
         if (message.callback_id === 'select-app') {
-            console.log('PICK STACK ATTACHMENT: ' + JSON.stringify(this.pickStack(action.value)));
             bot.replyInteractive(message, this.pickStack(action.value));
         }
 
