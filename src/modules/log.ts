@@ -16,7 +16,8 @@ export default class Log {
      */
     constructor() {
         this.env = (process.env.ENV === 'production') ? 'production' : 'testing';
-        this.logsDir = process.env.MIGRATE_LOGS_DIR ? process.env.MIGRATE_LOGS_DIR : Config.get<string>('logging.' + this.env + '.directory');
+        this.logsDir = process.env.MIGRATE_LOGS_DIR ? process.env.MIGRATE_LOGS_DIR :
+            Config.get<string>('logging.' + this.env + '.directory');
 
         AWS.config.update({
             credentials: {
@@ -45,7 +46,7 @@ export default class Log {
      */
     public createLogFile(logFileName: string, logContent: string) {
         return new Promise<any> ((resolve, reject) => {
-            if (!fs.existsSync(this.logsDir)){
+            if (!fs.existsSync(this.logsDir)) {
                 fs.mkdirSync(this.logsDir);
             }
             const fileStamp = new FileStamp();

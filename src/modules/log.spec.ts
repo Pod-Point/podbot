@@ -1,6 +1,5 @@
 import { expect } from 'chai';
 import Log from '../modules/log';
-import * as sinon from 'sinon';
 
 describe('Log', () => {
 
