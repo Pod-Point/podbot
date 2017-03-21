@@ -127,6 +127,7 @@ export default class S3Migration {
      * @return {Promise}
      */
     public deleteOldestBackup(bucket: string) {
+        // tslint:disable-next-line:promise-must-complete
         return new Promise<any> ((resolve, reject) => {
             const s3 = this;
             const async = require('async');
@@ -182,7 +183,6 @@ export default class S3Migration {
                         resolve(log.formatLogMsg(bucket + ': ' + backupFolders.length +
                             ' backup folders so not deleting any (will only delete if 5 or more)'));
                     }
-
                 }
             });
 
