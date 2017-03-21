@@ -1,6 +1,5 @@
 import { expect } from 'chai';
 import S3Migration from './s3-migration';
-const AWS = require('aws-sdk-mock');
 
 describe('S3 migration', () => {
 
@@ -8,6 +7,7 @@ describe('S3 migration', () => {
 
         it('copies the contents of one bucket into another bucket', () => {
 
+            const AWS = require('aws-sdk-mock');
             AWS.mock('S3', 'listObjectsV2', {
                 'Contents': [
                     {
@@ -37,6 +37,7 @@ describe('S3 migration', () => {
 
         it('backs up the contents of one bucket into a sub-folder', () => {
 
+            const AWS = require('aws-sdk-mock');
             AWS.mock('S3', 'listObjectsV2', {
                 'Contents': [
                     {
@@ -65,6 +66,7 @@ describe('S3 migration', () => {
 
         it('deletes the oldest backup folder in a bucket', () => {
 
+            const AWS = require('aws-sdk-mock');
             AWS.mock('S3', 'listObjectsV2', {
                 'Contents': [
                     {
@@ -98,6 +100,7 @@ describe('S3 migration', () => {
 
         it('doesn\'t delete if fewer than 5 backup folders', () => {
 
+            const AWS = require('aws-sdk-mock');
             AWS.mock('S3', 'listObjectsV2', {
                 'Contents': [
                     {
@@ -132,6 +135,7 @@ describe('S3 migration', () => {
 
         it('migrates content from one bucket to another, dealing with backups', () => {
 
+            const AWS = require('aws-sdk-mock');
             AWS.mock('S3', 'listObjectsV2', {
                 'Contents': [
                     {

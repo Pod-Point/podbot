@@ -91,9 +91,11 @@ export default class Migrate {
 
         if (message.callback_id === 'website') {
             const responses: { [index: string]: SlackAttachment; } = {};
+            let actionType: string;
 
             if (action.name === 's3' || action.name === 'both') {
-                responses['s3'] = {
+                actionType = 's3';
+                responses[actionType] = {
                         fallback: 'Migrating website S3 content from staging to live...',
                         color: '#3AA3E3',
                         title: 'Migrating website S3 content from staging to live...',
@@ -102,19 +104,20 @@ export default class Migrate {
 
                 const migrateBucket = this.s3migration.migrateBucket(this.websiteStagingBucket, this.websiteLiveBucket);
                 migrateBucket.then((val) => {
-                    responses['s3'].text = 'Success!';
-                    responses['s3'].color = 'good';
+                    responses[actionType].text = 'Success!';
+                    responses[actionType].color = 'good';
                     this.updateSlack(responses, bot, message);
                 })
                 .catch((err) => {
-                    responses['s3'].text = 'Errors - please check log for details';
-                    responses['s3'].color = 'danger';
+                    responses[actionType].text = 'Errors - please check log for details';
+                    responses[actionType].color = 'danger';
                     this.updateSlack(responses, bot, message);
                 });
             }
 
             if (action.name === 'database' || action.name === 'both') {
-                responses['database'] = {
+                actionType = 'database';
+                responses[actionType] = {
                         fallback: 'Migrating website database from staging to live...',
                         color: '#3AA3E3',
                         title: 'Migrating website database from staging to live...',
@@ -123,15 +126,15 @@ export default class Migrate {
 
                 const migrateDatabase = this.dbMigration.migrateDatabase(this.websiteReplicationTask);
                 migrateDatabase.then((val) => {
-                    responses['database'].text = val;
+                    responses[actionType].text = val;
                     this.updateSlack(responses, bot, message);
                     this.replicationTaskChecker = setInterval(() => {
                         this.checkReplicationTaskStatusTillDone(this.websiteReplicationTask, responses, bot, message);
                     }, 5000);
                 })
                 .catch((err) => {
-                    responses['database'].text = err;
-                    responses['database'].color = 'danger';
+                    responses[actionType].text = err;
+                    responses[actionType].color = 'danger';
                     this.updateSlack(responses, bot, message);
                 });
             }
@@ -149,7 +152,10 @@ export default class Migrate {
      * @param  {SlackMessage} message
      * @return {void}
      */
-    private checkReplicationTaskStatusTillDone(replicationTask: string, responses: { [index: string]: SlackAttachment; }, bot: SlackBot, message: SlackMessage) {
+    private checkReplicationTaskStatusTillDone(
+        replicationTask: string,
+        responses: { [index: string]: SlackAttachment; },
+        bot: SlackBot, message: SlackMessage) {
 
         const getReplicationTaskStatus = this.dbMigration.getReplicationTaskStatus(this.websiteReplicationTask);
 
@@ -168,7 +174,8 @@ export default class Migrate {
 
         .catch((err) => {
             clearInterval(this.replicationTaskChecker);
-            responses['database'].text = 'Errors during migration. <https://eu-west-1.console.aws.amazon.com/dms/home?region=eu-west-1#tasks:|See here> for more details.';
+            responses['database'].text = 'Errors during migration. ' +
+                '<https://eu-west-1.console.aws.amazon.com/dms/home?region=eu-west-1#tasks:|See here> for more details.';
             responses['database'].color = 'danger';
             this.updateSlack(responses, bot, message);
         });

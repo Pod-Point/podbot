@@ -1,6 +1,5 @@
 import { expect } from 'chai';
 import DatabaseMigration from './database-migration';
-const AWS = require('aws-sdk-mock');
 
 describe('Database migration', () => {
 
@@ -8,6 +7,7 @@ describe('Database migration', () => {
 
         it('gets the status of a database replication task', () => {
 
+            const AWS = require('aws-sdk-mock');
             AWS.mock('DMS', 'describeReplicationTasks', {
                 'ReplicationTasks': [
                     {
@@ -28,6 +28,7 @@ describe('Database migration', () => {
 
         it('returns an error if it gets an unexpected status', () => {
 
+            const AWS = require('aws-sdk-mock');
             AWS.mock('DMS', 'describeReplicationTasks', {
                 'ReplicationTasks': [
                     {
@@ -52,6 +53,7 @@ describe('Database migration', () => {
 
         it('starts a database replication task', () => {
 
+            const AWS = require('aws-sdk-mock');
             AWS.mock('DMS', 'startReplicationTask', { 'some': 'data' });
 
             const replicationTask: string = 'dummy-ARN-value';
