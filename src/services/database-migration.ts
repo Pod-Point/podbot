@@ -53,7 +53,8 @@ export default class DatabaseMigration {
                     logContents += 'Error: trying to start database replication ' + log.formatLogMsg(err);
                     logContents += log.formatLogMsg('See DMS logs for more details');
                     log.createLogFile(logFileName, logContents);
-                    reject('Error starting database replication. <https://eu-west-1.console.aws.amazon.com/dms/home?region=eu-west-1#tasks:|See here> and log files for details.');
+                    reject('Error starting database replication. ' +
+                        '<https://eu-west-1.console.aws.amazon.com/dms/home?region=eu-west-1#tasks:|See here> and log files for details.');
                 } else if (data) {
                     logContents += 'Successfully started database replication ' + log.formatLogMsg(data);
                     log.createLogFile(logFileName, logContents);
