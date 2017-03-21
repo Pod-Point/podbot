@@ -1,4 +1,3 @@
-import * as async from 'async';
 import * as AWS from 'aws-sdk';
 import FileStamp from '../modules/file-stamp';
 import Log from '../modules/log';
@@ -47,6 +46,8 @@ export default class S3Migration {
             const listParams = {
                 Bucket: encodeURIComponent(fromBucket)
             };
+            // tslint:disable-next-line:no-require-imports
+            const async = require('async');
 
             endpoints['eu-west-1'].listObjectsV2(listParams, (err, data) => {
                 if (err) {
