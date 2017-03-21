@@ -100,6 +100,7 @@ export default class S3Migration {
         return new Promise<any> ((resolve, reject) => {
             let logContents: string = log.formatLogMsg('BACKING UP ' + bucket);
             const deleteOldestBackup = this.deleteOldestBackup(bucket);
+
             deleteOldestBackup.then((val: string) => {
                 logContents += val;
                 const fileStamp = new FileStamp();
@@ -118,7 +119,6 @@ export default class S3Migration {
                 reject(logContents);
             });
         });
-
     }
 
     /**
