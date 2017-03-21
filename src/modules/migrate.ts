@@ -18,6 +18,7 @@ export default class Migrate {
      * @param  {BotController} controller
      * @return {void}
      */
+    // tslint:disable-next-line:max-func-body-length
     public messageListeners(controller: BotController): void {
 
         controller.hears(['migrate website'], [
@@ -66,34 +67,6 @@ export default class Migrate {
             bot.reply(message, {attachments: attachments});
 
         });
-
-        controller.hears(['db status'], [
-            'direct_message',
-            'direct_mention',
-            'mention'
-        ], (bot, message) => {
-
-            const checkStatus = this.dbMigration.getReplicationTaskStatus(this.websiteReplicationTask);
-            checkStatus.then((val) => {
-                bot.reply(message, 'Got status');
-            })
-            .catch((err) => {
-                bot.reply(message, 'Error');
-            });
-
-        });
-
-        controller.hears(['test'], [
-            'direct_message',
-            'direct_mention',
-            'mention'
-        ], (bot, message) => {
-
-            this.dbMigration.testAWS();
-            bot.reply(message, 'hello');
-
-        });
-
 
     }
 
