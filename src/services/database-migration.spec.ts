@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import DatabaseMigration from './database-migration';
+import * as AWS from 'aws-sdk-mock';
 
 describe('Database migration', () => {
 
@@ -7,7 +8,6 @@ describe('Database migration', () => {
 
         it('gets the status of a database replication task', () => {
 
-            const AWS = require('aws-sdk-mock');
             AWS.mock('DMS', 'describeReplicationTasks', {
                 'ReplicationTasks': [
                     {
@@ -21,14 +21,13 @@ describe('Database migration', () => {
 
             return databaseMigration.getReplicationTaskStatus(replicationTask).then((response: any) => {
                 expect(response).to.equal('running');
-                AWS.restore('DMS');
+                AWS.restore('DMS', 'describeReplicationTasks');
             });
 
         });
 
         it('returns an error if it gets an unexpected status', () => {
 
-            const AWS = require('aws-sdk-mock');
             AWS.mock('DMS', 'describeReplicationTasks', {
                 'ReplicationTasks': [
                     {
@@ -42,7 +41,7 @@ describe('Database migration', () => {
 
             return databaseMigration.getReplicationTaskStatus(replicationTask).catch((response: any) => {
                 expect(response).to.equal('error');
-                AWS.restore('DMS');
+                AWS.restore('DMS', 'describeReplicationTasks');
             });
 
         });
@@ -53,7 +52,6 @@ describe('Database migration', () => {
 
         it('starts a database replication task', () => {
 
-            const AWS = require('aws-sdk-mock');
             AWS.mock('DMS', 'startReplicationTask', { 'some': 'data' });
 
             const replicationTask: string = 'dummy-ARN-value';
@@ -61,7 +59,7 @@ describe('Database migration', () => {
 
             return databaseMigration.migrateDatabase(replicationTask).then((response: any) => {
                 expect(response).to.equal('Started database replication...');
-                AWS.restore('DMS');
+                AWS.restore('DMS', 'startReplicationTask');
             });
 
         });
