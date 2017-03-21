@@ -128,8 +128,7 @@ describe('S3 migration', () => {
 
     });
 
-    // tslint:disable-next-line:mocha-avoid-only
-    describe.only('Migrate bucket', () => {
+    describe('Migrate bucket', () => {
 
         it('migrates content from one bucket to another, dealing with backups', () => {
 
