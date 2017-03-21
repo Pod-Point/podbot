@@ -33,6 +33,7 @@
     "typescript": "^2.0.10"
   },
   "devDependencies": {
+    "aws-sdk-mock": "^1.6.1",
     "chai": "^3.5.0",
     "istanbul": "1.1.0-alpha.1",
     "mocha": "^3.0.2",
