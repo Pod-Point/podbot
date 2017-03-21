@@ -1,5 +1,4 @@
 import * as AWS from 'aws-sdk';
-import * as Config from 'config';
 import FileStamp from '../modules/file-stamp';
 import Log from '../modules/log';
 
@@ -137,7 +136,8 @@ export default class S3Migration {
 
             s3.endpoints['eu-west-1'].listObjectsV2(listParams, (err, data) => {
                 if (err) {
-                    reject('Error: Trying to delete oldest backup in ' +  bucket + ' encountered problem getting directory list: ' + log.formatLogMsg(err));
+                    reject('Error: Trying to delete oldest backup in ' +  bucket +
+                        ' encountered problem getting directory list: ' + log.formatLogMsg(err));
                 } else if (data.Contents) {
 
                     let backupFolders: string[] = [];
@@ -146,7 +146,8 @@ export default class S3Migration {
                     for (const file of data.Contents) {
                         if (file.Key.indexOf('backup__') !== -1) {
                             compareBackupFolder = file.Key.substr(0, file.Key.indexOf('/'));
-                            oldestBackupFolder = (compareBackupFolder < oldestBackupFolder || !oldestBackupFolder) ? compareBackupFolder : oldestBackupFolder;
+                            oldestBackupFolder = (compareBackupFolder < oldestBackupFolder || !oldestBackupFolder)
+                                ? compareBackupFolder : oldestBackupFolder;
                             if (backupFolders.indexOf(compareBackupFolder) === -1) {
                                 backupFolders.push(compareBackupFolder);
                             }
@@ -170,13 +171,16 @@ export default class S3Migration {
 
                         s3.endpoints['eu-west-1'].deleteObjects(deleteParams, (error, response) => {
                             if (error) {
-                                reject('Error: Trying to delete oldest backup in ' +  bucket + ' encountered errors trying to delete: ' + log.formatLogMsg(error));
+                                reject('Error: Trying to delete oldest backup in ' +  bucket +
+                                    ' encountered errors trying to delete: ' + log.formatLogMsg(error));
                             } else {
-                                resolve(log.formatLogMsg(bucket + ': ' + backupFolders.length + ' backup folders found. Deleted folder ' + oldestBackupFolder));
+                                resolve(log.formatLogMsg(bucket + ': ' + backupFolders.length +
+                                    ' backup folders found. Deleted folder ' + oldestBackupFolder));
                             }
                         });
                     } else {
-                        resolve(log.formatLogMsg(bucket + ': ' + backupFolders.length + ' backup folders so not deleting any (will only delete if 5 or more)'));
+                        resolve(log.formatLogMsg(bucket + ': ' + backupFolders.length +
+                            ' backup folders so not deleting any (will only delete if 5 or more)'));
                     }
 
                 }
