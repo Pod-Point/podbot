@@ -1,5 +1,6 @@
 import * as AWS from 'aws-sdk';
 import * as Config from 'config';
+import * as fs from 'fs';
 import FileStamp from '../modules/file-stamp';
 
 export default class Log {
@@ -44,7 +45,6 @@ export default class Log {
      */
     public createLogFile(logFileName: string, logContent: string) {
         return new Promise<any> ((resolve, reject) => {
-            const fs = require('fs');
             if (!fs.existsSync(this.logsDir)){
                 fs.mkdirSync(this.logsDir);
             }
