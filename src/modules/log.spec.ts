@@ -1,7 +1,5 @@
 import { expect } from 'chai';
-import * as dotenv from 'dotenv';
 import Log from '../modules/log';
-import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 
 describe('Log', () => {
