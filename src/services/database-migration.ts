@@ -1,4 +1,4 @@
-const AWS = require('aws-sdk');
+import * as AWS from 'aws-sdk';
 import Log from '../modules/log';
 
 const log = new Log();
@@ -23,9 +23,6 @@ export default class DatabaseMigration {
         AWS.config.region = 'eu-west-1';
 
         this.endpoints = {
-            'us-east-1': new AWS.DMS({
-                region: 'us-east-1'
-            }),
             'eu-west-1': new AWS.DMS({
                 region: 'eu-west-1'
             })

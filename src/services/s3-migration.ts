@@ -1,3 +1,4 @@
+import * as async from 'async';
 import * as AWS from 'aws-sdk';
 import FileStamp from '../modules/file-stamp';
 import Log from '../modules/log';
@@ -23,6 +24,12 @@ export default class S3Migration {
 
         AWS.config.region = 'eu-west-1';
 
+        this.endpoints = {
+            'eu-west-1': new AWS.S3({
+                region: 'eu-west-1'
+            })
+        };
+
     }
 
     /**
@@ -36,19 +43,12 @@ export default class S3Migration {
     public copyBucket(fromBucket: string, toBucket: string, toPrefix: string) {
         return new Promise<any> ((resolve, reject) => {
             let logContents: string = log.formatLogMsg('COPYING FROM ' + fromBucket + ' to ' + toBucket + '/' + toPrefix);
-            const async = require('async');
-            const s3 = {
-                'endpoints': {
-                    'eu-west-1': new AWS.S3({
-                        region: 'eu-west-1'
-                    })
-                }
-            };
+            const endpoints = this.endpoints;
             const listParams = {
                 Bucket: encodeURIComponent(fromBucket)
             };
 
-            s3.endpoints['eu-west-1'].listObjectsV2(listParams, (err, data) => {
+            endpoints['eu-west-1'].listObjectsV2(listParams, (err, data) => {
                 if (err) {
                     logContents += 'Error: trying to list files in bucket ' + fromBucket + ' ' + log.formatLogMsg(err);
                     reject(logContents);
@@ -60,7 +60,7 @@ export default class S3Migration {
                             Key: toPrefix + file.Key
                         };
                         if (file.Key.indexOf('backup__') === -1) {
-                            s3.endpoints['eu-west-1'].copyObject(copyParams, (error, response) => {
+                            endpoints['eu-west-1'].copyObject(copyParams, (error, response) => {
                                 if (error) {
                                     logContents += 'Error: copying file ' + file.Key + ' ' + log.formatLogMsg(error);
                                 } else {
@@ -125,25 +125,18 @@ export default class S3Migration {
      * @return {Promise}
      */
     public deleteOldestBackup(bucket: string) {
+        const endpoints = this.endpoints;
+        const listParams = {
+            Bucket: encodeURIComponent(bucket)
+        };
+
         // tslint:disable-next-line:promise-must-complete
         return new Promise<any> ((resolve, reject) => {
-            const s3 = {
-                'endpoints': {
-                    'eu-west-1': new AWS.S3({
-                        region: 'eu-west-1'
-                    })
-                }
-            };
-            const listParams = {
-                Bucket: encodeURIComponent(bucket)
-            };
-
-            s3.endpoints['eu-west-1'].listObjectsV2(listParams, (err, data) => {
+            endpoints['eu-west-1'].listObjectsV2(listParams, (err, data) => {
                 if (err) {
                     reject('Error: Trying to delete oldest backup in ' +  bucket +
                         ' encountered problem getting directory list: ' + log.formatLogMsg(err));
-                } else if (data.Contents) {
-
+                } else {
                     const backupFolders: string[] = [];
                     let oldestBackupFolder: string;
                     let compareBackupFolder: string;
@@ -173,7 +166,7 @@ export default class S3Migration {
                             }
                         }
 
-                        s3.endpoints['eu-west-1'].deleteObjects(deleteParams, (error, response) => {
+                        endpoints['eu-west-1'].deleteObjects(deleteParams, (error, response) => {
                             if (error) {
                                 reject('Error: Trying to delete oldest backup in ' +  bucket +
                                     ' encountered errors trying to delete: ' + log.formatLogMsg(error));
@@ -188,7 +181,6 @@ export default class S3Migration {
                     }
                 }
             });
-
         });
 
     }
