@@ -23,14 +23,6 @@ export default class S3Migration {
 
         AWS.config.region = 'eu-west-1';
 
-        this.endpoints = {
-            'us-east-1': new AWS.S3({
-                region: 'us-east-1'
-            }),
-            'eu-west-1': new AWS.S3({
-                region: 'eu-west-1'
-            })
-        };
     }
 
     /**
@@ -44,8 +36,14 @@ export default class S3Migration {
     public copyBucket(fromBucket: string, toBucket: string, toPrefix: string) {
         return new Promise<any> ((resolve, reject) => {
             let logContents: string = log.formatLogMsg('COPYING FROM ' + fromBucket + ' to ' + toBucket + '/' + toPrefix);
-            const s3 = this;
             const async = require('async');
+            const s3 = {
+                'endpoints': {
+                    'eu-west-1': new AWS.S3({
+                        region: 'eu-west-1'
+                    })
+                }
+            };
             const listParams = {
                 Bucket: encodeURIComponent(fromBucket)
             };
@@ -129,8 +127,13 @@ export default class S3Migration {
     public deleteOldestBackup(bucket: string) {
         // tslint:disable-next-line:promise-must-complete
         return new Promise<any> ((resolve, reject) => {
-            const s3 = this;
-            const async = require('async');
+            const s3 = {
+                'endpoints': {
+                    'eu-west-1': new AWS.S3({
+                        region: 'eu-west-1'
+                    })
+                }
+            };
             const listParams = {
                 Bucket: encodeURIComponent(bucket)
             };
@@ -141,7 +144,7 @@ export default class S3Migration {
                         ' encountered problem getting directory list: ' + log.formatLogMsg(err));
                 } else if (data.Contents) {
 
-                    let backupFolders: string[] = [];
+                    const backupFolders: string[] = [];
                     let oldestBackupFolder: string;
                     let compareBackupFolder: string;
                     for (const file of data.Contents) {

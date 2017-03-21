@@ -158,25 +158,26 @@ export default class Migrate {
         bot: SlackBot, message: SlackMessage) {
 
         const getReplicationTaskStatus = this.dbMigration.getReplicationTaskStatus(this.websiteReplicationTask);
+        const actionType: string = 'database';
 
         getReplicationTaskStatus.then((val) => {
             if (val === 'running') {
-                responses['database'].text = 'Running...';
+                responses[actionType].text = 'Running...';
                 this.updateSlack(responses, bot, message);
             }
             if (val === 'success') {
                 clearInterval(this.replicationTaskChecker);
-                responses['database'].text = 'Success!';
-                responses['database'].color = 'good';
+                responses[actionType].text = 'Success!';
+                responses[actionType].color = 'good';
                 this.updateSlack(responses, bot, message);
             }
         })
 
         .catch((err) => {
             clearInterval(this.replicationTaskChecker);
-            responses['database'].text = 'Errors during migration. ' +
+            responses[actionType].text = 'Errors during migration. ' +
                 '<https://eu-west-1.console.aws.amazon.com/dms/home?region=eu-west-1#tasks:|See here> for more details.';
-            responses['database'].color = 'danger';
+            responses[actionType].color = 'danger';
             this.updateSlack(responses, bot, message);
         });
     }
