@@ -1,4 +1,4 @@
-import * as AWS from 'aws-sdk';
+const AWS = require('aws-sdk');
 import Log from '../modules/log';
 
 const log = new Log();
@@ -56,6 +56,7 @@ export default class DatabaseMigration {
                     reject('Error starting database replication. <https://eu-west-1.console.aws.amazon.com/dms/home?region=eu-west-1#tasks:|See here> and log files for details.');
                 } else if (data) {
                     logContents += 'Successfully started database replication ' + log.formatLogMsg(data);
+                    log.createLogFile(logFileName, logContents);
                     resolve('Started database replication...');
                 }
             });
@@ -69,7 +70,6 @@ export default class DatabaseMigration {
      * @return {Promise}
      */
     public getReplicationTaskStatus(replicationTask: string) {
-        console.log('Started getReplicationTaskStatus');
         return new Promise<any> ((resolve, reject) => {
 
             const params = {
@@ -84,13 +84,10 @@ export default class DatabaseMigration {
             };
 
             let response: string = '';
-            console.log('HERE 1');
             this.endpoints['eu-west-1'].describeReplicationTasks(params, (err, data) => {
                 if (err) {
-                    console.log('ERROR: ' + JSON.stringify(err));
                     reject('error');
                 } else if (data) {
-                    console.log('DATA: ' + JSON.stringify(data));
                     response = data.ReplicationTasks[0].Status;
                     if (response === 'stopped' && data.ReplicationTasks[0].StopReason === 'Stop Reason FULL_LOAD_ONLY_FINISHED') {
                         resolve('success');
