@@ -55,7 +55,7 @@ export default class DatabaseMigration {
                 } else if (data) {
                     logContents += 'Successfully started database replication ' + log.formatLogMsg(data);
                     log.createLogFile(logFileName, logContents);
-                    resolve('Started database replication...');
+                    resolve('In progress...');
                 }
             });
         });
