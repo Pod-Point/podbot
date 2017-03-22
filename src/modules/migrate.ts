@@ -157,7 +157,8 @@ export default class Migrate {
     private checkReplicationTaskStatusTillDone(
         replicationTask: string,
         responses: { [index: string]: SlackAttachment; },
-        bot: SlackBot, message: SlackMessage) {
+        bot: SlackBot,
+        message: SlackMessage) {
 
         const getReplicationTaskStatus = this.dbMigration.getReplicationTaskStatus(this.websiteReplicationTask);
         const actionType: string = 'database';

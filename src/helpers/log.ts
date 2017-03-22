@@ -27,12 +27,12 @@ export default class Log {
      * @return {Promise}
      * 
      */
-    public createLogFile(logFileName: string, logContent: string) {
+    public createLogFile(logFileName: string, logContent: string): Promise<any> {
         return new Promise<any> ((resolve, reject) => {
             if (!fs.existsSync(this.logsDir)) {
                 fs.mkdirSync(this.logsDir);
             }
-            const fileStamp = new FileStamp();
+            const fileStamp: FileStamp = new FileStamp();
             fs.writeFile(this.logsDir + '/' + logFileName + '__' + fileStamp.dateTime() + '.log', logContent, (err: string) => {
                 if (err) {
                     reject(this.formatLogMsg(err));

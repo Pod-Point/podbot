@@ -35,7 +35,7 @@ export default class DatabaseMigration {
      * @param  {string} replicationTask
      * @return {Promise}
      */
-    public migrateDatabase(replicationTask: string) {
+    public migrateDatabase(replicationTask: string): Promise<any> {
         return new Promise<any> ((resolve, reject) => {
 
             let logContents: string = log.formatLogMsg('MIGRATING DATABASE ON AWS DMS USING REPLICATION TASK ' + replicationTask);
@@ -67,7 +67,7 @@ export default class DatabaseMigration {
      * @param  {string} replicationTask
      * @return {Promise}
      */
-    public getReplicationTaskStatus(replicationTask: string) {
+    public getReplicationTaskStatus(replicationTask: string): Promise<any> {
         return new Promise<any> ((resolve, reject) => {
 
             const params = {
