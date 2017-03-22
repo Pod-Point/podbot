@@ -2,7 +2,7 @@ import * as AWS from 'aws-sdk';
 import FileStamp from '../helpers/file-stamp';
 import Log from '../helpers/log';
 
-const log = new Log();
+const log: Log = new Log();
 
 export default class S3Migration {
 
@@ -39,7 +39,7 @@ export default class S3Migration {
      * @param  {string} toPrefix
      * @return {Promise}
      */
-    public copyBucket(fromBucket: string, toBucket: string, toPrefix: string) {
+    public copyBucket(fromBucket: string, toBucket: string, toPrefix: string): Promise<any> {
         return new Promise<any> ((resolve, reject) => {
             let logContents: string = log.formatLogMsg('COPYING FROM ' + fromBucket + ' to ' + toBucket + '/' + toPrefix);
             const endpoints = this.endpoints;
@@ -49,13 +49,13 @@ export default class S3Migration {
             // tslint:disable-next-line:no-require-imports
             const async = require('async');
 
-            endpoints['eu-west-1'].listObjectsV2(listParams, (err, data) => {
+            endpoints['eu-west-1'].listObjectsV2(listParams, (err: any, data: any) => {
                 if (err) {
                     logContents += 'Error: trying to list files in bucket ' + fromBucket + ' ' + log.formatLogMsg(err);
                     reject(logContents);
                 } else if (data.Contents) {
                     async.each(data.Contents, (file: any, callback: any) => {
-                        const copyParams = {
+                        const copyParams: any = {
                             CopySource: encodeURIComponent(fromBucket + '/' + file.Key),
                             Bucket: encodeURIComponent(toBucket),
                             Key: toPrefix + file.Key
@@ -125,7 +125,7 @@ export default class S3Migration {
      * @param  {string} bucket
      * @return {Promise}
      */
-    public deleteOldestBackup(bucket: string) {
+    public deleteOldestBackup(bucket: string): Promise<any> {
         const endpoints = this.endpoints;
         const listParams = {
             Bucket: encodeURIComponent(bucket)
