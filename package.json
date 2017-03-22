@@ -34,7 +34,6 @@
     "typescript": "^2.0.10"
   },
   "devDependencies": {
-    "async": "^4.1.2",
     "aws-sdk-mock": "^1.6.1",
     "chai": "^3.5.0",
     "istanbul": "1.1.0-alpha.1",
