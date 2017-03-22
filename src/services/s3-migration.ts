@@ -1,6 +1,6 @@
 import * as AWS from 'aws-sdk';
-import FileStamp from '../modules/file-stamp';
-import Log from '../modules/log';
+import FileStamp from '../helpers/file-stamp';
+import Log from '../helpers/log';
 
 const log = new Log();
 

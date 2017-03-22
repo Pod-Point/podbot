@@ -1,5 +1,5 @@
 import * as AWS from 'aws-sdk';
-import Log from '../modules/log';
+import Log from '../helpers/log';
 
 const log = new Log();
 
