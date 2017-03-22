@@ -104,11 +104,13 @@ export default class Migrate {
 
                 const migrateBucket = this.s3migration.migrateBucket(this.websiteStagingBucket, this.websiteLiveBucket);
                 migrateBucket.then((val) => {
+                    actionType = 's3';
                     responses[actionType].text = 'Success!';
                     responses[actionType].color = 'good';
                     this.updateSlack(responses, bot, message);
                 })
                 .catch((err) => {
+                    actionType = 's3';
                     responses[actionType].text = 'Errors - please check log for details';
                     responses[actionType].color = 'danger';
                     this.updateSlack(responses, bot, message);
@@ -126,6 +128,7 @@ export default class Migrate {
 
                 const migrateDatabase = this.dbMigration.migrateDatabase(this.websiteReplicationTask);
                 migrateDatabase.then((val) => {
+                    actionType = 'database';
                     responses[actionType].text = val;
                     this.updateSlack(responses, bot, message);
                     this.replicationTaskChecker = setInterval(() => {
@@ -133,6 +136,7 @@ export default class Migrate {
                     }, 5000);
                 })
                 .catch((err) => {
+                    actionType = 'database';
                     responses[actionType].text = err;
                     responses[actionType].color = 'danger';
                     this.updateSlack(responses, bot, message);
@@ -161,15 +165,11 @@ export default class Migrate {
         const actionType: string = 'database';
 
         getReplicationTaskStatus.then((val) => {
-            if (val === 'running') {
-                responses[actionType].text = 'Running...';
-                this.updateSlack(responses, bot, message);
-            }
             if (val === 'success') {
-                clearInterval(this.replicationTaskChecker);
                 responses[actionType].text = 'Success!';
                 responses[actionType].color = 'good';
                 this.updateSlack(responses, bot, message);
+                clearInterval(this.replicationTaskChecker);
             }
         })
 
@@ -191,7 +191,6 @@ export default class Migrate {
      * @return {void}
      */
     private updateSlack(responses: { [index: string]: SlackAttachment; }, bot: SlackBot, message: SlackMessage): void {
-
         const attachments: SlackAttachment[] = [];
 
         Object.keys(responses).forEach((key) => {
