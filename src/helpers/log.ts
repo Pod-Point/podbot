@@ -1,4 +1,3 @@
-import * as AWS from 'aws-sdk';
 import * as Config from 'config';
 import * as fs from 'fs';
 import FileStamp from './file-stamp';
