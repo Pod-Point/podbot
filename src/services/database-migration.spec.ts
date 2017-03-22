@@ -57,7 +57,7 @@ describe('Database migration', () => {
         const databaseMigration = new DatabaseMigration();
 
         return databaseMigration.migrateDatabase(replicationTask).then((response: any) => {
-            expect(response).to.equal('Started database replication...');
+            expect(response).to.equal('In progress...');
             AWS.restore('DMS', 'startReplicationTask');
         });
 
