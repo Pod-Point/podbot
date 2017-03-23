@@ -33,6 +33,7 @@ export default class S3Migration {
 
     /**
      * Get the list of files in an S3 bucket
+     * Allows for multiple calls to AWS if more than 1,000 files in the bucket
      *
      * @param  {string} bucket
      * @param  {string} continuationToken
