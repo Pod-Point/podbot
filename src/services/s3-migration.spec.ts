@@ -14,7 +14,7 @@ describe('S3 migration', () => {
         AWS.mock('S3', 'listObjectsV2', mockFileList);
 
         const s3Migration: S3Migration = new S3Migration();
-        const bucket: string = 'dummy-bucket-from-name';
+        const bucket: string = 'dummy-bucket-name';
 
         return s3Migration.getBucketContents(bucket, '').then((response) => {
             expect(response.length).to.equal(1000);
