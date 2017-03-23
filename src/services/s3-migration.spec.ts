@@ -3,6 +3,26 @@ import S3Migration from './s3-migration';
 
 describe('S3 migration', () => {
 
+    it('gets the contents of a bucket', () => {
+
+        // tslint:disable-next-line:no-require-imports
+        const AWS = require('aws-sdk-mock');
+        const mockFileList: any = { 'Contents': [] };
+        for (let count = 0; count < 1000; count = count + 1) {
+            mockFileList.Contents.push({ 'Key': 'dummy-file-name-' + count });
+        }
+        AWS.mock('S3', 'listObjectsV2', mockFileList);
+
+        const s3Migration: S3Migration = new S3Migration();
+        const bucket: string = 'dummy-bucket-from-name';
+
+        return s3Migration.getBucketContents(bucket, '').then((response) => {
+            expect(response.length).to.equal(1000);
+            AWS.restore('S3', 'listObjectsV2');
+        });
+
+    });
+
     it('copies the contents of one bucket into another bucket', () => {
 
         // tslint:disable-next-line:no-require-imports
