@@ -1,6 +1,9 @@
 import * as AWS from 'aws-sdk';
 import FileStamp from '../helpers/file-stamp';
 import Log from '../helpers/log';
+// tslint:disable:no-require-imports
+// tslint:disable:no-var-requires
+const async = require('async');
 
 const log: Log = new Log();
 
@@ -79,8 +82,6 @@ export default class S3Migration {
         return new Promise<any> ((resolve, reject) => {
             let logContents: string = log.formatLogMsg('COPYING FROM ' + fromBucket + ' to ' + toBucket + '/' + toPrefix);
             const endpoints = this.endpoints;
-            // tslint:disable-next-line:no-require-imports
-            const async = require('async');
 
             this.getBucketContents(fromBucket).then((contents) => {
                     async.each(contents, (file: any, callback: any) => {
@@ -196,8 +197,6 @@ export default class S3Migration {
                         deleteParamsArray[Math.floor(count / 1000)].Delete.Objects.push({ Key: deleteFilesList[count].Key });
                     }
 
-                    //tslint:disable-next-line:no-require-imports
-                    const async = require('async');
                     async.each(deleteParamsArray, (deleteParams: any, callback: any) => {
                         endpoints['eu-west-1'].deleteObjects(deleteParams, (error, response) => {
                             if (error) {
