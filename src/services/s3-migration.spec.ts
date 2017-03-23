@@ -18,6 +18,7 @@ describe('S3 migration', () => {
 
         return s3Migration.getBucketContents(bucket, '').then((response) => {
             expect(response.length).to.equal(1000);
+            expect(response[0].Key).to.equal('dummy-file-name-0');
             AWS.restore('S3', 'listObjectsV2');
         });
 
