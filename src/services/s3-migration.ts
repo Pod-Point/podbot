@@ -35,12 +35,12 @@ export default class S3Migration {
      * Get the list of files in an S3 bucket
      * Allows for multiple calls to AWS if more than 1,000 files in the bucket
      *
-     * @param  {string} bucket
-     * @param  {string} continuationToken
-     * @param  {string} fileList
+     * @param  {string}   bucket
+     * @param  {string}   continuationToken
+     * @param  {Object[]} fileList
      * @return {Promise}
      */
-    public getBucketContents(bucket: string, continuationToken: string = null, fileList: Object[] = []) {
+    public getBucketContents(bucket: string, continuationToken: string = null, fileList: Object[] = []): Promise<any> {
         return new Promise<any> ((resolve, reject) => {
             const endpoints = this.endpoints;
             const listParams: any = {
