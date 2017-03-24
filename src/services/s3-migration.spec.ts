@@ -1,12 +1,33 @@
 import { expect } from 'chai';
 import S3Migration from './s3-migration';
+// tslint:disable:no-require-imports
+// tslint:disable:no-var-requires
+// tslint:disable-next-line:mocha-no-side-effect-code
+const AWS = require('aws-sdk-mock');
 
 describe('S3 migration', () => {
 
+    it('gets the contents of a bucket', () => {
+
+        const mockFileList: any = { 'Contents': [] };
+        for (let count = 0; count < 1000; count = count + 1) {
+            mockFileList.Contents.push({ 'Key': 'dummy-file-name-' + count });
+        }
+        AWS.mock('S3', 'listObjectsV2', mockFileList);
+
+        const s3Migration: S3Migration = new S3Migration();
+        const bucket: string = 'dummy-bucket-name';
+
+        return s3Migration.getBucketContents(bucket, '').then((response) => {
+            expect(response.length).to.equal(1000);
+            expect(response[0].Key).to.equal('dummy-file-name-0');
+            AWS.restore('S3', 'listObjectsV2');
+        });
+
+    });
+
     it('copies the contents of one bucket into another bucket', () => {
 
-        // tslint:disable-next-line:no-require-imports
-        const AWS = require('aws-sdk-mock');
         AWS.mock('S3', 'listObjectsV2', {
             'Contents': [
                 {
@@ -33,8 +54,6 @@ describe('S3 migration', () => {
 
     it('backs up the contents of one bucket into a sub-folder', () => {
 
-        // tslint:disable-next-line:no-require-imports
-        const AWS = require('aws-sdk-mock');
         AWS.mock('S3', 'listObjectsV2', {
             'Contents': [
                 {
@@ -60,8 +79,6 @@ describe('S3 migration', () => {
 
     it('deletes the oldest backup folder in a bucket', () => {
 
-        // tslint:disable-next-line:no-require-imports
-        const AWS = require('aws-sdk-mock');
         AWS.mock('S3', 'listObjectsV2', {
             'Contents': [
                 {
@@ -96,8 +113,6 @@ describe('S3 migration', () => {
 
     it('doesn\'t delete if fewer than 5 backup folders', () => {
 
-        // tslint:disable-next-line:no-require-imports
-        const AWS = require('aws-sdk-mock');
         AWS.mock('S3', 'listObjectsV2', {
             'Contents': [
                 {
@@ -127,8 +142,6 @@ describe('S3 migration', () => {
 
     it('migrates content from one bucket to another, dealing with backups', () => {
 
-        // tslint:disable-next-line:no-require-imports
-        const AWS = require('aws-sdk-mock');
         AWS.mock('S3', 'listObjectsV2', {
             'Contents': [
                 {
