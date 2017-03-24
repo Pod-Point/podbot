@@ -1,6 +1,9 @@
 import * as AWS from 'aws-sdk';
 import FileStamp from '../helpers/file-stamp';
 import Log from '../helpers/log';
+// tslint:disable:no-require-imports
+// tslint:disable:no-var-requires
+const async = require('async');
 
 const log: Log = new Log();
 
@@ -32,6 +35,42 @@ export default class S3Migration {
     }
 
     /**
+     * Get the list of files in an S3 bucket
+     * Allows for multiple calls to AWS if more than 1,000 files in the bucket
+     *
+     * @param  {string}   bucket
+     * @param  {string}   continuationToken
+     * @param  {Object[]} fileList
+     * @return {Promise}
+     */
+    public getBucketContents(bucket: string, continuationToken: string = null, fileList: Object[] = []): Promise<any> {
+        return new Promise<any> ((resolve, reject) => {
+            const endpoints = this.endpoints;
+            const listParams: any = {
+                Bucket: encodeURIComponent(bucket),
+                ContinuationToken: (continuationToken) ? continuationToken : null
+            };
+
+            endpoints['eu-west-1'].listObjectsV2(listParams, (err, data) => {
+                if (err) {
+                    reject('Error');
+                } else {
+                    if (data.IsTruncated && data.NextContinuationToken) {
+                        this.getBucketContents(bucket, data.NextContinuationToken, data.Contents).then((val) => {
+                            resolve(fileList.concat(val));
+                        })
+                        .catch((err) => {
+                            reject('Error');
+                        });
+                    } else {
+                        resolve(fileList.concat(data.Contents));
+                    }
+                }
+            });
+        });
+    }
+
+    /**
      * Copy all content except backup directories from one S3 bucket to another
      *
      * @param  {string} fromBucket
@@ -43,18 +82,9 @@ export default class S3Migration {
         return new Promise<any> ((resolve, reject) => {
             let logContents: string = log.formatLogMsg('COPYING FROM ' + fromBucket + ' to ' + toBucket + '/' + toPrefix);
             const endpoints = this.endpoints;
-            const listParams = {
-                Bucket: encodeURIComponent(fromBucket)
-            };
-            // tslint:disable-next-line:no-require-imports
-            const async = require('async');
 
-            endpoints['eu-west-1'].listObjectsV2(listParams, (err: any, data: any) => {
-                if (err) {
-                    logContents += 'Error: trying to list files in bucket ' + fromBucket + ' ' + log.formatLogMsg(err);
-                    reject(logContents);
-                } else if (data.Contents) {
-                    async.each(data.Contents, (file: any, callback: any) => {
+            this.getBucketContents(fromBucket).then((contents) => {
+                    async.each(contents, (file: any, callback: any) => {
                         const copyParams: any = {
                             CopySource: encodeURIComponent(fromBucket + '/' + file.Key),
                             Bucket: encodeURIComponent(toBucket),
@@ -81,9 +111,11 @@ export default class S3Migration {
                             resolve(logContents);
                         }
                     });
-                }
+            })
+            .catch((err: any) => {
+                logContents += 'Error: trying to list files in bucket ' + fromBucket + ' ' + log.formatLogMsg(err);
+                reject(logContents);
             });
-
         });
 
     }
@@ -127,63 +159,72 @@ export default class S3Migration {
      */
     public deleteOldestBackup(bucket: string): Promise<any> {
         const endpoints = this.endpoints;
-        const listParams = {
-            Bucket: encodeURIComponent(bucket)
-        };
-
-        // tslint:disable-next-line:promise-must-complete
         return new Promise<any> ((resolve, reject) => {
-            endpoints['eu-west-1'].listObjectsV2(listParams, (err, data) => {
-                if (err) {
-                    reject('Error: Trying to delete oldest backup in ' +  bucket +
-                        ' encountered problem getting directory list: ' + log.formatLogMsg(err));
-                } else {
-                    const backupFolders: string[] = [];
-                    let oldestBackupFolder: string;
-                    let compareBackupFolder: string;
-                    for (const file of data.Contents) {
-                        if (file.Key.indexOf('backup__') !== -1) {
-                            compareBackupFolder = file.Key.substr(0, file.Key.indexOf('/'));
-                            oldestBackupFolder = (compareBackupFolder < oldestBackupFolder || !oldestBackupFolder)
-                                ? compareBackupFolder : oldestBackupFolder;
-                            if (backupFolders.indexOf(compareBackupFolder) === -1) {
-                                backupFolders.push(compareBackupFolder);
-                            }
+            this.getBucketContents(bucket).then((contents) => {
+                const backupFolders: string[] = [];
+                let oldestBackupFolder: string;
+                let compareBackupFolder: string;
+                for (const file of contents) {
+                    if (file.Key.indexOf('backup__') !== -1) {
+                        compareBackupFolder = file.Key.substr(0, file.Key.indexOf('/'));
+                        oldestBackupFolder = (compareBackupFolder < oldestBackupFolder || !oldestBackupFolder)
+                            ? compareBackupFolder : oldestBackupFolder;
+                        if (backupFolders.indexOf(compareBackupFolder) === -1) {
+                            backupFolders.push(compareBackupFolder);
                         }
                     }
+                }
 
-                    if (backupFolders.length >= 5) {
-                        const deleteParams = {
+                if (backupFolders.length >= 5) {
+                    const deleteFilesList: any = [];
+                    for (const file of contents) {
+                        if (file.Key.indexOf(oldestBackupFolder) !== -1) {
+                            deleteFilesList.push(file);
+                        }
+                    }
+                    const deleteCallsNeeded: number = Math.ceil(deleteFilesList.length / 1000);
+
+                    const deleteParamsArray: any[] = [];
+                    for (let count = 0; count < deleteCallsNeeded; count = count + 1) {
+                        deleteParamsArray.push({
                             Bucket: encodeURIComponent(bucket),
                             Delete: {
-                                Objects: [{ Key: '' }]
+                                Objects: []
                             }
-                        };
+                        });
+                    }
+                    for (let count = 0; count < deleteFilesList.length; count = count + 1) {
+                        deleteParamsArray[Math.floor(count / 1000)].Delete.Objects.push({ Key: deleteFilesList[count].Key });
+                    }
 
-                        deleteParams.Delete.Objects = [];
-                        for (const file of data.Contents) {
-                            if (file.Key.indexOf(oldestBackupFolder) !== -1) {
-                                deleteParams.Delete.Objects.push({ Key: file.Key });
-                            }
-                        }
-
+                    async.each(deleteParamsArray, (deleteParams: any, callback: any) => {
                         endpoints['eu-west-1'].deleteObjects(deleteParams, (error, response) => {
                             if (error) {
                                 reject('Error: Trying to delete oldest backup in ' +  bucket +
-                                    ' encountered errors trying to delete: ' + log.formatLogMsg(error));
+                                ' encountered errors trying to delete: ' + log.formatLogMsg(error));
                             } else {
-                                resolve(log.formatLogMsg(bucket + ': ' + backupFolders.length +
-                                    ' backup folders found. Deleted folder ' + oldestBackupFolder));
+                                callback(null);
                             }
                         });
-                    } else {
-                        resolve(log.formatLogMsg(bucket + ': ' + backupFolders.length +
-                            ' backup folders so not deleting any (will only delete if 5 or more)'));
-                    }
+                    }, (error: any) => {
+                        if (error) {
+                            reject('Error: Trying to delete oldest backup in ' +  bucket +
+                                ' encountered errors trying to delete: ' + log.formatLogMsg(error));
+                        } else {
+                            resolve(log.formatLogMsg(bucket + ': ' + backupFolders.length +
+                                ' backup folders found. Deleted folder ' + oldestBackupFolder));
+                        }
+                    });
+                } else {
+                    resolve(log.formatLogMsg(bucket + ': ' + backupFolders.length +
+                        ' backup folders so not deleting any (will only delete if 5 or more)'));
                 }
+            })
+            .catch((err) => {
+                reject('Error: Trying to delete oldest backup in ' +  bucket +
+                    ' encountered problem getting directory list: ' + log.formatLogMsg(err));
             });
         });
-
     }
 
     /**
