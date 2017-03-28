@@ -42,7 +42,7 @@ export default class DatabaseMigration {
             const logFileName: string = 'dms' + '__' + replicationTask;
             const params = {
                 ReplicationTaskArn: replicationTask,
-                StartReplicationTaskType: 'resume-processing'
+                StartReplicationTaskType: 'reload-target'
             };
 
             this.endpoints['eu-west-1'].startReplicationTask(params, (err, data) => {
