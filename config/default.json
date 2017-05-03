@@ -60,9 +60,9 @@
 	        "stacks": [
 	        	{
 		            "name": "API v3 Production",
-		            "stackId": "269b9fa8-536b-4c9c-b1c4-3a71ffc06e05",
-		            "appId": "f5d35b2c-b753-4bde-a091-970e31b68dab",
-		            "region": "us-east-1"
+		            "stackId": "88247033-cc35-45bf-8941-b51b9590e774",
+		            "appId": "283b8f00-fc3a-45a8-b0d0-172e088c2f55",
+		            "region": "eu-west-1"
 		        },
 		        {
 		            "name": "API v3 Staging",
