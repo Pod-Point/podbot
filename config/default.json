@@ -14,9 +14,9 @@
 	        "stacks": [
 	        	{
 	                "name": "MIS Production",
-	                "stackId": "e7f0fae6-1c53-4453-afaa-9bee37ea0752",
-	                "appId": "648c41c6-6167-41dc-8168-b6312db678b7",
-	                "region": "us-east-1"
+	                "stackId": "1c1f2003-ccb8-482e-82f3-d8fb5ed81eca",
+	                "appId": "9161131e-a916-4fe4-97ad-b50ad5e99980",
+	                "region": "eu-west-1"
 	            },
 	            {
 	                "name": "MIS Demo",
