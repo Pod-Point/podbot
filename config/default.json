@@ -241,5 +241,8 @@
 		"production": {
 			"directory": "logs"
 		}
+	},
+	"trello": {
+		"bugList": "58595ca54a1ea59dd172d875"
 	}
 }
