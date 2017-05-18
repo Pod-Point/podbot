@@ -23,7 +23,7 @@ export default class Sentry {
             });
 
             const params = {
-                idList: Config.get<string>('trello.bugList'),
+                idList: '5825f19c448059485b692824',
                 name: `${data.event.metadata.type}: ${data.culprit}`,
                 desc: `${data.url}\n\n    ${data.message}`,
                 idLabels: app ? app.label : null
