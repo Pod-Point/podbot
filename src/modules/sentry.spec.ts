@@ -2,7 +2,6 @@ import { expect } from 'chai';
 import * as Trello from 'node-trello';
 import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
-import * as Config from 'config';
 
 describe('Sentry', () => {
 
@@ -51,7 +50,7 @@ describe('Sentry', () => {
 
         const params = stub.post.getCall(0).args[1];
 
-        expect(params.idLabels).to.equal('5825f18f84e677fd3647c415, 'Trello card not created');
+        expect(params.idLabels).to.equal('5825f18f84e677fd3647c415', 'Trello card not created');
     });
 
 });
