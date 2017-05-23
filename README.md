@@ -4,6 +4,10 @@
 
 The POD Point slack bot built with [Botkit](https://github.com/howdyai/botkit/) in [TypeScript](https://www.typescriptlang.org/).
 
+## Deploy
+
+Make sure the `podbot.pod-point.com` domain is pointing to your instance then visit the `/login` endpoint to authorise the bot with Slack. You might need to use `supervisorctl` on the instance to restart the process after authorising.
+
 ## Develop
 
 If you haven't already you will need to create a new slack application and add the `CLIENT_ID` and `CLIENT_SECRET` to the .env file.

@@ -14,9 +14,9 @@
 	        "stacks": [
 	        	{
 	                "name": "MIS Production",
-	                "stackId": "e7f0fae6-1c53-4453-afaa-9bee37ea0752",
-	                "appId": "648c41c6-6167-41dc-8168-b6312db678b7",
-	                "region": "us-east-1"
+	                "stackId": "1c1f2003-ccb8-482e-82f3-d8fb5ed81eca",
+	                "appId": "9161131e-a916-4fe4-97ad-b50ad5e99980",
+	                "region": "eu-west-1"
 	            },
 	            {
 	                "name": "MIS Demo",
@@ -60,9 +60,9 @@
 	        "stacks": [
 	        	{
 		            "name": "API v3 Production",
-		            "stackId": "269b9fa8-536b-4c9c-b1c4-3a71ffc06e05",
-		            "appId": "f5d35b2c-b753-4bde-a091-970e31b68dab",
-		            "region": "us-east-1"
+		            "stackId": "88247033-cc35-45bf-8941-b51b9590e774",
+		            "appId": "283b8f00-fc3a-45a8-b0d0-172e088c2f55",
+		            "region": "eu-west-1"
 		        },
 		        {
 		            "name": "API v3 Staging",
@@ -199,6 +199,50 @@
 		            "region": "eu-west-1"
 		        }
 	        ]
+	    },
+	    {
+	        "name": "contractorsTool",
+	        "repo": "contractors-tool",
+	        "sentry": "Contractors Tool",
+	        "stacks": [
+	        	{
+		            "name": "Contractors Tool Production",
+		            "stackId": "c345aa47-1d03-4f01-b827-989f00abcda5",
+		            "appId": "d6ab9900-c373-49ce-a861-056e1de6fc82",
+		            "region": "eu-west-1"
+		        }
+	        ]
 	    }
-	]
+	],
+	"website": {
+		"s3": {
+			"testing": {
+				"staging": "podpoint-website-dev-test",
+				"live": "podpoint-website-test"
+			},
+			"production": {
+				"staging": "podpoint-website-dev",
+				"live": "podpoint-website"
+			}
+		},
+		"dms": {
+			"testing": {
+				"replication-task-arn": "arn:aws:dms:eu-west-1:959744386191:task:XA7MBY3Q72N3JK4KRKMFEVZXNA"
+			},
+			"production": {
+				"replication-task-arn": "arn:aws:dms:eu-west-1:959744386191:task:W2C2J47OOPDEGRFSVXNAFMMWGM"
+			}
+		}
+	},
+	"logging": {
+		"testing": {
+			"directory": "logs"
+		},
+		"production": {
+			"directory": "logs"
+		}
+	},
+	"trello": {
+		"bugList": "58595ca54a1ea59dd172d875"
+	}
 }
