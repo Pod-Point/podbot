@@ -30,16 +30,16 @@ export default class Codecov {
                                 {
                                     title: 'Project',
                                     value: data.repo,
-                                    short: true
+                                    short: true,
                                 },
                                 {
                                     title: 'Change',
                                     value: `${data.coverage}%`,
-                                    short: true
-                                }
-                            ]
-                        }
-                    ]
+                                    short: true,
+                                },
+                            ],
+                        },
+                    ],
                 };
 
                 bot.say(message);

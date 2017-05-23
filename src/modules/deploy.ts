@@ -27,7 +27,7 @@ export default class Deploy {
         controller.hears(['deploy ?([a-zA-Z]+)?( with comment )?(.*)?'], [
             'direct_message',
             'direct_mention',
-            'mention'
+            'mention',
         ], (bot, message) => {
 
             const name: string = message.match[1];
@@ -57,7 +57,7 @@ export default class Deploy {
             return bot.api.chat.delete({
                 token: bot.config.token,
                 ts: message.message_ts,
-                channel: message.channel
+                channel: message.channel,
             });
         }
 
@@ -68,20 +68,20 @@ export default class Deploy {
         if (message.callback_id === 'deploy') {
 
             const data: {app: string, comment: string} = JSON.parse(action.value);
-            const app: App = this.apps.find((app) => {
+            const app: App = this.apps.find(app => {
                 return app.name === data.app;
             });
 
             if (app) {
 
-                this.getComment(app.repo, data.comment).then((comment) => {
+                this.getComment(app.repo, data.comment).then(comment => {
 
                     const opsworks: Opsworks = new Opsworks();
                     const deployments = opsworks.deploy(app, comment, action.name);
 
                     const responses: { [index: string]: SlackAttachment; } = {};
 
-                    deployments.forEach((deployment) => {
+                    deployments.forEach(deployment => {
 
                         const endpoint: string = 'https://console.aws.amazon.com/opsworks/home';
                         const uri: string = `${endpoint}?region=${deployment.stack.region}#/stack/${deployment.stack.stackId}/deployments`;
@@ -90,28 +90,28 @@ export default class Deploy {
                             fallback: `Deploying ${app.name} to ${deployment.stack.name}.`,
                             color: '#3AA3E3',
                             title: `Deploying ${app.name} to ${deployment.stack.name}...`,
-                            text: `<${uri}|Check status>`
+                            text: `<${uri}|Check status>`,
                         };
 
-                        deployment.promise.then((val) => {
+                        deployment.promise.then(val => {
 
                             responses[deployment.stack.appId] = {
                                 fallback: `Deployed ${app.name} to ${deployment.stack.name}.`,
                                 color: 'good',
                                 title: 'Success!',
-                                text: `Deployed ${app.name} to ${deployment.stack.name} :blush:`
+                                text: `Deployed ${app.name} to ${deployment.stack.name} :blush:`,
                             };
 
                             this.updateSlack(responses, bot, message);
 
                         })
-                        .catch((err) => {
+                        .catch(err => {
 
                             responses[deployment.stack.appId] = {
                                 fallback: `Sorry I wasn't able to deploy ${app.name} to ${deployment.stack.name}.`,
                                 color: 'danger',
                                 title: `Sorry I wasn't able to deploy ${app.name} to ${deployment.stack.name} :disappointed:`,
-                                text: err
+                                text: err,
                             };
 
                             this.updateSlack(responses, bot, message);
@@ -129,9 +129,9 @@ export default class Deploy {
                             {
                                 fallback: `Sorry I couldn't get a comment from ${app.repo}.`,
                                 color: 'warning',
-                                title: `Sorry I couldn't get a comment from ${app.repo}.`
-                            }
-                        ]
+                                title: `Sorry I couldn't get a comment from ${app.repo}.`,
+                            },
+                        ],
                     });
 
                 });
@@ -142,9 +142,9 @@ export default class Deploy {
                         {
                             fallback: `Sorry I dont know how to deploy ${data.app}.`,
                             color: 'warning',
-                            title: `Sorry I dont know how to deploy ${data.app} :disappointed:`
-                        }
-                    ]
+                            title: `Sorry I dont know how to deploy ${data.app} :disappointed:`,
+                        },
+                    ],
                 });
             }
         }
@@ -162,12 +162,12 @@ export default class Deploy {
 
         const attachments: SlackAttachment[] = [];
 
-        Object.keys(responses).forEach((key) => {
+        Object.keys(responses).forEach(key => {
             attachments.push(responses[key]);
         });
 
         bot.replyInteractive(message, {
-            attachments: attachments
+            attachments: attachments,
         });
     }
 
@@ -182,7 +182,7 @@ export default class Deploy {
 
         if (comment) {
 
-            return new Promise((resolve) => {
+            return new Promise(resolve => {
                 resolve(comment);
             });
 
@@ -192,7 +192,7 @@ export default class Deploy {
 
             return new Promise((resolve, reject) => {
 
-                github.getLastPr(repo).then((pulls) => {
+                github.getLastPr(repo).then(pulls => {
 
                     if (pulls.length) {
                         resolve(`${pulls[0].number} ${pulls[0].title}`);
@@ -216,12 +216,12 @@ export default class Deploy {
 
         const actions: SlackAttachmentAction[] = [];
 
-        this.apps.forEach((app) => {
+        this.apps.forEach(app => {
             actions.push({
                 name: app.name,
                 text: app.name,
                 value: app.name,
-                type: 'button'
+                type: 'button',
             });
         });
 
@@ -229,7 +229,7 @@ export default class Deploy {
             name: 'cancel',
             text: 'Cancel',
             style: 'danger',
-            type: 'button'
+            type: 'button',
         });
 
         return {
@@ -240,9 +240,9 @@ export default class Deploy {
                     text: 'Which app to deploy?',
                     callback_id: 'select-app',
                     attachment_type: 'default',
-                    actions: actions
-                }
-            ]
+                    actions: actions,
+                },
+            ],
         };
     }
 
@@ -255,7 +255,7 @@ export default class Deploy {
      */
     private pickStack(name: string, comment: string = null): SlackReply {
 
-        const app: App = this.apps.find((app) => {
+        const app: App = this.apps.find(app => {
             return app.name === name;
         });
 
@@ -263,15 +263,15 @@ export default class Deploy {
 
             const actions: SlackAttachmentAction[] = [];
 
-            app.stacks.forEach((stack) => {
+            app.stacks.forEach(stack => {
                 actions.push({
                     name: stack.name,
                     text: stack.name,
                     value: JSON.stringify({
                         app: name,
-                        comment: comment
+                        comment: comment,
                     }),
-                    type: 'button'
+                    type: 'button',
                 });
             });
 
@@ -280,16 +280,16 @@ export default class Deploy {
                 text: 'All',
                 value: JSON.stringify({
                     app: name,
-                    comment: comment
+                    comment: comment,
                 }),
-                type: 'button'
+                type: 'button',
             });
 
             actions.push({
                 name: 'cancel',
                 text: 'Cancel',
                 style: 'danger',
-                type: 'button'
+                type: 'button',
             });
 
             return {
@@ -300,9 +300,9 @@ export default class Deploy {
                         text: 'Which stack to deploy?',
                         callback_id: 'deploy',
                         attachment_type: 'default',
-                        actions: actions
-                    }
-                ]
+                        actions: actions,
+                    },
+                ],
             };
 
         } else {
@@ -312,9 +312,9 @@ export default class Deploy {
                     {
                         fallback: `Sorry I dont know how to deploy ${name}.`,
                         color: 'warning',
-                        title: `Sorry I dont know how to deploy ${name} :disappointed:`
-                    }
-                ]
+                        title: `Sorry I dont know how to deploy ${name} :disappointed:`,
+                    },
+                ],
             };
 
         }

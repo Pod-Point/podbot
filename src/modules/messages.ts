@@ -21,7 +21,7 @@ export default class Messages {
 
             bot.say({
                 channel: Config.get<string>('channels.software.code'),
-                text: message
+                text: message,
             });
         }, null, true, 'Europe/London');
 

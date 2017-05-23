@@ -27,14 +27,14 @@ if (process.env.ENV === 'local') {
 
     botParams = {
         debug: true,
-        json_file_store: './db'
+        json_file_store: './db',
     };
 
 } else {
 
     botParams = {
         debug: false,
-        storage: redisStorage()
+        storage: redisStorage(),
     };
 
 }
@@ -43,8 +43,8 @@ const controller: BotController = Botkit.slackbot(botParams).configureSlackApp({
     clientId: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
     scopes: [
-        'bot'
-    ]
+        'bot',
+    ],
 });
 
 const prClosed: Module = new PrClosed();
@@ -143,7 +143,7 @@ controller.storage.teams.get(process.env.TEAM, (err, team) => {
  * @return {void}
  */
 function register(callback: string, ...args: any[]): void {
-    modules.forEach((botModule) => {
+    modules.forEach(botModule => {
         if (typeof botModule[callback] === 'function') {
             botModule[callback](...args);
         }

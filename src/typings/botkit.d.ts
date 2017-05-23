@@ -79,7 +79,7 @@ interface SlackBot {
     reply: (message: SlackMessage, reply: SlackReply) => void;
     api: SlackApi;
     config: {
-        token: string
+        token: string,
     };
 }
 

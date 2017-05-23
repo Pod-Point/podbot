@@ -17,13 +17,13 @@ export default class Github {
             protocol: 'https',
             host: 'api.github.com',
             headers: {
-                'user-agent': 'PodBot'
-            }
+                'user-agent': 'PodBot',
+            },
         });
 
         this.github.authenticate({
             type: 'oauth',
-            token: process.env.GITHUB_TOKEN
+            token: process.env.GITHUB_TOKEN,
         });
     }
 
@@ -39,7 +39,7 @@ export default class Github {
             user: 'Pod-Point',
             repo: repo,
             state: 'closed',
-            per_page: 1
+            per_page: 1,
         });
 
     }

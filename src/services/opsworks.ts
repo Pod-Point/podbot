@@ -15,17 +15,17 @@ export default class Opsworks {
         AWS.config.update({
             credentials: {
                 accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-            }
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+            },
         });
 
         this.endpoints = {
             'us-east-1': new AWS.OpsWorks({
-                region: 'us-east-1'
+                region: 'us-east-1',
             }),
             'eu-west-1': new AWS.OpsWorks({
-                region: 'eu-west-1'
-            })
+                region: 'eu-west-1',
+            }),
         };
     }
 
@@ -39,7 +39,7 @@ export default class Opsworks {
      */
     public deploy(app: App, comment: string, deploy: string = 'all'): {stack: Stack, promise: Promise<any>}[] {
 
-        return app.stacks.filter((stack) => {
+        return app.stacks.filter(stack => {
 
             if (deploy !== 'all' && stack.name !== deploy) {
                 return false;
@@ -47,7 +47,7 @@ export default class Opsworks {
 
             return true;
 
-        }).map((stack) => {
+        }).map(stack => {
 
             const promise: Promise<any> = new Promise((resolve, reject) => {
 
@@ -56,8 +56,8 @@ export default class Opsworks {
                     StackId: stack.stackId,
                     Comment: comment,
                     Command: {
-                        Name: 'deploy'
-                    }
+                        Name: 'deploy',
+                    },
                 };
 
                 this.endpoints[stack.region].createDeployment(params, (err, data) => {
@@ -70,8 +70,8 @@ export default class Opsworks {
 
                         const params = {
                             DeploymentIds: [
-                                data.DeploymentId
-                            ]
+                                data.DeploymentId,
+                            ],
                         };
 
                         this.endpoints[stack.region].waitFor('deploymentSuccessful', params, (err, data) => {
@@ -92,7 +92,7 @@ export default class Opsworks {
 
             return {
                 stack: stack,
-                promise: promise
+                promise: promise,
             };
 
         });
