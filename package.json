@@ -2,6 +2,12 @@
   "name": "podbot",
   "version": "1.0.0",
   "main": "lib/index.js",
+  "private": true,
+  "license" : "MIT",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/Pod-Point/podbot.git"
+  },
   "scripts": {
     "start": "npm run tsc && node lib/index.js",
     "tsc": "tsc",
