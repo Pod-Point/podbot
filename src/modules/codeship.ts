@@ -1,6 +1,7 @@
 import * as Config from 'config';
+import Module from '../interfaces/module';
 
-export default class Codeship {
+export default class Codeship implements Module {
 
     /**
      * Listen for Codeship webhooks and notify the channel if

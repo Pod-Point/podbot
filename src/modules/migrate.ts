@@ -1,8 +1,9 @@
 import * as Config from 'config';
 import DatabaseMigration from '../services/database-migration';
 import S3Migration from '../services/s3-migration';
+import Module from '../interfaces/module';
 
-export default class Migrate {
+export default class Migrate implements Module {
 
     private env: string = (process.env.ENV === 'production') ? 'production' : 'testing';
     private s3migration: S3Migration = new S3Migration();

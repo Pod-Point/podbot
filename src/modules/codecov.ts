@@ -1,6 +1,7 @@
 import * as Config from 'config';
+import Module from '../interfaces/module';
 
-export default class Codecov {
+export default class Codecov implements Module {
 
     /**
      * Listen for CodeCov webhooks and notify the channel if

@@ -1,6 +1,7 @@
 import * as Config from 'config';
+import Module from '../interfaces/module';
 
-export default class Coveralls {
+export default class Coveralls implements Module {
 
     /**
      * Listen for Coveralls webhooks and notify the channel if

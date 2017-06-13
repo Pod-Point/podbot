@@ -1,6 +1,7 @@
 import * as Config from 'config';
+import Module from '../interfaces/module';
 
-export default class Travis {
+export default class Travis implements Module {
 
     /**
      * Listen for Travis CI webhooks
