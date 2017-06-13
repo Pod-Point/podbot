@@ -4,13 +4,29 @@ import Github from '../services/github';
 import * as Config from 'config';
 import App from '../interfaces/app';
 import Stack from '../interfaces/stack';
+import Module from '../interfaces/module';
 
-export default class Deploy {
+export default class Deploy implements Module {
 
+    /**
+     * Array of available apps
+     *
+     * @type {App[]}
+     */
     private apps: App[];
 
+    /**
+     * SlackBot object
+     *
+     * @type {SlackBot}
+     */
     private bot: SlackBot;
 
+    /**
+     * SlackMessage object
+     *
+     * @type {SlackMessage}
+     */
     private message: SlackMessage;
 
     /**
@@ -127,11 +143,9 @@ export default class Deploy {
      * Update slack with Opsworks responses
      *
      * @param  {Object}  responses
-     * @param  {SlackBot} bot
-     * @param  {SlackMessage} message
      * @return {void}
      */
-    private updateSlack(responses: { [index: string]: SlackAttachment; }, bot: SlackBot, message: SlackMessage): void {
+    private updateSlack(responses: { [index: string]: SlackAttachment; }): void {
 
         const attachments: SlackAttachment[] = [];
 
@@ -139,7 +153,7 @@ export default class Deploy {
             attachments.push(responses[key]);
         });
 
-        bot.replyInteractive(message, {
+        this.bot.replyInteractive(this.message, {
             attachments: attachments
         });
     }
@@ -358,7 +372,7 @@ export default class Deploy {
                     text: `Deployed ${app.name} to ${stack.name} :blush:`
                 };
 
-                this.updateSlack(responses, this.bot, this.message);
+                this.updateSlack(responses);
 
             })
             .catch((err: string) => {
@@ -370,12 +384,12 @@ export default class Deploy {
                     text: err
                 };
 
-                this.updateSlack(responses, this.bot, this.message);
+                this.updateSlack(responses);
 
             });
         });
 
-        this.updateSlack(responses, this.bot, this.message);
+        this.updateSlack(responses);
     }
 
     /**
