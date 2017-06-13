@@ -1,14 +1,20 @@
 import Opsworks from '../services/opsworks';
+import CodeBuild from '../services/code-build';
 import Github from '../services/github';
 import * as Config from 'config';
 import App from '../interfaces/app';
+import Stack from '../interfaces/stack';
 
 export default class Deploy {
 
     private apps: App[];
 
+    private bot: SlackBot;
+
+    private message: SlackMessage;
+
     /**
-     * Perform api functions on AWS Opsworks
+     * Deploys apps to stacks
      *
      * @return {void}
      */
@@ -24,7 +30,7 @@ export default class Deploy {
      */
     public messageListeners(controller: BotController): void {
 
-        controller.hears(['deploy ?([a-zA-Z]+)?( with comment )?(.*)?'], [
+        controller.hears(['deploy ?([a-zA-Z0-9-]+)?( with comment )?(.*)?'], [
             'direct_message',
             'direct_mention',
             'mention'
@@ -51,6 +57,9 @@ export default class Deploy {
      */
     public callbacks(bot: SlackBot, message: SlackMessage): void {
 
+        this.bot = bot;
+        this.message = message;
+
         const action: SlackAttachmentAction = message.actions[0];
 
         if (action.name === 'cancel') {
@@ -76,51 +85,15 @@ export default class Deploy {
 
                 this.getComment(app.repo, data.comment).then((comment) => {
 
-                    const opsworks: Opsworks = new Opsworks();
-                    const deployments = opsworks.deploy(app, comment, action.name);
+                    switch (app.type) {
+                        case 'codebuild':
+                            this.codeBuildDeploy(app, action.name);
+                            break;
 
-                    const responses: { [index: string]: SlackAttachment; } = {};
-
-                    deployments.forEach((deployment) => {
-
-                        const endpoint: string = 'https://console.aws.amazon.com/opsworks/home';
-                        const uri: string = `${endpoint}?region=${deployment.stack.region}#/stack/${deployment.stack.stackId}/deployments`;
-
-                        responses[deployment.stack.appId] = {
-                            fallback: `Deploying ${app.name} to ${deployment.stack.name}.`,
-                            color: '#3AA3E3',
-                            title: `Deploying ${app.name} to ${deployment.stack.name}...`,
-                            text: `<${uri}|Check status>`
-                        };
-
-                        deployment.promise.then((val) => {
-
-                            responses[deployment.stack.appId] = {
-                                fallback: `Deployed ${app.name} to ${deployment.stack.name}.`,
-                                color: 'good',
-                                title: 'Success!',
-                                text: `Deployed ${app.name} to ${deployment.stack.name} :blush:`
-                            };
-
-                            this.updateSlack(responses, bot, message);
-
-                        })
-                        .catch((err) => {
-
-                            responses[deployment.stack.appId] = {
-                                fallback: `Sorry I wasn't able to deploy ${app.name} to ${deployment.stack.name}.`,
-                                color: 'danger',
-                                title: `Sorry I wasn't able to deploy ${app.name} to ${deployment.stack.name} :disappointed:`,
-                                text: err
-                            };
-
-                            this.updateSlack(responses, bot, message);
-
-                        });
-
-                    });
-
-                    this.updateSlack(responses, bot, message);
+                        default:
+                            this.opsworksDeploy(app, comment, action.name);
+                            break;
+                    }
 
                 }).catch(() => {
 
@@ -318,5 +291,116 @@ export default class Deploy {
             };
 
         }
+    }
+
+    /**
+     * Deploy an app on opsworks
+     *
+     * @param {App}          app
+     * @param {string}       comment
+     * @param {string}       stack
+     */
+    private opsworksDeploy(app: App, comment: string, stackToDeploy: string) {
+
+        const opsworks: Opsworks = new Opsworks();
+        const stacks = this.getStacks(app, stackToDeploy);
+
+        stacks.forEach(stack => {
+
+            const endpoint: string = 'https://console.aws.amazon.com/opsworks/home';
+            const uri: string = `${endpoint}?region=${stack.region}#/stack/${stack.stackId}/deployments`;
+            const promise = opsworks.deploy(stack, comment);
+
+            this.deployStack(app, stack, uri, promise);
+
+        });
+    }
+
+    /**
+     * Deploy an app on CodeBuild
+     *
+     * @param {App}    app
+     * @param {string} stackToDeploy
+     */
+    private codeBuildDeploy(app: App, stackToDeploy: string) {
+
+        const codebuild: CodeBuild = new CodeBuild();
+        const stacks = this.getStacks(app, stackToDeploy);
+
+        stacks.forEach(stack => {
+
+            const endpoint: string = 'https://console.aws.amazon.com/codebuild/home';
+            const uri: string = `${endpoint}?region=eu-west-1#/projects/${stack.project}/view`;
+            const promise = codebuild.startBuild(stack);
+
+            this.deployStack(app, stack, uri, promise);
+
+        });
+    }
+
+    /**
+     * Deploy a stack and update slack with the status
+     *
+     * @param {App}     app
+     * @param {Stack}   stack
+     * @param {string}  uri
+     * @param {Promise} promise
+     */
+    private deployStack(app: App, stack: Stack, uri: string, promise: Promise<any>) {
+
+        const responses: { [index: string]: SlackAttachment; } = {};
+
+        responses[stack.name] = {
+            fallback: `Deploying ${app.name} to ${stack.name}.`,
+            color: '#3AA3E3',
+            title: `Deploying ${app.name} to ${stack.name}...`,
+            text: `<${uri}|Check status>`
+        };
+
+        promise.then((val) => {
+
+            responses[stack.name] = {
+                fallback: `Deployed ${app.name} to ${stack.name}.`,
+                color: 'good',
+                title: 'Success!',
+                text: `Deployed ${app.name} to ${stack.name} :blush:`
+            };
+
+            this.updateSlack(responses, this.bot, this.message);
+
+        })
+        .catch((err) => {
+
+            responses[stack.name] = {
+                fallback: `Sorry I wasn't able to deploy ${app.name} to ${stack.name}.`,
+                color: 'danger',
+                title: `Sorry I wasn't able to deploy ${app.name} to ${stack.name} :disappointed:`,
+                text: err
+            };
+
+            this.updateSlack(responses, this.bot, this.message);
+
+        });
+
+        this.updateSlack(responses, this.bot, this.message);
+    }
+
+    /**
+     * Get stacks to be deployed
+     *
+     * @param {App}    app
+     * @param {string} stackToDeploy
+     */
+    private getStacks(app: App, stackToDeploy: string) {
+
+        return app.stacks.filter(stack => {
+
+            if (stackToDeploy !== 'all' && stack.name !== stackToDeploy) {
+                return false;
+            }
+
+            return true;
+
+        });
     }
 }
