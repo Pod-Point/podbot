@@ -1,6 +1,5 @@
 import * as AWS from 'aws-sdk';
 import Stack from '../interfaces/stack';
-import App from '../interfaces/app';
 
 export default class Opsworks {
 
@@ -30,71 +29,53 @@ export default class Opsworks {
     }
 
     /**
-     * Deploy an Opsworks app
+     * Deploy an Opsworks stack
      *
-     * @param  {App} app
+     * @param  {Stack} stack
      * @param  {string} comment
-     * @param  {string} deploy
-     * @return {Array}
+     * @return {Promise}
      */
-    public deploy(app: App, comment: string, deploy: string = 'all'): {stack: Stack, promise: Promise<any>}[] {
+    public deploy(stack: Stack, comment: string): Promise<any> {
 
-        return app.stacks.filter((stack) => {
+        return new Promise((resolve, reject) => {
 
-            if (deploy !== 'all' && stack.name !== deploy) {
-                return false;
-            }
-
-            return true;
-
-        }).map((stack) => {
-
-            const promise: Promise<any> = new Promise((resolve, reject) => {
-
-                const params = {
-                    AppId: stack.appId,
-                    StackId: stack.stackId,
-                    Comment: comment,
-                    Command: {
-                        Name: 'deploy'
-                    }
-                };
-
-                this.endpoints[stack.region].createDeployment(params, (err, data) => {
-
-                    if (err) {
-
-                        reject(err.message);
-
-                    } else if (data.DeploymentId) {
-
-                        const params = {
-                            DeploymentIds: [
-                                data.DeploymentId
-                            ]
-                        };
-
-                        this.endpoints[stack.region].waitFor('deploymentSuccessful', params, (err, data) => {
-
-                            if (err) {
-
-                                reject(err.message);
-
-                            } else if (data.Deployments[0]) {
-
-                                resolve();
-
-                            }
-                        });
-                    }
-                });
-            });
-
-            return {
-                stack: stack,
-                promise: promise
+            const params = {
+                AppId: stack.appId,
+                StackId: stack.stackId,
+                Comment: comment,
+                Command: {
+                    Name: 'deploy'
+                }
             };
 
+            this.endpoints[stack.region].createDeployment(params, (err, data) => {
+
+                if (err) {
+
+                    reject(err.message);
+
+                } else if (data.DeploymentId) {
+
+                    const params = {
+                        DeploymentIds: [
+                            data.DeploymentId
+                        ]
+                    };
+
+                    this.endpoints[stack.region].waitFor('deploymentSuccessful', params, (err, data) => {
+
+                        if (err) {
+
+                            reject(err.message);
+
+                        } else if (data.Deployments[0]) {
+
+                            resolve();
+
+                        }
+                    });
+                }
+            });
         });
     }
 }

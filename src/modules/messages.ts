@@ -1,7 +1,8 @@
 import { CronJob } from 'cron';
 import * as Config from 'config';
+import Module from '../interfaces/module';
 
-export default class Messages {
+export default class Messages implements Module {
 
     /**
      * Register any cronjobs

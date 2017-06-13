@@ -1,7 +1,8 @@
 import * as Config from 'config';
 import App from '../interfaces/app';
+import Module from '../interfaces/module';
 
-export default class PrClosed {
+export default class PrClosed implements Module {
 
     /**
      * Listen for PR closed Github webhooks

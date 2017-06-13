@@ -2,8 +2,9 @@
 import * as Trello from 'node-trello';
 import * as Config from 'config';
 import App from '../interfaces/app';
+import Module from '../interfaces/module';
 
-export default class Sentry {
+export default class Sentry implements Module {
 
     /**
      * Listen for Sentry webhooks and create Trello cards if applicable
