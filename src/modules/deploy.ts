@@ -298,7 +298,7 @@ export default class Deploy {
      *
      * @param {App}    app
      * @param {string} comment
-     * @param {string} stack
+     * @param {string} stackToDeploy
      */
     private opsworksDeploy(app: App, comment: string, stackToDeploy: string) {
 

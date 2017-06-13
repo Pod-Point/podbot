@@ -49,7 +49,9 @@ export default class CodeBuild {
                         ]
                     };
 
-                    this.codebuild.api.waiters['buildSuccessful'] = {
+                    const state = 'buildSuccessful';
+
+                    this.codebuild.api.waiters[state] = {
                         'delay': 15,
                         'operation': 'batchGetBuilds',
                         'maxAttempts': 120,
