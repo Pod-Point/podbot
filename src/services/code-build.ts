@@ -37,16 +37,69 @@ export default class CodeBuild {
 
             this.codebuild.startBuild(params, (err: any, data: any) => {
 
-                console.log(data);
-                console.log(err);
-
                 if (err) {
 
                     reject(err.message);
 
                 } else if (data.build) {
 
-                    resolve();
+                    const params = {
+                        ids: [
+                            data.build.id
+                        ]
+                    };
+
+                    this.codebuild.api.waiters['buildSuccessful'] = {
+                        'delay': 15,
+                        'operation': 'batchGetBuilds',
+                        'maxAttempts': 120,
+                        'description': 'Wait until a build has completed successfully',
+                        'acceptors': [
+                            {
+                                'expected': 'SUCCEEDED',
+                                'matcher': 'pathAll',
+                                'state': 'success',
+                                'argument': 'builds[].buildStatus'
+                            },
+                            {
+                                'expected': 'FAILED',
+                                'matcher': 'pathAny',
+                                'state': 'failure',
+                                'argument': 'builds[].buildStatus'
+                            },
+                            {
+                                'expected': 'FAULT',
+                                'matcher': 'pathAny',
+                                'state': 'failure',
+                                'argument': 'builds[].buildStatus'
+                            },
+                            {
+                                'expected': 'TIMED_OUT',
+                                'matcher': 'pathAny',
+                                'state': 'failure',
+                                'argument': 'builds[].buildStatus'
+                            },
+                            {
+                                'expected': 'STOPPED',
+                                'matcher': 'pathAny',
+                                'state': 'failure',
+                                'argument': 'builds[].buildStatus'
+                            }
+                        ]
+                    };
+
+                    this.codebuild.waitFor('buildSuccessful', params, (err: any, data: any) => {
+
+                        if (err) {
+
+                            reject(err.message);
+
+                        } else if (data.Deployments[0]) {
+
+                            resolve();
+
+                        }
+                    });
 
                 }
             });
