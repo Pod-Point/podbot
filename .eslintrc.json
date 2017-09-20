@@ -1,0 +1,7 @@
+{
+  "extends": "@pod-point/eslint-config-podpoint-base",
+  "parser": "typescript-eslint-parser",
+  "plugins": [
+    "typescript"
+  ]
+}
