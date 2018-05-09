@@ -32,7 +32,7 @@ export default class Log {
                 fs.mkdirSync(this.logsDir);
             }
             const fileStamp: FileStamp = new FileStamp();
-            fs.writeFile(this.logsDir + '/' + logFileName + '__' + fileStamp.dateTime() + '.log', logContent, (err: string) => {
+            fs.writeFile(this.logsDir + '/' + logFileName + '__' + fileStamp.dateTime() + '.log', logContent, (err: NodeJS.ErrnoException) => {
                 if (err) {
                     reject(this.formatLogMsg(err));
                 }
