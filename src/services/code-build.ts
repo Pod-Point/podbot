@@ -31,10 +31,7 @@ export default class CodeBuild {
 
         return new Promise((resolve, reject) => {
 
-            const params: {
-                projectName: string,
-                sourceVersion?: string
-            } = {
+            const params: AWS.CodeBuild.Types.StartBuildInput = {
                 projectName: stack.project
             };
 
