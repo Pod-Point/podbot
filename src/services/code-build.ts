@@ -31,9 +31,16 @@ export default class CodeBuild {
 
         return new Promise((resolve, reject) => {
 
-            const params = {
+            const params: {
+                projectName: string,
+                sourceVersion?: string
+            } = {
                 projectName: stack.project
             };
+
+            if (stack.branch) {
+                params.sourceVersion = stack.branch;
+            }
 
             this.codebuild.startBuild(params, (err: any, data: any) => {
 

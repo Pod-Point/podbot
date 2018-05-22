@@ -4,6 +4,7 @@ interface Stack {
     appId: string;
     region: string;
     project: string;
+    branch?: string;
 }
 
 export default Stack;
