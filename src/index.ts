@@ -12,7 +12,6 @@ import Deploy from './modules/deploy';
 import Sentry from './modules/sentry';
 import Module from './interfaces/module';
 import Codecov from './modules/codecov';
-import Migrate from './modules/migrate';
 
 dotenv.config();
 
@@ -55,7 +54,6 @@ const messages: Module = new Messages();
 const deploy: Module = new Deploy();
 const codecov: Module = new Codecov();
 const sentry: Module = new Sentry();
-const migrate: Module = new Migrate();
 
 const modules: any[] = [
     prClosed,
@@ -65,8 +63,7 @@ const modules: any[] = [
     messages,
     deploy,
     codecov,
-    sentry,
-    migrate
+    sentry
 ];
 
 controller.storage.teams.get(process.env.TEAM, (err, team) => {
